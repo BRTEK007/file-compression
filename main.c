@@ -113,3 +113,36 @@ int main(int argc, char** argv){
   byte_freq_arr_free(bf_arr);
   return 0;
 }
+
+
+/*
+arr = [
+  {byte: F, freq: 1},
+  {byte: M, freq: 1},
+  {byte: G, freq: 4},
+  {byte: X, freq: 6},
+  {byte: A, freq: 10},
+];
+
+nodes = [];
+
+while(arr.len > 0){
+  if(nodes.len < 2){
+    nodes.push({byte: arr[0].byte, freq: arr[0].freq, leaf: true, left: NULL, right: NULL});
+    arr.pop_front();
+  }else if(nodes[0].freq + nodes[1].freq < arr[0].freq){
+    let new_node = {byte: 0, leaf: false, freq: nodes[0].freq + nodes[1].freq, left: nodes[0], right: nodes[1]};
+    nodes.pop();
+    nodes.pop();
+    nodes.push(new_node);
+  }else{
+    nodes.push({byte: arr[0].byte, freq: arr[0].freq, leaf: true, left: NULL, right: NULL});
+    arr.pop_front();
+  }
+}
+
+root = {leaf: false, left: nodes[0], right: nodes[]};
+
+some tree traversal to read all bytes codes
+
+*/
