@@ -6,6 +6,18 @@
 #define UNI_VEC_IMPLEMENTATION
 #include "uni_vec.h"
 
+#define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
+#define BYTE_TO_BINARY(byte)  \
+  (byte & 0x80 ? '1' : '0'), \
+  (byte & 0x40 ? '1' : '0'), \
+  (byte & 0x20 ? '1' : '0'), \
+  (byte & 0x10 ? '1' : '0'), \
+  (byte & 0x08 ? '1' : '0'), \
+  (byte & 0x04 ? '1' : '0'), \
+  (byte & 0x02 ? '1' : '0'), \
+  (byte & 0x01 ? '1' : '0') 
+
+
 typedef struct byte_freq_t{
   unsigned char byte;
   int freq;
@@ -52,8 +64,7 @@ uni_vec_t* get_byte_freq_arr(uni_vec_t* input){
   uni_vec_t* bf_arr = uni_vec_create(size, sizeof(byte_freq_t));
 
   //copy bytes with atleast 1 occurance to new array
-  byte_freq_t* cropped_arr = calloc(size, sizeof(byte_freq_t));
-  uni_vec_push_array(bf_arr, arr+zeros, size);
+  uni_vec_push_back_array(bf_arr, arr+zeros, size);
 
   free(arr);
   
@@ -79,53 +90,89 @@ uni_vec_t* get_input_buffer(const char* filename){
   fclose(inputFile); // Close the file
 
   uni_vec_t* bb = uni_vec_create(filelen, sizeof(unsigned char));
-  uni_vec_push_array(bb, buffer, filelen);
+  uni_vec_push_back_array(bb, buffer, filelen);
 
   free(buffer);
   return bb;
 }
 
-// void huffman(byte_freq_arr_t* bf_arr){
-//   node_t nodes[bf_arr->size];
-//   int nodes_size = 0;
+node_t create_tree(uni_vec_t* bf_arr){
+  uni_vec_t* nodes = uni_vec_create(bf_arr->size, sizeof(node_t));
+  
+  while(bf_arr->size > 0){
+    byte_freq_t bf;
+    uni_vec_extract(bf_arr, 0, &bf);
+    
+    if(nodes->size < 2){//create leaf node with byte 
+      node_t node = (node_t){
+        byte: bf.byte, 
+        freq: bf.freq,
+        leaf: true,
+        left: NULL,
+        right: NULL};
+      uni_vec_push_back(nodes, &node);
+      // printf("new leaf: %c %i \n", node.byte, node.freq);
+      uni_vec_pop_front(bf_arr);
+    }else{
+     node_t* first_node = (node_t*)uni_vec_get(nodes, 0);      
+     node_t* second_node = (node_t*)uni_vec_get(nodes, 1);
+     if(first_node->freq + second_node->freq < bf.freq){//connect first 2 nodes
+      node_t node = (node_t){
+        byte: 0, 
+        freq: first_node->freq + second_node->freq,
+        leaf: false,
+        left: first_node,
+        right: second_node};
+      uni_vec_pop_front(nodes);
+      uni_vec_pop_front(nodes);
+      uni_vec_push_front(nodes, &node);
+      // printf("new root: %c %i \n", node.byte, node.freq);
+     }else{//add another leaf node
+      node_t node = (node_t){
+        byte: bf.byte, 
+        freq: bf.freq,
+        leaf: true,
+        left: NULL,
+        right: NULL};
 
-//   while(bf_arr->size > 0){
-//     if(nodes_size < 2){//create leaf node with byte
+      // printf("new leaf: %c %i \n", node.byte, node.freq);
+      uni_vec_push_back(nodes, &node);
+      uni_vec_pop_front(bf_arr);
+     }
+    }
+  }
 
-//     }
-//   }
-// /*
-// arr = [
-//   {byte: F, freq: 1},
-//   {byte: M, freq: 1},
-//   {byte: G, freq: 4},
-//   {byte: X, freq: 6},
-//   {byte: A, freq: 10},
-// ];
+  while(nodes->size != 1){
+    node_t* first_node = (node_t*)uni_vec_get(nodes, 0);      
+    node_t* second_node = (node_t*)uni_vec_get(nodes, 1);
+    node_t node = (node_t){
+        byte: 0, 
+        freq: first_node->freq + second_node->freq,
+        leaf: false,
+        left: first_node,
+        right: second_node};
+      uni_vec_pop_front(nodes);
+      uni_vec_pop_front(nodes);
+      uni_vec_push_front(nodes, &node);
+      // printf("new root: %c %i \n", node.byte, node.freq);
+  }
 
-// nodes = [];
+  node_t root;
+  uni_vec_extract(nodes, 0, &root);
+  uni_vec_free(nodes);
 
-// while(arr.len > 0){
-//   if(nodes.len < 2){
-//     nodes.push({byte: arr[0].byte, freq: arr[0].freq, leaf: true, left: NULL, right: NULL});
-//     arr.pop_front();
-//   }else if(nodes[0].freq + nodes[1].freq < arr[0].freq){
-//     let new_node = {byte: 0, leaf: false, freq: nodes[0].freq + nodes[1].freq, left: nodes[0], right: nodes[1]};
-//     nodes.pop();
-//     nodes.pop();
-//     nodes.push(new_node);
-//   }else{
-//     nodes.push({byte: arr[0].byte, freq: arr[0].freq, leaf: true, left: NULL, right: NULL});
-//     arr.pop_front();
-//   }
-// }
+  return root;
+}
 
-// root = {leaf: false, left: nodes[0], right: nodes[]};
-
-// some tree traversal to read all bytes codes
-
-// */
-// }
+void tree_traversal(node_t* node, unsigned char code){
+  if(node == NULL) return;
+  if(node->leaf){
+    printf("%c: "BYTE_TO_BINARY_PATTERN"\n", node->byte, BYTE_TO_BINARY(5));
+  }else{
+    tree_traversal(node->left, (code << 1) & 0);
+    tree_traversal(node->right, (code << 1) & 1);
+  }
+}
 
 int main(int argc, char** argv){
   if(argc != 2){
@@ -136,15 +183,17 @@ int main(int argc, char** argv){
   uni_vec_t* buffer = get_input_buffer(argv[1]);
   uni_vec_t* bf_arr = get_byte_freq_arr(buffer);
 
-  // for(int i = 0; i < bf_arr->size; i++){
-  //   byte_freq_t* bf = ((byte_freq_t*)uni_vec_get(bf_arr, i));
-  //   printf("%c : %d\n", bf->byte, bf->freq);
-  // }
+  for(int i = 0; i < bf_arr->size; i++){
+    byte_freq_t* bf = ((byte_freq_t*)uni_vec_get(bf_arr, i));
+    printf("%c : %d\n", bf->byte, bf->freq);
+  }
 
-  // huffman(bf_arr);
+  node_t root = create_tree(bf_arr);
+
+  tree_traversal(&root, 0);
 
   uni_vec_free(buffer);
-  // uni_vec_free(bf_arr); 
+  uni_vec_free(bf_arr); 
   return 0;
 }
 
