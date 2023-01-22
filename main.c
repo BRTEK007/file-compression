@@ -1,29 +1,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
+
+#define UNI_VEC_IMPLEMENTATION
+#include "uni_vec.h"
 
 typedef struct byte_freq_t{
   unsigned char byte;
   int freq;
 } byte_freq_t;
 
-typedef struct byte_freq_arr_t{
-  byte_freq_t* arr;
-  size_t size;
-}byte_freq_arr_t;
-
-typedef struct byte_buffer_t{
-  unsigned char* arr;
-  size_t size;
-}byte_buffer_t;
+typedef struct node_t{
+  unsigned char byte;
+  bool leaf;
+  int freq;
+  struct node_t* left;
+  struct node_t* right;
+} node_t;
 
 int cmp_byte_freq (const void * a, const void * b) {
    return ( ((byte_freq_t*)a)->freq - ((byte_freq_t*)b)->freq );
 }
 
-byte_freq_arr_t* get_byte_freq_arr(byte_buffer_t* input){
-  byte_freq_arr_t* bf_arr = malloc(sizeof(byte_freq_arr_t));
-  
+uni_vec_t* get_byte_freq_arr(uni_vec_t* input){ 
   byte_freq_t* arr = calloc(256, sizeof(byte_freq_t));//256 bytes, count their frequency
   
   for(int i = 0; i < 256; i++){//init array
@@ -32,7 +32,8 @@ byte_freq_arr_t* get_byte_freq_arr(byte_buffer_t* input){
   }
 
   for(size_t i = 0; i < input->size; i++){//go through bytes in input file and increment their freq in array
-    arr[input->arr[i]].freq++;
+    unsigned char index = *((unsigned char*)uni_vec_get(input, i));
+    arr[index].freq++;
   }
 
   qsort(arr, 256, sizeof(byte_freq_t), cmp_byte_freq);
@@ -48,20 +49,18 @@ byte_freq_arr_t* get_byte_freq_arr(byte_buffer_t* input){
 
   size_t size = 256 - zeros;
 
+  uni_vec_t* bf_arr = uni_vec_create(size, sizeof(byte_freq_t));
+
   //copy bytes with atleast 1 occurance to new array
   byte_freq_t* cropped_arr = calloc(size, sizeof(byte_freq_t));
-  memcpy(cropped_arr, arr + zeros, size * sizeof(byte_freq_t));
+  uni_vec_push_array(bf_arr, arr+zeros, size);
 
   free(arr);
-
-  bf_arr->arr = cropped_arr;
-  bf_arr->size = size;
+  
   return bf_arr;
 }
 
-byte_buffer_t* get_input_buffer(const char* filename){
-  byte_buffer_t* bb = malloc(sizeof(byte_buffer_t));
-  
+uni_vec_t* get_input_buffer(const char* filename){ 
   FILE* inputFile;
   
   inputFile = fopen(filename, "rb");
@@ -79,20 +78,54 @@ byte_buffer_t* get_input_buffer(const char* filename){
 
   fclose(inputFile); // Close the file
 
-  bb->size = filelen;
-  bb->arr = buffer;
+  uni_vec_t* bb = uni_vec_create(filelen, sizeof(unsigned char));
+  uni_vec_push_array(bb, buffer, filelen);
+
+  free(buffer);
   return bb;
 }
 
-void byte_buffer_free(byte_buffer_t* bb){
-  free(bb->arr);
-  free(bb);
-}
+// void huffman(byte_freq_arr_t* bf_arr){
+//   node_t nodes[bf_arr->size];
+//   int nodes_size = 0;
 
-void byte_freq_arr_free(byte_freq_arr_t* bf_arr){
-  free(bf_arr->arr);
-  free(bf_arr);
-}
+//   while(bf_arr->size > 0){
+//     if(nodes_size < 2){//create leaf node with byte
+
+//     }
+//   }
+// /*
+// arr = [
+//   {byte: F, freq: 1},
+//   {byte: M, freq: 1},
+//   {byte: G, freq: 4},
+//   {byte: X, freq: 6},
+//   {byte: A, freq: 10},
+// ];
+
+// nodes = [];
+
+// while(arr.len > 0){
+//   if(nodes.len < 2){
+//     nodes.push({byte: arr[0].byte, freq: arr[0].freq, leaf: true, left: NULL, right: NULL});
+//     arr.pop_front();
+//   }else if(nodes[0].freq + nodes[1].freq < arr[0].freq){
+//     let new_node = {byte: 0, leaf: false, freq: nodes[0].freq + nodes[1].freq, left: nodes[0], right: nodes[1]};
+//     nodes.pop();
+//     nodes.pop();
+//     nodes.push(new_node);
+//   }else{
+//     nodes.push({byte: arr[0].byte, freq: arr[0].freq, leaf: true, left: NULL, right: NULL});
+//     arr.pop_front();
+//   }
+// }
+
+// root = {leaf: false, left: nodes[0], right: nodes[]};
+
+// some tree traversal to read all bytes codes
+
+// */
+// }
 
 int main(int argc, char** argv){
   if(argc != 2){
@@ -100,49 +133,18 @@ int main(int argc, char** argv){
     exit(1);
   }
   
-  byte_buffer_t* buffer = get_input_buffer(argv[1]);
-  byte_freq_arr_t* bf_arr = get_byte_freq_arr(buffer);
+  uni_vec_t* buffer = get_input_buffer(argv[1]);
+  uni_vec_t* bf_arr = get_byte_freq_arr(buffer);
 
-  for(int i = 0; i < bf_arr->size; i++){
-    printf("%c : %d\n", bf_arr->arr[i].byte, bf_arr->arr[i].freq);
-  }
+  // for(int i = 0; i < bf_arr->size; i++){
+  //   byte_freq_t* bf = ((byte_freq_t*)uni_vec_get(bf_arr, i));
+  //   printf("%c : %d\n", bf->byte, bf->freq);
+  // }
 
-  // printf("total bytes: %ld\n", buffer->size);
-  
-  byte_buffer_free(buffer);
-  byte_freq_arr_free(bf_arr);
+  // huffman(bf_arr);
+
+  uni_vec_free(buffer);
+  // uni_vec_free(bf_arr); 
   return 0;
 }
 
-
-/*
-arr = [
-  {byte: F, freq: 1},
-  {byte: M, freq: 1},
-  {byte: G, freq: 4},
-  {byte: X, freq: 6},
-  {byte: A, freq: 10},
-];
-
-nodes = [];
-
-while(arr.len > 0){
-  if(nodes.len < 2){
-    nodes.push({byte: arr[0].byte, freq: arr[0].freq, leaf: true, left: NULL, right: NULL});
-    arr.pop_front();
-  }else if(nodes[0].freq + nodes[1].freq < arr[0].freq){
-    let new_node = {byte: 0, leaf: false, freq: nodes[0].freq + nodes[1].freq, left: nodes[0], right: nodes[1]};
-    nodes.pop();
-    nodes.pop();
-    nodes.push(new_node);
-  }else{
-    nodes.push({byte: arr[0].byte, freq: arr[0].freq, leaf: true, left: NULL, right: NULL});
-    arr.pop_front();
-  }
-}
-
-root = {leaf: false, left: nodes[0], right: nodes[]};
-
-some tree traversal to read all bytes codes
-
-*/
