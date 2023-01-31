@@ -1,6 +1,6 @@
 all: compressor
 
-compressor: main.c uni_vec.h
+compressor: main.c
 	gcc main.c -o compressor
 
 clean:
