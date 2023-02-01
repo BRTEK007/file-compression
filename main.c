@@ -36,6 +36,14 @@ bit_code_t bit_code_add_one(bit_code_t bc){
   return nbc;
 }
 
+int bit_code_pop_msb(bit_code_t* bc){
+  // int r = bc->code & (1u << (bc->len-1))?  1 : 0;
+  int r = bc->code & 1u;
+  bc->code = bc->code >> 1;
+  bc->len--;
+  return r;
+}
+
 bit_code_t bit_code_add_zero(bit_code_t bc){
   bit_code_t nbc = bc;
   nbc.len++;
@@ -89,7 +97,7 @@ node_t* node_queue_pop(node_queue_t* nq){
 }
 
 void node_queue_free(node_queue_t* nq){
-  cvector_free(nq);
+  cvector_free(nq->nodes);
   free(nq);
 }
 
@@ -197,20 +205,21 @@ node_t* create_tree(byte_freq_t* bf_arr){
   }
   
   node_t* root = node_queue_pop(node_queue);
-  // node_queue_free(node_queue);
+  node_queue_free(node_queue);
   return root;
 }
 
-void tree_traversal(node_t* node, bit_code_t bc){
+void tree_traversal(node_t* node, bit_code_t bc, bit_code_t* bit_codes){
   if(node == NULL) return;
   if(node->leaf){
     printf("%c: ", node->byte);
     bit_code_print(bc);
     printf("\n");
+    bit_codes[node->byte] = bc;
   }else{
-    tree_traversal(node->left, bit_code_add_zero(bc));
+    tree_traversal(node->left, bit_code_add_zero(bc), bit_codes);
     
-    tree_traversal(node->right, bit_code_add_one(bc));
+    tree_traversal(node->right, bit_code_add_one(bc), bit_codes);
   }
 }
 
@@ -235,11 +244,49 @@ int main(int argc, char** argv){
   //   printf("%c : %d\n", bf.byte, bf.freq);
   // }
 
-  // node_t* root = create_tree(bf_arr);
-  // bit_code_t bc = bit_code_empty();
-  // tree_traversal(root, bc);
-  // tree_free(root);
+  node_t* root = create_tree(bf_arr);
+  
+  bit_code_t* bit_codes = calloc(256, sizeof(bit_code_t));
+  
+  bit_code_t bc = bit_code_empty();
+  
+  tree_traversal(root, bc, bit_codes);
 
+  // unsigned char byte;
+  // bit_code_t bits = bit_code_empty();
+
+  // add_bits(&bits, );
+  bit_code_t to_write = bit_code_empty();
+
+  for(int i = 0; i < cvector_size(buffer); i++){
+    unsigned char byte = buffer[i];
+    bit_code_t bits = bit_codes[byte];
+    // printf("(");
+    // bit_code_print(bits);
+    // printf(")");
+    while(bits.len > 0){
+      int bit = bit_code_pop_msb(&bits);
+      // printf("(%d)", bit);
+      if(bit)
+        to_write = bit_code_add_one(to_write);
+      else
+        to_write = bit_code_add_zero(to_write);
+      if(to_write.len == 8){
+        bit_code_print(to_write);
+        printf(" ");
+        to_write = bit_code_empty();
+      }
+      // bit_code_print(to_write);
+      // printf("\n");
+    }
+
+  }
+  //remember about the rest int to_write 
+  // bit_code_print(to_write);
+  
+  tree_free(root);
+
+  free(bit_codes);
   cvector_free(buffer);
   cvector_free(bf_arr);
   return 0;
