@@ -1,6 +1,3 @@
-# file-compression
-# TODO: 
-	get some .mp4 \
-	get some 3d model \
-	get some binary program \
-  huffman coding
+implement priority queue, min-max heap or whatever efficient...
+unit tests, for tree creation
+tree reconstruction from bitcode...

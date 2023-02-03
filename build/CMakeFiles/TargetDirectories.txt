@@ -1,0 +1,3 @@
+/home/barto/Documents/file-compression/build/CMakeFiles/compressor.dir
+/home/barto/Documents/file-compression/build/CMakeFiles/edit_cache.dir
+/home/barto/Documents/file-compression/build/CMakeFiles/rebuild_cache.dir
