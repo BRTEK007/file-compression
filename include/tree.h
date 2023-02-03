@@ -20,4 +20,8 @@ void tree_traversal(node_t* node, bit_code_t bc, bit_code_t* bit_codes);
 
 void tree_free(node_t* node);
 
+void tree_traversal_recon(node_t* node);
+
+void tree_recon(unsigned char* data);
+
 #endif

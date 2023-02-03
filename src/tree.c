@@ -54,6 +54,92 @@ void tree_traversal(node_t* node, bit_code_t bc, bit_code_t* bit_codes){
   }
 }
 
+void tree_traversal_recon(node_t* root){
+  cvector_vector_type(node_t*) stack = NULL;
+  
+  cvector_push_back(stack, root->right);
+  cvector_push_back(stack, root->left);
+
+  cvector_vector_type(unsigned char) data = NULL;
+
+  while(cvector_size(stack) > 0){
+    node_t* node = stack[cvector_size(stack)-1];
+    cvector_pop_back(stack);
+    if(node == NULL)
+      continue;
+    
+    if(node->leaf){
+      printf("1 %c ", node->byte);
+      cvector_push_back(data, '1');
+      cvector_push_back(data, node->byte);
+    }else{
+      printf("0 ");
+      cvector_push_back(data, '0');
+      cvector_push_back(stack, node->right);
+      cvector_push_back(stack, node->left);
+    }
+  }
+  printf("\n");
+
+  tree_recon(data);
+
+  cvector_free(data);
+  cvector_free(stack);
+}
+
+void tree_recon(unsigned char* data){
+  node_t* root = malloc(sizeof(node_t));
+  root->leaf = false;
+  root->left = NULL;
+  root->right = NULL;
+
+  bit_code_t* bit_codes = calloc(256, sizeof(bit_code_t));
+  
+  bit_code_t bc = bit_code_empty();
+
+  cvector_vector_type(node_t**) stack = NULL;
+
+  cvector_push_back(stack, &(root->right));
+  cvector_push_back(stack, &(root->left));
+
+  int data_id = 0;
+
+  while(data_id < cvector_size(data)){
+    unsigned char byte = data[data_id];
+
+    node_t** node = stack[cvector_size(stack)-1];
+    cvector_pop_back(stack);
+
+    if(byte == '0'){//parent node
+      node_t* new_node = malloc(sizeof(node_t));
+      new_node->leaf = false;
+      new_node->left = NULL;
+      new_node->right = NULL;
+      *node = new_node;
+      
+      cvector_push_back(stack, &(new_node->right));
+      cvector_push_back(stack, &(new_node->left));
+      data_id++;
+    }else if(byte == '1'){//leaf node
+      node_t* new_node = malloc(sizeof(node_t));
+      new_node->byte = data[data_id+1];
+      new_node->leaf = true;
+      new_node->left = NULL;
+      new_node->right = NULL;
+      *node = new_node;
+      data_id+=2;
+    }
+  }
+
+  cvector_free(stack);
+
+  tree_traversal(root, bc, bit_codes);
+  
+  free(bit_codes);
+
+  tree_free(root);
+}
+
 void tree_free(node_t* node){
   if(node == NULL) return;
   tree_free(node->left);
