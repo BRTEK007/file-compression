@@ -1,1 +1,0 @@
-/usr/bin/cc CMakeFiles/compressor.dir/src/bitcode.c.o CMakeFiles/compressor.dir/src/main.c.o CMakeFiles/compressor.dir/src/node_queue.c.o CMakeFiles/compressor.dir/src/tree.c.o -o compressor 
