@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "bitcode.h"
+#include "byte_slice.h"
 #include "node_queue.h"
 #include "tree.h"
 #include "bitstack.h"
@@ -99,70 +99,28 @@ int main(int argc, char** argv){
 
   node_t* root = create_tree(bf_arr);
   
-  bit_code_t* bit_codes = calloc(256, sizeof(bit_code_t));
+  // bit_code_t* bit_codes = calloc(256, sizeof(bit_code_t));
   
-  bit_code_t bc = bit_code_empty();
+  // bit_code_t bc = bit_code_empty();
   
-  tree_traversal(root, bc, bit_codes);
-  tree_traversal_recon(root);
+  // tree_traversal(root, bc, bit_codes);
+  // tree_traversal_recon(root);
 
-  // bc = bit_code_empty();
-  // bc = bit_code_add_one(bc);
-  // bc = bit_code_add_one(bc);
-  // bc = bit_code_add_zero(bc);
-  // bc = bit_code_add_one(bc);
-  // bit_code_print(bc);
+  // bitstack_t bitstack;
+  // bitstack_init(&bitstack);
 
-  // bit_code_pop_msb(&bc);
+  // for(int i = 0; i < cvector_size(buffer); i++){
+  //   unsigned char byte = buffer[i];
+  //   bit_code_t bits = bit_codes[byte];
+  //   bitstack_push_bits(&bitstack, bits);
+  // }
+  // bitstack_print(&bitstack);
 
-  // printf("\n");
-  
-  // bit_code_print(bc);
-
-  // unsigned char byte;
-  // bit_code_t bits = bit_code_empty();
-
-  // add_bits(&bits, );
-  // bit_code_t to_write = bit_code_empty();
-
-  bitstack_t bitstack;
-  bitstack_init(&bitstack);
-
-  for(int i = 0; i < cvector_size(buffer); i++){
-    unsigned char byte = buffer[i];
-    bit_code_t bits = bit_codes[byte];
-    bitstack_push_bits(&bitstack, bits);
-  }
-    // while(bits.len > 0){
-    //   int bit = bit_code_pop_msb(&bits);
-      
-    //   if(bit)
-    //     to_write = bit_code_add_one(to_write);
-    //   else
-    //     to_write = bit_code_add_zero(to_write);
-    //   if(to_write.len == 8){
-    //     bit_code_print(to_write);
-    //     printf(" ");
-    //     to_write = bit_code_empty();
-    //   }
-    // }
-
-  // remember about the rest int to_write 
-  // bit_code_print(to_write);
-
-  bitstack_print(&bitstack);
-
-  printf("\n");
-
-  for(int i = 0; i < 8; i++){
-    printf("%d", bitstack_get_bit(&bitstack, i));
-  }
-
-  bitstack_free(&bitstack);
+  // bitstack_free(&bitstack);
 
   tree_free(root);
 
-  free(bit_codes);
+  // free(bit_codes);
   cvector_free(buffer);
   cvector_free(bf_arr);
   return 0;
