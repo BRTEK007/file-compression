@@ -5,9 +5,25 @@
 
 void bit_set_init(bit_set_t* bit_set){
     cvector_vector_type(unsigned char) bytes = NULL;
+    byte_slice_init(&(bit_set->byte_slice));
     bit_set->bytes = bytes;
     bit_set->read_id = 0;
-    bit_set->write_id = 0;
+}
+
+void bit_set_end_write(bit_set_t* bit_set){
+    //push byte_slice to bytes, bit by bit
+    unsigned char byte = bit_set->byte_slice.bits;
+    byte = byte << (8-bit_set->byte_slice.len);
+    
+    cvector_push_back(bit_set->bytes, byte);
+}
+
+void bit_set_begin_read(bit_set_t* bit_set){
+    byte_slice_t* slice = &(bit_set->byte_slice);
+    bit_set->read_id = 0;
+    slice->bits = bit_set->bytes[bit_set->read_id];
+    slice->len = 8;
+    bit_set->read_id++;
 }
 
 void bit_set_free(bit_set_t* bit_set){
@@ -15,102 +31,24 @@ void bit_set_free(bit_set_t* bit_set){
 }
 
 void bit_set_write_bit(bit_set_t* bit_set, bool bit){
-    uint64_t byte_id = bit_set->write_id / 8;
-    uint8_t bit_id = bit_set->write_id % 8;
-    bit_set->write_id++;
+    byte_slice_t* slice = &(bit_set->byte_slice);
+    byte_slice_write_bit(slice, bit);
+    if(slice->len == 8){//is full, can be added to bytes
+        cvector_push_back(bit_set->bytes, slice->bits);
+        byte_slice_init(slice);
+    }
 }
 
 bool bit_set_read_bit(bit_set_t* bit_set){
-    uint64_t byte_id = bit_set->write_id / 8;
-    uint8_t bit_id = bit_set->write_id % 8;
-    bit_set->read_id++;
+    byte_slice_t* slice = &(bit_set->byte_slice);
+
+    bool bit = byte_slice_read_bit(slice);
+
+    if(slice->len == 0){//slice is empty -> copy next byte to slice
+        slice->bits = bit_set->bytes[bit_set->read_id];
+        slice->len = 8;
+        bit_set->read_id++;
+    }
+
+    return bit;
 }
-// void bitstack_print(bitstack_t* bs){
-//     for(int i = 0; i < cvector_size(bs->bytes); i++){
-//         bit_code_t bc = bit_code_empty();
-//         bc.code = bs->bytes[i];
-//         bc.len = 8;
-//         bit_code_print(bc);
-//         printf(" ");
-//     }
-
-//     bit_code_print(bs->bits);
-// }
-
-// int bitstack_get_bit(bitstack_t* bs, int index){
-//   int bit_index = index % 8;
-//   int byte_index = index / 8;
-//   //asking for bit that is not yet in bytes
-//   if(byte_index == cvector_size(bs->bytes)){
-//     return bs->bits.code & (1u << (8-(bit_index-1)));
-//   }else{
-//     unsigned char byte = bs->bytes[byte_index];
-//     return byte & (1u << (8-(bit_index-1)));
-//   }
-// }
-
-// unsigned char bitstack_get_8_bits(bitstack_t* bs, int index){
-
-// }
-
-// void bitstack_print_format(bitstack_t* bs){
-//     for(int i = 0; i < cvector_size(bs->bytes); i++){
-//         bit_code_t bc = bit_code_empty();
-//         bc.code = bs->bytes[i];
-//         bc.len = 8;
-//         bit_code_print(bc);
-//         printf(" ");
-//     }
-
-//     bit_code_print(bs->bits);
-// }
-
-// void bitstack_free(bitstack_t* bs){
-//     cvector_free(bs->bytes);
-// }
-
-// void bitstack_push_one(bitstack_t* bs){
-
-//       bs->bits = bit_code_add_one(bs->bits);
-      
-//       if(bs->bits.len == 8){
-//         cvector_push_back(bs->bytes, bs->bits.code);
-//         bs->bits = bit_code_empty();
-//       }
-// }
-
-// void bitstack_push_zero(bitstack_t* bs){
-//     bs->bits = bit_code_add_zero(bs->bits);
-//     if(bs->bits.len == 8){
-//       cvector_push_back(bs->bytes, bs->bits.code);
-//       bs->bits = bit_code_empty();
-//     }
-// }
-
-// void bitstack_push_bits(bitstack_t* bs, bit_code_t bits){
-//     while(bits.len > 0){
-//       int bit = bit_code_pop_msb(&bits);
-      
-//       if(bit)
-//         bs->bits = bit_code_add_one(bs->bits);
-//       else
-//         bs->bits = bit_code_add_zero(bs->bits);
-//       if(bs->bits.len == 8){
-//         // bit_code_print(to_write);
-//         // printf(" ");
-//         cvector_push_back(bs->bytes, bs->bits.code);
-//         bs->bits = bit_code_empty();
-//       }
-//     }
-// }
-
-// void bitstack_push_byte(bitstack_t* bs, unsigned char byte){
-//   bit_code_t bits = bit_code_empty();
-//   bits.code = byte;
-//   bits.len = 8;
-//   bitstack_push_bits(bs, bits);
-// }
-
-// void bitstack_push_bitstack(bitstack_t* bs, bitstack_t* bs2){
-
-// }

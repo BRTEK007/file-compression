@@ -35,6 +35,41 @@ TEST_BEGIN(bit_set_1)
     bit_set_t bit_set;
     bit_set_init(&bit_set);
 
+    //11001101 1011
+    bit_set_write_bit(&bit_set, true);
+    bit_set_write_bit(&bit_set, true);
+    bit_set_write_bit(&bit_set, false);
+    bit_set_write_bit(&bit_set, false);
+    
+    bit_set_write_bit(&bit_set, true);
+    bit_set_write_bit(&bit_set, true);
+    bit_set_write_bit(&bit_set, false);
+    bit_set_write_bit(&bit_set, true);
+    
+    bit_set_write_bit(&bit_set, true);
+    bit_set_write_bit(&bit_set, false);
+    bit_set_write_bit(&bit_set, true);
+    bit_set_write_bit(&bit_set, true);
+
+    bit_set_end_write(&bit_set);
+    
+    bit_set_begin_read(&bit_set);
+    //11001101 1011
+    assert(bit_set_read_bit(&bit_set) == true);
+    assert(bit_set_read_bit(&bit_set) == true);
+    assert(bit_set_read_bit(&bit_set) == false);
+    assert(bit_set_read_bit(&bit_set) == false);
+    
+    assert(bit_set_read_bit(&bit_set) == true);
+    assert(bit_set_read_bit(&bit_set) == true);
+    assert(bit_set_read_bit(&bit_set) == false);
+    assert(bit_set_read_bit(&bit_set) == true);
+   
+    assert(bit_set_read_bit(&bit_set) == true);
+    assert(bit_set_read_bit(&bit_set) == false);
+    assert(bit_set_read_bit(&bit_set) == true);
+    assert(bit_set_read_bit(&bit_set) == true);
+   
     bit_set_free(&bit_set);
 TEST_END
 

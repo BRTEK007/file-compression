@@ -6,13 +6,22 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+//end writing with end_write()
+//start reading with begin_read()
+//WRITE: first write to byte_slice if full push its bits to bytes
+//READ: copy n-th byte to byte_slice, read from byte_slice, if empty -> read copy another byte
+
 typedef struct bit_set_t{
    unsigned char* bytes;
-   uint64_t read_id;//id of bit to read
-   uint64_t write_id;//id of bit to write
+   byte_slice_t byte_slice;//byte slice to write or to read
+   uint64_t read_id;//id of byte to read
 } bit_set_t;
 
 void bit_set_init(bit_set_t* bit_set);
+
+void bit_set_end_write(bit_set_t* bit_set);
+
+void bit_set_begin_read(bit_set_t* bit_set);
 
 void bit_set_free(bit_set_t* bit_set);
 
@@ -20,30 +29,10 @@ void bit_set_write_bit(bit_set_t* bit_set, bool bit);
 
 bool bit_set_read_bit(bit_set_t* bit_set);
 
-void bit_set_write_byte(bit_set_t* bit_set);
+void bit_set_write_byte(bit_set_t* bit_set, unsigned char byte);
 
-bool bit_set_read_byte(bit_set_t* bit_set);
+unsigned char bit_set_read_byte(bit_set_t* bit_set);
 
-// void bitstack_init(bitstack_t* bs);
-
-// void bitstack_print(bitstack_t* bs);
-
-// void bitstack_print_format(bitstack_t* bs);
-
-// int bitstack_get_bit(bitstack_t* bs, int index);
-
-// unsigned char bitstack_get_8_bits(bitstack_t* bs, int index);
-
-// void bitstack_free(bitstack_t* bs);
-
-// void bitstack_push_one(bitstack_t* bs);
-
-// void bitstack_push_byte(bitstack_t* bs, unsigned char byte);
-
-// void bitstack_push_zero(bitstack_t* bs);
-
-// void bitstack_push_bits(bitstack_t* bs, bit_code_t bits);
-
-// void bitstack_push_bitstack(bitstack_t* bs, bitstack_t* bs2);
+void bit_set_write_slice(bit_set_t* bit_set, byte_slice_t* slice);
 
 #endif
