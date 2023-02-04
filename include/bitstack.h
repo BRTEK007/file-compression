@@ -12,9 +12,17 @@ void bitstack_init(bitstack_t* bs);
 
 void bitstack_print(bitstack_t* bs);
 
+void bitstack_print_format(bitstack_t* bs);
+
+int bitstack_get_bit(bitstack_t* bs, int index);
+
+unsigned char bitstack_get_8_bits(bitstack_t* bs, int index);
+
 void bitstack_free(bitstack_t* bs);
 
 void bitstack_push_one(bitstack_t* bs);
+
+void bitstack_push_byte(bitstack_t* bs, unsigned char byte);
 
 void bitstack_push_zero(bitstack_t* bs);
 

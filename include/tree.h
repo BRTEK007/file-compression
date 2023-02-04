@@ -5,6 +5,7 @@
 
 #include "byte_freq.h"
 #include "bitcode.h"
+#include "bitstack.h"
 
 typedef struct node_t{
   unsigned char byte;

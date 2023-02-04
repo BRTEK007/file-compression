@@ -60,7 +60,8 @@ void tree_traversal_recon(node_t* root){
   cvector_push_back(stack, root->right);
   cvector_push_back(stack, root->left);
 
-  cvector_vector_type(unsigned char) data = NULL;
+  bitstack_t data;
+  bitstack_init(&data);
 
   while(cvector_size(stack) > 0){
     node_t* node = stack[cvector_size(stack)-1];
@@ -69,21 +70,21 @@ void tree_traversal_recon(node_t* root){
       continue;
     
     if(node->leaf){
-      printf("1 %c ", node->byte);
-      cvector_push_back(data, '1');
-      cvector_push_back(data, node->byte);
+      // printf("1 %c ", node->byte);
+      bitstack_push_one(&data);
+      bitstack_push_byte(&data, node->byte);
     }else{
-      printf("0 ");
-      cvector_push_back(data, '0');
+      // printf("0 ");
+      bitstack_push_zero(&data);
       cvector_push_back(stack, node->right);
       cvector_push_back(stack, node->left);
     }
   }
   printf("\n");
 
-  tree_recon(data);
+  // tree_recon(data);
+  // bitstack_print_format(&data);
 
-  cvector_free(data);
   cvector_free(stack);
 }
 

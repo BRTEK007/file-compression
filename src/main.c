@@ -151,6 +151,13 @@ int main(int argc, char** argv){
   // bit_code_print(to_write);
 
   bitstack_print(&bitstack);
+
+  printf("\n");
+
+  for(int i = 0; i < 8; i++){
+    printf("%d", bitstack_get_bit(&bitstack, i));
+  }
+
   bitstack_free(&bitstack);
 
   tree_free(root);
