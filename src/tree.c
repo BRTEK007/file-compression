@@ -141,6 +141,29 @@ node_t* create_tree(byte_freq_t* bf_arr){
 //   tree_free(root);
 // }
 
+void tree_extract_codes(node_t* root, byte_slice_t* codes){
+byte_slice_t slice;
+byte_slice_init(&slice);
+tree_extract_codes_rec(root, slice, codes);
+}
+
+void tree_extract_codes_rec(node_t* node, byte_slice_t slice, byte_slice_t* codes){
+  if(node == NULL) return;
+  if(node->leaf){
+    codes[node->byte] = slice;
+  }else{
+    byte_slice_t slice_left = slice;
+    byte_slice_t slice_right = slice;
+
+    byte_slice_write_bit(&slice_left, false);
+    byte_slice_write_bit(&slice_right, true);
+
+    tree_extract_codes_rec(node->left, slice_left, codes);
+    
+    tree_extract_codes_rec(node->right, slice_right, codes);
+  }
+}
+
 void tree_free(node_t* node){
   if(node == NULL) return;
   tree_free(node->left);

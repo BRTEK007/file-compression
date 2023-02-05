@@ -6,7 +6,7 @@
 #include "byte_slice.h"
 #include "node_queue.h"
 #include "tree.h"
-#include "bitstack.h"
+#include "bit_set.h"
 
 #define CVECTOR_LOGARITHMIC_GROWTH
 #include "c-vector/cvector.h"
@@ -63,7 +63,7 @@ unsigned char* get_input_buffer(const char* filename){
   }
   
   fseek(inputFile, 0, SEEK_END);        // Jump to the end of the file
-  size_t filelen = ftell(inputFile);      // Get the current byte offset in the file
+  long filelen = ftell(inputFile);      // Get the current byte offset in the file
   rewind(inputFile);                      // Jump back to the beginning of the file
 
   unsigned char* buffer = calloc(filelen, sizeof(unsigned char)); // Enough memory for the file
@@ -75,7 +75,7 @@ unsigned char* get_input_buffer(const char* filename){
 
   cvector_reserve(vec, filelen);
 
-  for(int i = 0; i < filelen; i++){
+  for(long i = 0; i < filelen; i++){
     cvector_push_back(vec, buffer[i]);
   }
 
@@ -99,11 +99,17 @@ int main(int argc, char** argv){
 
   node_t* root = create_tree(bf_arr);
   
-  // bit_code_t* bit_codes = calloc(256, sizeof(bit_code_t));
+  byte_slice_t* codes = calloc(256, sizeof(byte_slice_t)); 
   
-  // bit_code_t bc = bit_code_empty();
-  
-  // tree_traversal(root, bc, bit_codes);
+  tree_extract_codes(root, codes);
+
+  // for(int i = 0; i < cvector_size(bf_arr); i++){
+  //   byte_freq_t bf = bf_arr[i];
+  //   printf("%c :", bf.byte);
+  //   byte_slice_print(codes[bf.byte]);
+  //   printf("\n");
+  // }
+
   // tree_traversal_recon(root);
 
   // bitstack_t bitstack;

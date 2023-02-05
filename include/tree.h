@@ -5,7 +5,7 @@
 
 #include "byte_freq.h"
 #include "byte_slice.h"
-#include "bitstack.h"
+#include "bit_set.h"
 
 typedef struct node_t{
   unsigned char byte;
@@ -17,6 +17,9 @@ typedef struct node_t{
 
 node_t* create_tree(byte_freq_t* bf_arr);
 
+void tree_extract_codes(node_t* root, byte_slice_t* codes);
+
+void tree_extract_codes_rec(node_t* root, byte_slice_t slice, byte_slice_t* codes);
 // void tree_traversal(node_t* node, bit_code_t bc, bit_code_t* bit_codes);
 
 void tree_free(node_t* node);

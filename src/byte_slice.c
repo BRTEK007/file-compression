@@ -1,4 +1,11 @@
 #include "byte_slice.h"
+#include <stdio.h>
+
+void byte_slice_print(byte_slice_t slice){
+  while(slice.len > 0){
+    printf("%d", byte_slice_read_bit(&slice));
+  }
+}
 
 void byte_slice_init(byte_slice_t* byte_slice){
   byte_slice->len = 0;
