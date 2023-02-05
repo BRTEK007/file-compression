@@ -68,58 +68,49 @@ void tree_write_to_bitset(node_t* root, bit_set_t* bit_set){
   cvector_free(stack);
 }
 
-// void tree_recon(unsigned char* data){
-//   node_t* root = malloc(sizeof(node_t));
-//   root->leaf = false;
-//   root->left = NULL;
-//   root->right = NULL;
+node_t* tree_read_from_bitset(bit_set_t* bit_set, uint8_t leaf_count){
+  node_t* root = malloc(sizeof(node_t));
+  root->leaf = false;
+  root->left = NULL;
+  root->right = NULL;
 
-//   bit_code_t* bit_codes = calloc(256, sizeof(bit_code_t));
-  
-//   bit_code_t bc = bit_code_empty();
+  cvector_vector_type(node_t**) stack = NULL;
 
-//   cvector_vector_type(node_t**) stack = NULL;
+  cvector_push_back(stack, &(root->right));
+  cvector_push_back(stack, &(root->left));
 
-//   cvector_push_back(stack, &(root->right));
-//   cvector_push_back(stack, &(root->left));
+  uint8_t leaves_read = 0;
+  while(leaves_read < leaf_count){
+    node_t** node = stack[cvector_size(stack)-1];
+    cvector_pop_back(stack);
 
-//   int data_id = 0;
+    bool bit = bit_set_read_bit(bit_set);
 
-//   while(data_id < cvector_size(data)){
-//     unsigned char byte = data[data_id];
-
-//     node_t** node = stack[cvector_size(stack)-1];
-//     cvector_pop_back(stack);
-
-//     if(byte == '0'){//parent node
-//       node_t* new_node = malloc(sizeof(node_t));
-//       new_node->leaf = false;
-//       new_node->left = NULL;
-//       new_node->right = NULL;
-//       *node = new_node;
+    if(!bit){//parent node
+      // printf("0 ");
+      node_t* new_node = malloc(sizeof(node_t));
+      new_node->leaf = false;
+      new_node->left = NULL;
+      new_node->right = NULL;
+      *node = new_node;
       
-//       cvector_push_back(stack, &(new_node->right));
-//       cvector_push_back(stack, &(new_node->left));
-//       data_id++;
-//     }else if(byte == '1'){//leaf node
-//       node_t* new_node = malloc(sizeof(node_t));
-//       new_node->byte = data[data_id+1];
-//       new_node->leaf = true;
-//       new_node->left = NULL;
-//       new_node->right = NULL;
-//       *node = new_node;
-//       data_id+=2;
-//     }
-//   }
+      cvector_push_back(stack, &(new_node->right));
+      cvector_push_back(stack, &(new_node->left));
+    }else{//leaf node
+      node_t* new_node = malloc(sizeof(node_t));
+      new_node->byte = bit_set_read_byte(bit_set);
+      new_node->leaf = true;
+      new_node->left = NULL;
+      new_node->right = NULL;
+      *node = new_node;
+      // printf("1 %c ", new_node->byte);
+      leaves_read++;
+    }
+  }
 
-//   cvector_free(stack);
-
-//   tree_traversal(root, bc, bit_codes);
-  
-//   free(bit_codes);
-
-//   tree_free(root);
-// }
+  cvector_free(stack);
+  return root;
+}
 
 void tree_extract_codes(node_t* root, byte_slice_t* codes){
   byte_slice_t slice;
@@ -141,6 +132,17 @@ void tree_extract_codes_rec(node_t* node, byte_slice_t slice, byte_slice_t* code
     tree_extract_codes_rec(node->left, slice_left, codes);
     
     tree_extract_codes_rec(node->right, slice_right, codes);
+  }
+}
+
+void tree_extract_leaf_bytes(node_t* node, unsigned char** bytes){
+  if(node == NULL) return;
+  if(node->leaf){
+    cvector_push_back(*bytes, node->byte);
+    // printf("extracted %c ", node->byte);
+  }else{
+    tree_extract_leaf_bytes(node->left, bytes);
+    tree_extract_leaf_bytes(node->right, bytes);
   }
 }
 
