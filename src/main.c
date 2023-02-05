@@ -83,6 +83,10 @@ unsigned char* get_input_buffer(const char* filename){
   return vec;
 }
 
+void compress(){
+
+}
+
 void decompress(bit_set_t* bit_set){
   bit_set_begin_read(bit_set);
   //read 4 bytes -> total_characters count
@@ -148,13 +152,50 @@ void decompress(bit_set_t* bit_set){
   tree_free(root);
 }
 
+void args_error_exit(){
+  fprintf(stderr, "ERROR: wrong arguments!, run with -h to display help.\n");
+  exit(1);
+}
+
+void print_help(){
+  printf(
+    "----------------------------------\n"
+    "./byte-compression [OPTION] [FILE]\n"
+    "OPTION e {-h, -c, -d}\n"
+    "-h ... prints this message\n"
+    "-c ... compress mode\n"
+    "-d ... decompress mode\n"
+    "FILE ... path to file\n"
+    "if OPTION = -h ... not needed\n"
+    "if OPTION = -c ... file extension will be added (.bc)\n"
+    "if OPTION = -d ... file must end with .bc, file extension will be removed\n"
+  );
+}
+
 int main(int argc, char** argv){
-  if(argc != 2){
-    fprintf(stderr, "ERROR: wrong arguments!\n");
-    exit(1);
+  char* filename;
+  bool compress;
+
+  if(argc == 2){
+    if(strcmp(argv[1], "-h") == 0){
+      print_help();
+      exit(0);
+    }else
+      args_error_exit();
+  }else if(argc == 3){
+    filename = argv[2];
+    if(strcmp(argv[1], "-c") == 0){
+      compress = true;
+    }else if(strcmp(argv[1], "-d") == 0){
+      compress = false;
+    }else{
+      args_error_exit();
+    }
+  }else{
+    args_error_exit();
   }
 
-  unsigned char* buffer = get_input_buffer(argv[1]);
+  unsigned char* buffer = get_input_buffer(filename);
 
   uint32_t total_byte_count = cvector_size(buffer);
 
@@ -202,7 +243,7 @@ int main(int argc, char** argv){
   }
   bit_set_end_write(&bit_set);
   
-  decompress(&bit_set);
+  // decompress(&bit_set);
 
   bit_set_free(&bit_set);
   tree_free(root);

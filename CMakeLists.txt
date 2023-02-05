@@ -4,13 +4,9 @@ project(file_compression)
 
 include_directories(include)
 
-add_executable(compressor)
+add_executable(byte-compressor)
 
-# file(GLOB compressor_SRC "src/*.c")
-
-# target_sources(compressor PRIVATE ${compressor_SRC})
-
-target_sources(compressor PRIVATE 
+target_sources(byte-compressor PRIVATE 
     src/bit_set.c 
     src/main.c 
     src/node_queue.c 
