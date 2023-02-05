@@ -31,6 +31,7 @@ void bit_set_free(bit_set_t* bit_set){
 }
 
 void bit_set_write_bit(bit_set_t* bit_set, bool bit){
+    //write bit to slice, if slice full write slice to bytes
     byte_slice_t* slice = &(bit_set->byte_slice);
     byte_slice_write_bit(slice, bit);
     if(slice->len == 8){//is full, can be added to bytes
@@ -51,4 +52,28 @@ bool bit_set_read_bit(bit_set_t* bit_set){
     }
 
     return bit;
+}
+
+void bit_set_write_slice(bit_set_t* bit_set, byte_slice_t slice){
+    //write slice bit by bit
+    while(slice.len > 0){
+        bit_set_write_bit(bit_set, byte_slice_read_bit(&slice));
+    }
+}
+
+void bit_set_write_byte(bit_set_t* bit_set, unsigned char byte){
+    byte_slice_t slice;
+    slice.bits = byte;
+    slice.len = 8;
+    bit_set_write_slice(bit_set, slice);
+}
+
+unsigned char bit_set_read_byte(bit_set_t* bit_set){
+    //perform 8 bit reads
+   byte_slice_t slice;
+   byte_slice_init(&slice);
+   while(slice.len < 8){
+        byte_slice_write_bit(&slice, bit_set_read_bit(bit_set));
+   }
+   return slice.bits; 
 }

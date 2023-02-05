@@ -73,9 +73,43 @@ TEST_BEGIN(bit_set_1)
     bit_set_free(&bit_set);
 TEST_END
 
+TEST_BEGIN(bit_set_2)
+    bit_set_t bit_set;
+    bit_set_init(&bit_set);
+
+    // 0 0 1 A 0 1 F 
+    bit_set_write_bit(&bit_set, false);
+    bit_set_write_bit(&bit_set, false);
+    bit_set_write_bit(&bit_set, true);
+
+    bit_set_write_byte(&bit_set, 'A');
+    
+    bit_set_write_bit(&bit_set, false);
+    bit_set_write_bit(&bit_set, true);
+
+    bit_set_write_byte(&bit_set, 'F');
+    
+    bit_set_end_write(&bit_set);
+    
+    bit_set_begin_read(&bit_set);
+    // 0 0 1 A 0 1 F 
+    assert(bit_set_read_bit(&bit_set) == false);
+    assert(bit_set_read_bit(&bit_set) == false);
+    assert(bit_set_read_bit(&bit_set) == true);
+    
+    assert(bit_set_read_byte(&bit_set) == 'A');
+    
+    assert(bit_set_read_bit(&bit_set) == false);
+    assert(bit_set_read_bit(&bit_set) == true);
+
+    assert(bit_set_read_byte(&bit_set) == 'F');
+    bit_set_free(&bit_set);
+TEST_END
+
 int main(int argc, char** argv){
   TEST_RUN(byte_slice_1);
   TEST_RUN(bit_set_1);
+  TEST_RUN(bit_set_2);
   return 0;
 }
 

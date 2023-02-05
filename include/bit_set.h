@@ -33,6 +33,6 @@ void bit_set_write_byte(bit_set_t* bit_set, unsigned char byte);
 
 unsigned char bit_set_read_byte(bit_set_t* bit_set);
 
-void bit_set_write_slice(bit_set_t* bit_set, byte_slice_t* slice);
+void bit_set_write_slice(bit_set_t* bit_set, byte_slice_t slice);
 
 #endif
