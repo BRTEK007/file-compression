@@ -40,53 +40,33 @@ node_t* create_tree(byte_freq_t* bf_arr){
   return root;
 }
 
-// void tree_traversal(node_t* node, bit_code_t bc, bit_code_t* bit_codes){
-//   if(node == NULL) return;
-//   if(node->leaf){
-//     printf("%c: ", node->byte);
-//     bit_code_print(bc);
-//     printf("\n");
-//     bit_codes[node->byte] = bc;
-//   }else{
-//     tree_traversal(node->left, bit_code_add_zero(bc), bit_codes);
-    
-//     tree_traversal(node->right, bit_code_add_one(bc), bit_codes);
-//   }
-// }
-
-// void tree_traversal_recon(node_t* root){
-//   cvector_vector_type(node_t*) stack = NULL;
+void tree_write_to_bitset(node_t* root, bit_set_t* bit_set){
+  cvector_vector_type(node_t*) stack = NULL;
   
-//   cvector_push_back(stack, root->right);
-//   cvector_push_back(stack, root->left);
+  cvector_push_back(stack, root->right);
+  cvector_push_back(stack, root->left);
 
-//   bitstack_t data;
-//   bitstack_init(&data);
-
-//   while(cvector_size(stack) > 0){
-//     node_t* node = stack[cvector_size(stack)-1];
-//     cvector_pop_back(stack);
-//     if(node == NULL)
-//       continue;
+  while(cvector_size(stack) > 0){
+    node_t* node = stack[cvector_size(stack)-1];
+    cvector_pop_back(stack);
+    if(node == NULL)
+      continue;
     
-//     if(node->leaf){
-//       // printf("1 %c ", node->byte);
-//       bitstack_push_one(&data);
-//       bitstack_push_byte(&data, node->byte);
-//     }else{
-//       // printf("0 ");
-//       bitstack_push_zero(&data);
-//       cvector_push_back(stack, node->right);
-//       cvector_push_back(stack, node->left);
-//     }
-//   }
-//   printf("\n");
+    if(node->leaf){
+      // printf("1 %c ", node->byte);
+      bit_set_write_bit(bit_set, true);
+      bit_set_write_byte(bit_set, node->byte);
+    }else{
+      // printf("0 ");
+      bit_set_write_bit(bit_set, false);
+      cvector_push_back(stack, node->right);
+      cvector_push_back(stack, node->left);
+    }
+  }
+  // printf("\n");
 
-//   // tree_recon(data);
-//   // bitstack_print_format(&data);
-
-//   cvector_free(stack);
-// }
+  cvector_free(stack);
+}
 
 // void tree_recon(unsigned char* data){
 //   node_t* root = malloc(sizeof(node_t));
@@ -142,9 +122,9 @@ node_t* create_tree(byte_freq_t* bf_arr){
 // }
 
 void tree_extract_codes(node_t* root, byte_slice_t* codes){
-byte_slice_t slice;
-byte_slice_init(&slice);
-tree_extract_codes_rec(root, slice, codes);
+  byte_slice_t slice;
+  byte_slice_init(&slice);
+  tree_extract_codes_rec(root, slice, codes);
 }
 
 void tree_extract_codes_rec(node_t* node, byte_slice_t slice, byte_slice_t* codes){

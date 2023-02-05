@@ -89,44 +89,62 @@ int main(int argc, char** argv){
     exit(1);
   }
 
-  unsigned char* buffer = get_input_buffer(argv[1]); 
+  unsigned char* buffer = get_input_buffer(argv[1]);
+
+  uint32_t total_byte_count = cvector_size(buffer);
+
   byte_freq_t* bf_arr = get_byte_freq_arr(buffer);
 
-  // for(int i = 0; i < cvector_size(bf_arr); i++){
-  //   byte_freq_t bf = bf_arr[i];
-  //   printf("%c : %d\n", bf.byte, bf.freq);
-  // }
-
+  unsigned char unique_byte_count = cvector_size(bf_arr);
+  
   node_t* root = create_tree(bf_arr);
   
   byte_slice_t* codes = calloc(256, sizeof(byte_slice_t)); 
   
   tree_extract_codes(root, codes);
 
-  // for(int i = 0; i < cvector_size(bf_arr); i++){
-  //   byte_freq_t bf = bf_arr[i];
-  //   printf("%c :", bf.byte);
-  //   byte_slice_print(codes[bf.byte]);
-  //   printf("\n");
-  // }
+  printf("-------------------------\n");
+  printf("COMPRESSING %ld BYTES, %d UNIQUE\n", total_byte_count, unique_byte_count);
+  printf("-------------------------\n");
+  printf("BYTE   | FREQUENCY | CODE\n");
+  printf("-------------------------\n");
+  for(int i = 0; i < unique_byte_count; i++){
+    byte_freq_t bf = bf_arr[i];
+    printf("%d (%c) | %9.1f | ", bf.byte, bf.byte, (float)(100*bf.freq) / total_byte_count);
+    byte_slice_print(codes[bf.byte]);
+    printf("\n");
+  }
+  printf("-------------------------\n");
 
-  // tree_traversal_recon(root);
+  bit_set_t bit_set;
+  bit_set_init(&bit_set);
 
-  // bitstack_t bitstack;
-  // bitstack_init(&bitstack);
+  //write 4 bytes -> total bytes count
+  unsigned char* bytes = (unsigned char *)&total_byte_count;
+  bit_set_write_byte(&bit_set, bytes[0]);
+  bit_set_write_byte(&bit_set, bytes[1]);
+  bit_set_write_byte(&bit_set, bytes[2]);
+  bit_set_write_byte(&bit_set, bytes[3]);
+  //write 1 byte -> unique bytes count
+  bit_set_write_byte(&bit_set, unique_byte_count);
+  //write huffman tree data
+  tree_write_to_bitset(root, &bit_set);
+  //write compressed data
+  for(uint32_t i = 0; i < total_byte_count; i++){
+    unsigned char byte = buffer[i];
+    byte_slice_t slice = codes[byte];
+    bit_set_write_slice(&bit_set, slice);
+  }
+  bit_set_end_write(&bit_set);
+  
+  //read 4 bytes -> total_characters count
+  //read 1 byte -> unique bytes count
+  //read huffman tree data
+  //read compressed data
 
-  // for(int i = 0; i < cvector_size(buffer); i++){
-  //   unsigned char byte = buffer[i];
-  //   bit_code_t bits = bit_codes[byte];
-  //   bitstack_push_bits(&bitstack, bits);
-  // }
-  // bitstack_print(&bitstack);
-
-  // bitstack_free(&bitstack);
-
+  bit_set_free(&bit_set);
   tree_free(root);
-
-  // free(bit_codes);
+  free(codes);
   cvector_free(buffer);
   cvector_free(bf_arr);
   return 0;

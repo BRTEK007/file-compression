@@ -20,9 +20,10 @@ node_t* create_tree(byte_freq_t* bf_arr);
 void tree_extract_codes(node_t* root, byte_slice_t* codes);
 
 void tree_extract_codes_rec(node_t* root, byte_slice_t slice, byte_slice_t* codes);
-// void tree_traversal(node_t* node, bit_code_t bc, bit_code_t* bit_codes);
 
 void tree_free(node_t* node);
+
+void tree_write_to_bitset(node_t* root, bit_set_t* bit_set);
 
 // void tree_traversal_recon(node_t* node);
 
