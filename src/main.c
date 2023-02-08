@@ -83,8 +83,60 @@ unsigned char* get_input_buffer(const char* filename){
   return vec;
 }
 
-void compress(){
+bit_set_t compress(unsigned char* buffer){
+  uint32_t total_byte_count = cvector_size(buffer);
 
+  byte_freq_t* bf_arr = get_byte_freq_arr(buffer);
+
+  unsigned char unique_byte_count = cvector_size(bf_arr);
+  
+  node_t* root = create_tree(bf_arr);
+  
+  byte_slice_t* codes = calloc(256, sizeof(byte_slice_t)); 
+  
+  tree_extract_codes(root, codes);
+
+  printf("-------------------------\n");
+  printf("COMPRESSING %d BYTES, %d UNIQUE\n", total_byte_count, unique_byte_count);
+  printf("-------------------------\n");
+  printf("BYTE   | FREQUENCY | CODE\n");
+  printf("-------------------------\n");
+  for(int i = 0; i < unique_byte_count; i++){
+    byte_freq_t bf = bf_arr[i];
+    printf("%d (%c) | %9.1f | ", bf.byte, bf.byte, (float)(100*bf.freq) / total_byte_count);
+    byte_slice_print(codes[bf.byte]);
+    printf("\n");
+  }
+  printf("-------------------------\n");
+
+  bit_set_t bit_set;
+  bit_set_init(&bit_set);
+
+  //write 4 bytes -> total bytes count
+  unsigned char* bytes = (unsigned char *)&total_byte_count;
+  bit_set_write_byte(&bit_set, bytes[0]);
+  bit_set_write_byte(&bit_set, bytes[1]);
+  bit_set_write_byte(&bit_set, bytes[2]);
+  bit_set_write_byte(&bit_set, bytes[3]);
+  //write 1 byte -> unique bytes count
+  bit_set_write_byte(&bit_set, unique_byte_count);
+  //write huffman tree data
+  tree_write_to_bitset(root, &bit_set);
+  //write compressed data
+  for(uint32_t i = 0; i < total_byte_count; i++){
+    unsigned char byte = buffer[i];
+    byte_slice_t slice = codes[byte];
+    bit_set_write_slice(&bit_set, slice);
+  }
+  bit_set_end_write(&bit_set);
+  
+  // decompress(&bit_set);
+  //write bitset to file
+  
+  tree_free(root);
+  free(codes);
+  cvector_free(bf_arr);
+  return bit_set;
 }
 
 void decompress(bit_set_t* bit_set){
@@ -100,7 +152,7 @@ void decompress(bit_set_t* bit_set){
   unsigned char unique_byte_count = bit_set_read_byte(bit_set); 
   //
   printf("-------------------------\n");
-  printf("DECOMPRESSING %ld BYTES, %d UNIQUE\n", total_byte_count, unique_byte_count);
+  printf("DECOMPRESSING %d BYTES, %d UNIQUE\n", total_byte_count, unique_byte_count);
   printf("-------------------------\n");
   //read huffman tree data
   node_t* root = tree_read_from_bitset(bit_set, unique_byte_count);
@@ -160,95 +212,69 @@ void args_error_exit(){
 void print_help(){
   printf(
     "----------------------------------\n"
-    "./byte-compression [OPTION] [FILE]\n"
+    "./byte-compression [OPTION] [INPUT FILE] [OUTPUT FILE]\n"
     "OPTION e {-h, -c, -d}\n"
     "-h ... prints this message\n"
     "-c ... compress mode\n"
     "-d ... decompress mode\n"
-    "FILE ... path to file\n"
-    "if OPTION = -h ... not needed\n"
-    "if OPTION = -c ... file extension will be added (.bc)\n"
-    "if OPTION = -d ... file must end with .bc, file extension will be removed\n"
+    "INPUT FILE ... file to compress\n"
+    "OUTPUT FILE ... file to write compressed result in\n"
   );
 }
 
 int main(int argc, char** argv){
-  char* filename;
-  bool compress;
+  char* input_filename;
+  char* output_filename;
+  bool doCompress;
 
-  if(argc == 2){
+  if(argc > 1 && argc != 4){
     if(strcmp(argv[1], "-h") == 0){
       print_help();
       exit(0);
     }else
       args_error_exit();
-  }else if(argc == 3){
-    filename = argv[2];
+  }else if(argc == 4){
+    input_filename = argv[2];
+    output_filename = argv[3];
     if(strcmp(argv[1], "-c") == 0){
-      compress = true;
+      doCompress = true;
     }else if(strcmp(argv[1], "-d") == 0){
-      compress = false;
+      doCompress = false;
+    }else if(strcmp(argv[1], "-h") == 0){
+      print_help();
+      exit(0);
     }else{
       args_error_exit();
     }
   }else{
     args_error_exit();
   }
-
-  unsigned char* buffer = get_input_buffer(filename);
-
-  uint32_t total_byte_count = cvector_size(buffer);
-
-  byte_freq_t* bf_arr = get_byte_freq_arr(buffer);
-
-  unsigned char unique_byte_count = cvector_size(bf_arr);
   
-  node_t* root = create_tree(bf_arr);
-  
-  byte_slice_t* codes = calloc(256, sizeof(byte_slice_t)); 
-  
-  tree_extract_codes(root, codes);
+  unsigned char* buffer = get_input_buffer(input_filename);
 
-  printf("-------------------------\n");
-  printf("COMPRESSING %ld BYTES, %d UNIQUE\n", total_byte_count, unique_byte_count);
-  printf("-------------------------\n");
-  printf("BYTE   | FREQUENCY | CODE\n");
-  printf("-------------------------\n");
-  for(int i = 0; i < unique_byte_count; i++){
-    byte_freq_t bf = bf_arr[i];
-    printf("%d (%c) | %9.1f | ", bf.byte, bf.byte, (float)(100*bf.freq) / total_byte_count);
-    byte_slice_print(codes[bf.byte]);
-    printf("\n");
+  if(doCompress){
+    bit_set_t bit_set = compress(buffer);
+    
+    FILE* outputFile;
+  
+    outputFile = fopen(output_filename, "wb");
+    if(outputFile == NULL){
+      fprintf(stderr, "ERROR: could not open file\n");
+      exit(2);
+    }
+
+    fwrite(bit_set.bytes, sizeof(unsigned char), cvector_size(bit_set.bytes), outputFile);
+
+    fclose(outputFile);
+
+    bit_set_free(&bit_set);
+    
+    cvector_free(buffer);
+  }else{
+    //create bitset from buffer
+    //the decompress it and return buffer to write to ouput file
   }
-  printf("-------------------------\n");
 
-  bit_set_t bit_set;
-  bit_set_init(&bit_set);
-
-  //write 4 bytes -> total bytes count
-  unsigned char* bytes = (unsigned char *)&total_byte_count;
-  bit_set_write_byte(&bit_set, bytes[0]);
-  bit_set_write_byte(&bit_set, bytes[1]);
-  bit_set_write_byte(&bit_set, bytes[2]);
-  bit_set_write_byte(&bit_set, bytes[3]);
-  //write 1 byte -> unique bytes count
-  bit_set_write_byte(&bit_set, unique_byte_count);
-  //write huffman tree data
-  tree_write_to_bitset(root, &bit_set);
-  //write compressed data
-  for(uint32_t i = 0; i < total_byte_count; i++){
-    unsigned char byte = buffer[i];
-    byte_slice_t slice = codes[byte];
-    bit_set_write_slice(&bit_set, slice);
-  }
-  bit_set_end_write(&bit_set);
   
-  // decompress(&bit_set);
-
-  bit_set_free(&bit_set);
-  tree_free(root);
-  free(codes);
-  cvector_free(buffer);
-  cvector_free(bf_arr);
   return 0;
 }
