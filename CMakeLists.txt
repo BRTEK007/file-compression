@@ -11,7 +11,11 @@ target_sources(byte-compressor PRIVATE
     src/main.c 
     src/node_queue.c 
     src/tree.c 
-    src/byte_slice.c)
+    src/byte_slice.c
+    src/io.c
+    src/byte_freq.c
+    src/compress.c
+    src/decompress.c)
 
 add_executable(tests)
 
