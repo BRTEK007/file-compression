@@ -24,4 +24,3 @@ target_sources(unit_tests PRIVATE
     src/byte_slice.c
     src/bit_set.c
 )
-# target_link_libraries(trafsim sfml-system)
