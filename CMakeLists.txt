@@ -17,10 +17,10 @@ target_sources(byte-compressor PRIVATE
     src/compress.c
     src/decompress.c)
 
-add_executable(tests)
+add_executable(unit_tests)
 
-target_sources(tests PRIVATE 
-    src/tests.c
+target_sources(unit_tests PRIVATE 
+    src/unit_tests.c
     src/byte_slice.c
     src/bit_set.c
 )
