@@ -129,9 +129,10 @@ bit_set_t compress(unsigned char* buffer){
     bit_set_write_slice(&bit_set, slice);
   }
   bit_set_end_write(&bit_set);
-  
-  // decompress(&bit_set);
-  //write bitset to file
+
+  double reduction = 100.f * (1.f - ((double)cvector_size(bit_set.bytes) / (double)cvector_size(buffer))); 
+  printf("size after compression: %ld, %.1f%% reduction\n", cvector_size(bit_set.bytes), reduction);
+  printf("-------------------------\n");
   
   tree_free(root);
   free(codes);
