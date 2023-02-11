@@ -55,15 +55,19 @@ int main(int argc, char** argv){
   }else{
     args_error_exit();
   }
+  // printf("1\n");
   
   unsigned char* input_buffer = read_bytes_from_file(input_filename);
   unsigned char* output_buffer;
 
+  // printf("2\n");
   if(doCompress){
     output_buffer = compress(input_buffer);
   }else{
+    // printf("3\n");
     output_buffer = decompress(input_buffer);
   }
+  // printf("4\n");
 
   FILE* output_file;
   
@@ -75,6 +79,7 @@ int main(int argc, char** argv){
 
   fwrite(output_buffer, sizeof(unsigned char), cvector_size(output_buffer), output_file);
 
+  cvector_free(input_buffer);
   cvector_free(output_buffer);
   fclose(output_file);
 

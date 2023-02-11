@@ -6,7 +6,10 @@
 #include <stdio.h>
 
 unsigned char* decompress(unsigned char* in_buffer){
+  //create bit_set from in_buffer
   bit_set_t bit_set;
+  bit_set_init_from_bytes(&bit_set, in_buffer);
+
   bit_set_begin_read(&bit_set);
   //read 4 bytes -> total_characters count
   unsigned char bytes[4];
@@ -57,14 +60,14 @@ unsigned char* decompress(unsigned char* in_buffer){
       node = node->left;
     }
     if(node->leaf){
-    //   printf("%c", node->byte);
+      // printf("%c", node->byte);
       cvector_push_back(out_buffer, node->byte);
       node = root;
       read_bytes++;
     }
   }
 
-
+  bit_set_free(&bit_set);
   tree_free(root);
   return out_buffer;
 }

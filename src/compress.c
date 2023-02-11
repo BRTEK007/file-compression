@@ -55,8 +55,9 @@ unsigned char* compress(unsigned char* in_buffer){
   bit_set_end_write(&bit_set);
 
   cvector_free(bf_arr);
-  cvector_vector_type(unsigned char*) out_buffer = NULL;
+  cvector_vector_type(unsigned char) out_buffer = bit_set_extract_bytes(&bit_set);
   //extract to out_buffer from bit_set
+
   bit_set_free(&bit_set);
 
   double reduction = 100.f * (1.f - ((double)cvector_size(out_buffer) / (double)cvector_size(in_buffer))); 

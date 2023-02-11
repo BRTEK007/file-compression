@@ -5,6 +5,7 @@
 
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 //end writing with end_write()
 //start reading with begin_read()
@@ -15,9 +16,12 @@ typedef struct bit_set_t{
    unsigned char* bytes;
    byte_slice_t byte_slice;//byte slice to write or to read
    uint64_t read_id;//id of byte to read
+   bool owning_bytes;
 } bit_set_t;
 
 void bit_set_init(bit_set_t* bit_set);
+
+void bit_set_init_from_bytes(bit_set_t* bit_set, unsigned char* bytes);
 
 void bit_set_end_write(bit_set_t* bit_set);
 
@@ -34,5 +38,7 @@ void bit_set_write_byte(bit_set_t* bit_set, unsigned char byte);
 unsigned char bit_set_read_byte(bit_set_t* bit_set);
 
 void bit_set_write_slice(bit_set_t* bit_set, byte_slice_t slice);
+
+unsigned char* bit_set_extract_bytes(bit_set_t* bit_set);
 
 #endif
