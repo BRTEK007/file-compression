@@ -2,6 +2,7 @@
 #define BIT_SET_H
 
 #include "byte_slice.h"
+#include "bit_code.h"
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -40,5 +41,7 @@ unsigned char bit_set_read_byte(bit_set_t* bit_set);
 void bit_set_write_slice(bit_set_t* bit_set, byte_slice_t slice);
 
 unsigned char* bit_set_extract_bytes(bit_set_t* bit_set);
+
+void bit_set_write_code(bit_set_t* bit_set, bit_code_t bc);
 
 #endif

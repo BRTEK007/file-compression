@@ -8,6 +8,7 @@ add_executable(byte-compressor)
 
 target_sources(byte-compressor PRIVATE 
     src/bit_set.c 
+    src/bit_code.c 
     src/main.c 
     src/node_queue.c 
     src/tree.c 

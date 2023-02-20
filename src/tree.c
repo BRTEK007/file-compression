@@ -112,19 +112,19 @@ node_t* tree_read_from_bitset(bit_set_t* bit_set, uint8_t leaf_count){
   return root;
 }
 
-void tree_extract_codes(node_t* root, byte_slice_t* codes){
-  byte_slice_t slice;
-  byte_slice_init(&slice);
+void tree_extract_codes(node_t* root, bit_code_t* codes){
+  // byte_slice_t slice;
+  // byte_slice_init(&slice);
   tree_extract_codes_rec(root, slice, codes);
 }
 
-void tree_extract_codes_rec(node_t* node, byte_slice_t slice, byte_slice_t* codes){
+void tree_extract_codes_rec(node_t* node, bit_code_t code, bit_code_t* codes){
   if(node == NULL) return;
   if(node->leaf){
-    codes[node->byte] = slice;
+    codes[node->byte] = code;
   }else{
-    byte_slice_t slice_left = slice;
-    byte_slice_t slice_right = slice;
+    byte_slice_t slice_left = code;
+    byte_slice_t slice_right = code;
 
     byte_slice_write_bit(&slice_left, false);
     byte_slice_write_bit(&slice_right, true);

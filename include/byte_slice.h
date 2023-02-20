@@ -1,11 +1,14 @@
 #ifndef BYTE_SLICE_H
 #define BYTE_SLICE_H
 
+#define BYTE_SLICE_BIT_COUNT 8
 #include <stdbool.h>
+#include <stdint.h>
 
 //array of bits, slice of a byte, 
 typedef struct byte_slice_t{
   unsigned char bits;
+  // uint64_t bits;
   int len;
 } byte_slice_t;
 

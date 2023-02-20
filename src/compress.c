@@ -1,6 +1,6 @@
 #include "compress.h"
 #include "byte_freq.h"
-#include "byte_slice.h"
+#include "bit_code.h"
 #include <stdint.h>
 #include <stdio.h>
 #include "c-vector/cvector.h"
@@ -16,8 +16,11 @@ unsigned char* compress(unsigned char* in_buffer){
   
   node_t* root = create_tree(bf_arr);
   
-  byte_slice_t* codes = calloc(256, sizeof(byte_slice_t)); 
-  
+  // byte_slice_t* codes = calloc(256, sizeof(byte_slice_t));
+  //bit_code_t* codes = calloc(256, sizeof(bit_code_t)); 
+  cvector_vector_type(bit_code_t) codes = NULL;
+  cvector_reserve(codes, 256);
+
   tree_extract_codes(root, codes);
 
   printf("-------------------------\n");
@@ -28,7 +31,7 @@ unsigned char* compress(unsigned char* in_buffer){
   for(int i = 0; i < unique_byte_count; i++){
     byte_freq_t bf = bf_arr[i];
     printf("%d (%c) | %9.1f | ", bf.byte, bf.byte, (float)(100*bf.freq) / total_byte_count);
-    byte_slice_print(codes[bf.byte]);
+    // byte_slice_print(codes[bf.byte]);
     printf("\n");
   }
   printf("-------------------------\n");
@@ -49,8 +52,10 @@ unsigned char* compress(unsigned char* in_buffer){
   //write compressed data
   for(uint32_t i = 0; i < total_byte_count; i++){
     unsigned char byte = in_buffer[i];
-    byte_slice_t slice = codes[byte];
-    bit_set_write_slice(&bit_set, slice);
+    bit_code_t code = codes[byte];
+    bit_set_write_code(&bit_set, code);
+    // byte_slice_t slice = codes[byte];
+    // bit_set_write_slice(&bit_set, slice);
   }
   bit_set_end_write(&bit_set);
 
@@ -65,6 +70,7 @@ unsigned char* compress(unsigned char* in_buffer){
   printf("-------------------------\n");
   
   tree_free(root);
-  free(codes);
+  // free(codes);
+  cvector_free(codes);
   return out_buffer;
 }
