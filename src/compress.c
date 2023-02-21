@@ -31,7 +31,7 @@ unsigned char* compress(unsigned char* in_buffer){
   for(int i = 0; i < unique_byte_count; i++){
     byte_freq_t bf = bf_arr[i];
     printf("%d (%c) | %9.1f | ", bf.byte, bf.byte, (float)(100*bf.freq) / total_byte_count);
-    // byte_slice_print(codes[bf.byte]);
+    byte_slice_print(codes[bf.byte]);
     printf("\n");
   }
   printf("-------------------------\n");
