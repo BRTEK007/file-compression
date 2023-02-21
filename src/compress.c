@@ -16,10 +16,10 @@ unsigned char* compress(unsigned char* in_buffer){
   
   node_t* root = create_tree(bf_arr);
   
-  // byte_slice_t* codes = calloc(256, sizeof(byte_slice_t));
-  //bit_code_t* codes = calloc(256, sizeof(bit_code_t)); 
-  cvector_vector_type(bit_code_t) codes = NULL;
-  cvector_reserve(codes, 256);
+  byte_slice_t* codes = calloc(256, sizeof(byte_slice_t));
+  // bit_code_t* codes = calloc(256, sizeof(bit_code_t)); 
+  // cvector_vector_type(bit_code_t) codes = NULL;
+  // cvector_reserve(codes, 256);
 
   tree_extract_codes(root, codes);
 
@@ -52,10 +52,10 @@ unsigned char* compress(unsigned char* in_buffer){
   //write compressed data
   for(uint32_t i = 0; i < total_byte_count; i++){
     unsigned char byte = in_buffer[i];
-    bit_code_t code = codes[byte];
-    bit_set_write_code(&bit_set, code);
-    // byte_slice_t slice = codes[byte];
-    // bit_set_write_slice(&bit_set, slice);
+    // bit_code_t code = codes[byte];
+    // bit_set_write_code(&bit_set, code);
+    byte_slice_t slice = codes[byte];
+    bit_set_write_slice(&bit_set, slice);
   }
   bit_set_end_write(&bit_set);
 
@@ -70,7 +70,7 @@ unsigned char* compress(unsigned char* in_buffer){
   printf("-------------------------\n");
   
   tree_free(root);
-  // free(codes);
-  cvector_free(codes);
+  free(codes);
+  // cvector_free(codes);
   return out_buffer;
 }

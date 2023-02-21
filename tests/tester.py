@@ -12,15 +12,17 @@ class Tester:
 
     def run(self, filePath):
         absoluteFilePath = os.path.join(self.absolutePath, filePath)
-        print("<<TESTER>> : BEGIN COMPRESSION")
+        # print("<<TESTER>> : BEGIN COMPRESSION")
         retcode = subprocess.call([self.compressorPath, '-c', absoluteFilePath, 'temp.compressed'], stdout=subprocess.DEVNULL) 
         if retcode != 0:
+            print(RED+"FAILED"+ENDC, filePath, "(COMPRESSION)")
             return    
-        print("<<TESTER>> : BEGIN DECOMPRESSION")
+        # print("<<TESTER>> : BEGIN DECOMPRESSION")
         retcode = subprocess.call([self.compressorPath, '-d', 'temp.compressed', 'temp.decompressed'], stdout=subprocess.DEVNULL) 
         if retcode != 0:
+            print(RED+"FAILED"+ENDC, filePath, "(DECOMPRESSION)")
             return    
-        print("<<TESTER>> : BEGIN COMPARISSON")
+        # print("<<TESTER>> : BEGIN COMPARISSON")
         p = subprocess.Popen(['cmp', absoluteFilePath, 'temp.decompressed'], stdout=subprocess.PIPE)
         p.wait()
         p.stdout.flush()
@@ -28,12 +30,12 @@ class Tester:
         if output == "":
            print(GREEN+"PASSED"+ENDC, filePath)
         else:
-            print(RED+"FAILED"+ENDC, filePath)
+            print(RED+"FAILED"+ENDC, filePath, "(COMPARISSON)")
 
 tester = Tester("../build/byte-compressor")
 tester.run("files/22_total_5_unique.txt")
-#tester.run("files/iliad.txt")
-#tester.run("files/1000_digits.bin")
-#tester.run("files/1000_lowercase.bin")
-#tester.run("files/1000_printable.bin")
-#tester.run("files/10000_all.bin")
+tester.run("files/iliad.txt")
+tester.run("files/1000_digits.bin")
+tester.run("files/1000_lowercase.bin")
+tester.run("files/1000_printable.bin")
+tester.run("files/10000_all.bin")

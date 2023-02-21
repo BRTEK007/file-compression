@@ -19,7 +19,7 @@ void node_queue_insert(node_queue_t* nq, node_t* node){
 node_t* node_queue_pop(node_queue_t* nq){
   node_t* node = nq->nodes[0];
   int index = 0;
-  for(int i = 0; i < cvector_size(nq->nodes); i++){
+  for(size_t i = 0; i < cvector_size(nq->nodes); i++){
     if(nq->nodes[i]->freq < node->freq){
       node = nq->nodes[i];
       index = i;

@@ -94,7 +94,7 @@ unsigned char* bit_set_extract_bytes(bit_set_t* bit_set){
 }
 
 void bit_set_write_code(bit_set_t* bit_set, bit_code_t code){
-    for(int i = 0; i < cvector_size(code.bits); i++){
+    for(size_t i = 0; i < cvector_size(code.bits); i++){
         bit_set_write_bit(bit_set, code.bits[i]);
     }
 }

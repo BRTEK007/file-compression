@@ -6,6 +6,8 @@ include_directories(include)
 
 add_executable(byte-compressor)
 
+target_compile_options(byte-compressor PRIVATE -Werror)
+
 target_sources(byte-compressor PRIVATE 
     src/bit_set.c 
     src/bit_code.c 
@@ -19,6 +21,8 @@ target_sources(byte-compressor PRIVATE
     src/decompress.c)
 
 add_executable(unit_tests)
+
+# target_compile_options(unit_tests PRIVATE -Werror -Wall -Wextra)
 
 target_sources(unit_tests PRIVATE 
     src/unit_tests.c
