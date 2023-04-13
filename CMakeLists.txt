@@ -9,23 +9,23 @@ add_executable(byte-compressor)
 target_compile_options(byte-compressor PRIVATE -Werror)
 
 target_sources(byte-compressor PRIVATE 
-    src/bit_set.c 
-    src/bit_code.c 
-    src/main.c 
-    src/node_queue.c 
-    src/tree.c 
-    src/byte_slice.c
-    src/io.c
-    src/byte_freq.c
-    src/compress.c
-    src/decompress.c)
+    src/bit_set.cpp 
+    src/bit_code.cpp 
+    src/main.cpp 
+    src/node_queue.cpp 
+    src/tree.cpp 
+    src/byte_slice.cpp
+    src/io.cpp
+    src/byte_freq.cpp
+    src/compress.cpp
+    src/decompress.cpp)
 
 add_executable(unit_tests)
 
 # target_compile_options(unit_tests PRIVATE -Werror -Wall -Wextra)
 
 target_sources(unit_tests PRIVATE 
-    src/unit_tests.c
-    src/byte_slice.c
-    src/bit_set.c
+    src/unit_tests.cpp
+    src/byte_slice.cpp
+    src/bit_set.cpp
 )

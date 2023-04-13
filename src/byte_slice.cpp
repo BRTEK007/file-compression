@@ -1,4 +1,4 @@
-#include "byte_slice.h"
+#include "byte_slice.hpp"
 #include <stdio.h>
 
 void byte_slice_print(byte_slice_t slice){

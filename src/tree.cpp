@@ -1,9 +1,9 @@
-#include "tree.h"
+#include "tree.hpp"
 
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "node_queue.h"
+#include "node_queue.hpp"
 
 node_t* create_tree(byte_freq_t* bf_arr){
   node_queue_t* node_queue = node_queue_create(cvector_size(bf_arr));

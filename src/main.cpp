@@ -3,12 +3,12 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "compress.h"
-#include "decompress.h"
-#include "io.h"
+#include "compress.hpp"
+#include "decompress.hpp"
+#include "io.hpp"
 
 #define CVECTOR_LOGARITHMIC_GROWTH
-#include "c-vector/cvector.h"
+// #include "c-vector/cvector.h"
 
 void args_error_exit(){
   fprintf(stderr, "ERROR: wrong arguments!, run with -h to display help.\n");

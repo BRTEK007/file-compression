@@ -1,5 +1,5 @@
-#include "byte_freq.h"
-#include "stdlib.h"
+#include "byte_freq.hpp"
+#include <stdlib.h>
 #include "c-vector/cvector.h"
 
 int cmp_byte_freq (const void * a, const void * b) {

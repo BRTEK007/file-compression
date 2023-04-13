@@ -2,14 +2,17 @@
 #define BIT_CODE_H
 
 #include <stdbool.h>
+#include <vector>
 
 #define BIT_ONE true
 #define BIT_ZERO false
 
+// typedef Bit bool;
+
 //struct for holding bit codes for bytes
 
 typedef struct bit_code_t{
-    bool* bits;//vector of bits, true false
+    std::vector<bool> bits;
 }bit_code_t;
 
 void bit_code_init(bit_code_t* bc);
@@ -17,5 +20,15 @@ void bit_code_init(bit_code_t* bc);
 void bit_code_add_bit(bit_code_t* bc, bool bit);
 
 void bit_code_free(bit_code_t* bc);
+
+// class BitCode{
+//     private:
+//     std::vector<bool> bits;
+//     ~BitCode();
+//     public:
+//         BitCode();
+//         void addBit(bool bit);
+// };
+
 
 #endif

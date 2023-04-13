@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "byte_slice.h"
-#include "bit_set.h"
+#include "byte_slice.hpp"
+#include "bit_set.hpp"
 
 #define TEST_BEGIN(name) void name() { \
                         printf("RUNNING TEST\n");

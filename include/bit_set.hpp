@@ -1,12 +1,13 @@
 #ifndef BIT_SET_H
 #define BIT_SET_H
 
-#include "byte_slice.h"
-#include "bit_code.h"
+#include "byte_slice.hpp"
+#include "bit_code.hpp"
 
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <vector>
 
 //end writing with end_write()
 //start reading with begin_read()
@@ -14,7 +15,8 @@
 //READ: copy n-th byte to byte_slice, read from byte_slice, if empty -> read copy another byte
 
 typedef struct bit_set_t{
-   unsigned char* bytes;
+   // unsigned char* bytes;
+   std::vector<unsigned char> bytes;
    byte_slice_t byte_slice;//byte slice to write or to read
    uint64_t read_id;//id of byte to read
    bool owning_bytes;
@@ -22,7 +24,7 @@ typedef struct bit_set_t{
 
 void bit_set_init(bit_set_t* bit_set);
 
-void bit_set_init_from_bytes(bit_set_t* bit_set, unsigned char* bytes);
+void bit_set_init_from_bytes(bit_set_t* bit_set, std::vector<unsigned char> bytes);
 
 void bit_set_end_write(bit_set_t* bit_set);
 
@@ -40,8 +42,12 @@ unsigned char bit_set_read_byte(bit_set_t* bit_set);
 
 void bit_set_write_slice(bit_set_t* bit_set, byte_slice_t slice);
 
-unsigned char* bit_set_extract_bytes(bit_set_t* bit_set);
+std::vector<unsigned char> bit_set_extract_bytes(bit_set_t* bit_set);
 
 void bit_set_write_code(bit_set_t* bit_set, bit_code_t bc);
+
+// class BitSet{
+// 
+// };
 
 #endif

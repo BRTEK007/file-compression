@@ -3,9 +3,9 @@
 
 #include <stdbool.h>
 
-#include "byte_freq.h"
-#include "byte_slice.h"
-#include "bit_set.h"
+#include "byte_freq.hpp"
+#include "byte_slice.hpp"
+#include "bit_set.hpp"
 // #include "bit_code.h"
 
 typedef struct node_t{

@@ -1,7 +1,7 @@
-#include "decompress.h"
-#include "bit_set.h"
+#include "decompress.hpp"
+#include "bit_set.hpp"
 #include "c-vector/cvector.h"
-#include "tree.h"
+#include "tree.hpp"
 #include <stdint.h>
 #include <stdio.h>
 

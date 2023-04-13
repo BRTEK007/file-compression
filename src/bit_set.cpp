@@ -1,17 +1,17 @@
-#include "bit_set.h"
+#include "bit_set.hpp"
 
-#include "c-vector/cvector.h"
+#include <vector>
 // #include <stdio.h>
 
 void bit_set_init(bit_set_t* bit_set){
-    cvector_vector_type(unsigned char) bytes = NULL;
+    // cvector_vector_type(unsigned char) bytes = NULL;
     byte_slice_init(&(bit_set->byte_slice));
-    bit_set->bytes = bytes;
+    // bit_set->bytes = bytes;
     bit_set->read_id = 0;
     bit_set->owning_bytes = true;
 }
 
-void bit_set_init_from_bytes(bit_set_t* bit_set, unsigned char* bytes){
+void bit_set_init_from_bytes(bit_set_t* bit_set, std::vector<unsigned char> bytes){
     byte_slice_init(&(bit_set->byte_slice));
     bit_set->bytes = bytes;
     bit_set->read_id = 0;
@@ -23,7 +23,8 @@ void bit_set_end_write(bit_set_t* bit_set){
     unsigned char byte = bit_set->byte_slice.bits;
     byte = byte << (BYTE_SLICE_BIT_COUNT-bit_set->byte_slice.len);
     
-    cvector_push_back(bit_set->bytes, byte);
+    // cvector_push_back(bit_set->bytes, byte);
+    bit_set->bytes.push_back(byte);
 }
 
 void bit_set_begin_read(bit_set_t* bit_set){
@@ -36,7 +37,7 @@ void bit_set_begin_read(bit_set_t* bit_set){
 
 void bit_set_free(bit_set_t* bit_set){
     if(bit_set->owning_bytes){
-        cvector_free(bit_set->bytes);
+        // cvector_free(bit_set->bytes);
     }
 }
 
@@ -45,7 +46,8 @@ void bit_set_write_bit(bit_set_t* bit_set, bool bit){
     byte_slice_t* slice = &(bit_set->byte_slice);
     byte_slice_write_bit(slice, bit);
     if(slice->len == BYTE_SLICE_BIT_COUNT){//is full, can be added to bytes
-        cvector_push_back(bit_set->bytes, slice->bits);
+        // cvector_push_back(bit_set->bytes, slice->bits);
+        bit_set->bytes.push_back(slice->bits);
         byte_slice_init(slice);
     }
 }
@@ -88,13 +90,13 @@ unsigned char bit_set_read_byte(bit_set_t* bit_set){
    return slice.bits; 
 }
 
-unsigned char* bit_set_extract_bytes(bit_set_t* bit_set){
+std::vector<unsigned char> bit_set_extract_bytes(bit_set_t* bit_set){
     bit_set->owning_bytes = false;
     return bit_set->bytes;
 }
 
 void bit_set_write_code(bit_set_t* bit_set, bit_code_t code){
-    for(size_t i = 0; i < cvector_size(code.bits); i++){
+    for(size_t i = 0; i < code.bits.size(); i++){
         bit_set_write_bit(bit_set, code.bits[i]);
     }
 }

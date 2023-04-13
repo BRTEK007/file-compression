@@ -1,4 +1,4 @@
-#include "node_queue.h"
+#include "node_queue.hpp"
 
 node_queue_t* node_queue_create(size_t size){
   node_queue_t* nq = malloc(sizeof(node_queue_t));

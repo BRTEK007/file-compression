@@ -1,11 +1,11 @@
-#include "compress.h"
-#include "byte_freq.h"
-#include "bit_code.h"
+#include "compress.hpp"
+#include "byte_freq.hpp"
+#include "bit_code.hpp"
 #include <stdint.h>
 #include <stdio.h>
 #include "c-vector/cvector.h"
-#include "tree.h"
-#include "bit_set.h"
+#include "tree.hpp"
+#include "bit_set.hpp"
 
 unsigned char* compress(unsigned char* in_buffer){
   uint32_t total_byte_count = cvector_size(in_buffer);

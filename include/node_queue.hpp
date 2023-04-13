@@ -6,7 +6,7 @@
 #define CVECTOR_LOGARITHMIC_GROWTH
 #include "c-vector/cvector.h"
 
-#include "tree.h"
+#include "tree.hpp"
 
 typedef struct node_queue_t{
   node_t** nodes;
