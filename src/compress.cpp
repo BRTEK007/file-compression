@@ -3,12 +3,13 @@
 #include "bit_code.hpp"
 #include <stdint.h>
 #include <stdio.h>
-#include "c-vector/cvector.h"
+// #include "c-vector/cvector.h"
 #include "tree.hpp"
 #include "bit_set.hpp"
 
-unsigned char* compress(unsigned char* in_buffer){
-  uint32_t total_byte_count = cvector_size(in_buffer);
+std::vector<unsigned char> compress(std::vector<unsigned char> in_buffer){
+  // uint32_t total_byte_count = cvector_size(in_buffer);
+  uint32_t total_byte_count = in_buffer.size();
 
   byte_freq_t* bf_arr = get_byte_freq_arr(in_buffer);
 

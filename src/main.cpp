@@ -57,7 +57,7 @@ int main(int argc, char** argv){
   }
   // printf("1\n");
   
-  unsigned char* input_buffer = read_bytes_from_file(input_filename);
+  std::vector<unsigned char> input_buffer = read_bytes_from_file(input_filename);
   unsigned char* output_buffer;
 
   // printf("2\n");

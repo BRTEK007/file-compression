@@ -1,6 +1,6 @@
 #ifndef COMPRESS_H
 #define COMPRESS_H
 
-unsigned char* compress(unsigned char* in_buffer);
+std::vector<unsigned char> compress(std::vector<unsigned char> in_buffer);
 
 #endif
