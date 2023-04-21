@@ -4,12 +4,12 @@
 #include <stdlib.h>
 
 #define CVECTOR_LOGARITHMIC_GROWTH
-#include "c-vector/cvector.h"
 
 #include "tree.hpp"
 
 typedef struct node_queue_t{
-  node_t** nodes;
+  // node_t** nodes;
+  std::vector<node_t*> nodes;
 } node_queue_t;
 
 node_queue_t* node_queue_create(size_t size);

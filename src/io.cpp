@@ -18,7 +18,7 @@ std::vector<unsigned char> read_bytes_from_file(const char* filename){
   long filelen = ftell(inputFile);      // Get the current byte offset in the file
   rewind(inputFile);                      // Jump back to the beginning of the file
 
-  unsigned char* buffer = calloc(filelen, sizeof(unsigned char)); // Enough memory for the file
+  unsigned char* buffer = (unsigned char*) calloc(filelen, sizeof(unsigned char)); // Enough memory for the file
   fread(buffer, filelen, 1, inputFile); // Read in the entire file 
 
   fclose(inputFile); // Close the file

@@ -58,7 +58,7 @@ int main(int argc, char** argv){
   // printf("1\n");
   
   std::vector<unsigned char> input_buffer = read_bytes_from_file(input_filename);
-  unsigned char* output_buffer;
+  std::vector<unsigned char> output_buffer;
 
   // printf("2\n");
   if(doCompress){
@@ -77,10 +77,12 @@ int main(int argc, char** argv){
     exit(2);
   }
 
-  fwrite(output_buffer, sizeof(unsigned char), cvector_size(output_buffer), output_file);
+  unsigned char out_c_buff[output_buffer.size()];
+  std::copy(output_buffer.begin(), output_buffer.end(), out_c_buff);
+  fwrite(out_c_buff, sizeof(unsigned char), output_buffer.size(), output_file);
 
-  cvector_free(input_buffer);
-  cvector_free(output_buffer);
+  // cvector_free(input_buffer);
+  // cvector_free(output_buffer);
   fclose(output_file);
 
   return 0;

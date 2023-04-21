@@ -1,6 +1,7 @@
 #include "byte_freq.hpp"
 #include <stdlib.h>
 // #include "c-vector/cvector.h"
+#include <vector>
 
 int cmp_byte_freq (const void * a, const void * b) {
    return ( ((byte_freq_t*)a)->freq - ((byte_freq_t*)b)->freq );
@@ -8,7 +9,7 @@ int cmp_byte_freq (const void * a, const void * b) {
 
 //returns array of byte_frequencies from input byte buffer
 std::vector<byte_freq_t> get_byte_freq_arr(std::vector<unsigned char> input){ 
-  byte_freq_t* arr = calloc(256, sizeof(byte_freq_t));//256 bytes, count their frequency
+  byte_freq_t* arr = (byte_freq_t*)calloc(256, sizeof(byte_freq_t));//256 bytes, count their frequency
   
   for(int i = 0; i < 256; i++){//init array
     arr[i].byte = (unsigned char)i;

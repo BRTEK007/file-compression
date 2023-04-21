@@ -7,6 +7,7 @@
 #include "byte_slice.hpp"
 #include "bit_set.hpp"
 // #include "bit_code.h"
+#include <vector>
 
 typedef struct node_t{
   unsigned char byte;
@@ -16,13 +17,13 @@ typedef struct node_t{
   struct node_t* right;
 } node_t;
 
-node_t* create_tree(byte_freq_t* bf_arr);
+node_t* create_tree(std::vector<byte_freq_t> bf_arr);
 
 void tree_extract_codes(node_t* root, byte_slice_t* codes);
 
 void tree_extract_codes_rec(node_t* root, byte_slice_t slice, byte_slice_t* codes);
 
-void tree_extract_leaf_bytes(node_t* node, unsigned char** bytes);
+void tree_extract_leaf_bytes(node_t* node, std::vector<unsigned char>* bytes);
 
 void tree_free(node_t* node);
 

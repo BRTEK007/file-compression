@@ -1,11 +1,10 @@
 #include "decompress.hpp"
 #include "bit_set.hpp"
-#include "c-vector/cvector.h"
 #include "tree.hpp"
 #include <stdint.h>
 #include <stdio.h>
 
-unsigned char* decompress(unsigned char* in_buffer){
+std::vector<unsigned char> decompress(std::vector<unsigned char> in_buffer){
   //create bit_set from in_buffer
   bit_set_t bit_set;
   bit_set_init_from_bytes(&bit_set, in_buffer);
@@ -27,17 +26,18 @@ unsigned char* decompress(unsigned char* in_buffer){
   //read huffman tree data
   node_t* root = tree_read_from_bitset(&bit_set, unique_byte_count);
   //
-  cvector_vector_type(unsigned char) leaf_bytes = NULL;
+  // cvector_vector_type(unsigned char) leaf_bytes = NULL;
+  std::vector<unsigned char> leaf_bytes;
   
   tree_extract_leaf_bytes(root, &leaf_bytes);
 
-  byte_slice_t* codes = calloc(256, sizeof(byte_slice_t)); 
+  byte_slice_t* codes = (byte_slice_t*) calloc(256, sizeof(byte_slice_t)); 
   
   tree_extract_codes(root, codes);
 
   printf("BYTE   | CODE\n");
   printf("-----------\n");
-  for(int i = 0; i < cvector_size(leaf_bytes); i++){
+  for(int i = 0; i < leaf_bytes.size(); i++){
     printf("%d (%c) | ", leaf_bytes[i], leaf_bytes[i]);
     byte_slice_print(codes[leaf_bytes[i]]);
     printf("\n");
@@ -45,11 +45,12 @@ unsigned char* decompress(unsigned char* in_buffer){
   printf("-------------------------\n");
   
   free(codes);
-  cvector_free(leaf_bytes);
+  // cvector_free(leaf_bytes);
 
   //read compressed data
-  cvector_vector_type(unsigned char) out_buffer = NULL;
-  cvector_reserve(out_buffer, total_byte_count);
+  // cvector_vector_type(unsigned char) out_buffer = NULL;
+  // cvector_reserve(out_buffer, total_byte_count);
+  std::vector<unsigned char> out_buffer;
   uint32_t read_bytes = 0;
   node_t* node = root;
   while(read_bytes < total_byte_count){
@@ -61,7 +62,8 @@ unsigned char* decompress(unsigned char* in_buffer){
     }
     if(node->leaf){
       // printf("%c", node->byte);
-      cvector_push_back(out_buffer, node->byte);
+      // cvector_push_back(out_buffer, node->byte);
+      out_buffer.push_back(node->byte);
       node = root;
       read_bytes++;
     }

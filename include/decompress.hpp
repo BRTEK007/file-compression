@@ -1,6 +1,7 @@
 #ifndef DECOMPRESS_H
 #define DECOMPRESS_H
+#include <vector>
 
-unsigned char* decompress(unsigned char* in_buffer);
+std::vector<unsigned char> decompress(std::vector<unsigned char> in_buffer);
 
 #endif
