@@ -5,6 +5,8 @@ GREEN = '\033[92m'
 RED = '\033[91m'
 ENDC = '\033[0m'
 
+#TODO timeout detection, print return codes
+
 class Tester:
     def __init__(self, compressorPath):
         self.absolutePath = os.path.dirname(__file__)

@@ -12,11 +12,6 @@ node_t* create_tree(std::vector<byte_freq_t> bf_arr){
   //create a leaf node for each symbol
   for(int i = 0; i < bf_arr.size(); i++){
     node_t* node = (node_t*)malloc(sizeof(node_t));
-    // *node = (node_t){
-    //   byte: bf_arr[i].byte,
-    //   freq: bf_arr[i].freq,
-    //   leaf: true
-    // };
     node->byte = bf_arr[i].byte;
     node->freq = bf_arr[i].freq;
     node->leaf = true;
@@ -32,13 +27,6 @@ node_t* create_tree(std::vector<byte_freq_t> bf_arr){
     node_t* nodeB = node_queue_pop(node_queue);
     //create new internal node
     node_t* node_internal = (node_t*)malloc(sizeof(node_t));
-    // node_t* node_internal = malloc(sizeof(node_t));
-    // *node_internal = (node_t){
-    //   freq: nodeA->freq + nodeB->freq,
-    //   leaf: false,
-    //   left: nodeA,
-    //   right: nodeB
-    // };
     node_internal->freq = nodeA->freq + nodeB->freq;
     node_internal->leaf = false;
     node_internal->left = nodeA;
@@ -52,53 +40,28 @@ node_t* create_tree(std::vector<byte_freq_t> bf_arr){
 }
 
 void tree_write_to_bitset(node_t* root, bit_set_t* bit_set){
-  // cvector_vector_type(node_t*) stack = NULL;
   std::vector<node_t*> stack;
   
-  // cvector_push_back(stack, root->right);
-  // cvector_push_back(stack, root->left);
   stack.push_back(root->right);
   stack.push_back(root->left);
 
-
-  // std::cout<<"debug1: "<<root->left->byte<<"\n";
-
-  // int iters = 0;// TODO remove
   while(!stack.empty()){
-    // node_t* node = stack[cvector_size(stack)-1];
-    // cvector_pop_back(stack);
     node_t* node = stack.back();
     stack.pop_back();
-    // node = NULL;
-    // printf("%d ", stack.size());
 
     if(!node)
       continue;
     
-    // std::cout<<"size: "<<stack.size()<<" "<<node->byte<<std::endl;
     
     if(node->leaf){
-      // printf("1 %c ", node->byte);
       bit_set_write_bit(bit_set, true);
       bit_set_write_byte(bit_set, node->byte);
-      // std::cout<<"1"<<node->byte;
     }else{
-      // printf("0 ");
       bit_set_write_bit(bit_set, false);
-      // cvector_push_back(stack, node->right);
-      // cvector_push_back(stack, node->left);
-      // std::cout<<"adding\n";
-      // std::cout<<"0";
       stack.push_back(node->right);
       stack.push_back(node->left);
     }
-    // if(iters > 10)//TODO remove
-    //   break;
-    // iters++;
   }
-  // printf("\n");
-
-  // cvector_free(stack);
 }
 
 node_t* tree_read_from_bitset(bit_set_t* bit_set, uint8_t leaf_count){
@@ -107,35 +70,27 @@ node_t* tree_read_from_bitset(bit_set_t* bit_set, uint8_t leaf_count){
   root->left = NULL;
   root->right = NULL;
 
-  // cvector_vector_type(node_t**) stack = NULL;
   std::vector<node_t**> stack;
 
-  // cvector_push_back(stack, &(root->right));
-  // cvector_push_back(stack, &(root->left));
-      stack.push_back(&(root->right));
-      stack.push_back(&(root->left));
+  stack.push_back(&(root->right));
+  stack.push_back(&(root->left));
 
   uint8_t leaves_read = 0;
   while(leaves_read < leaf_count){
-    // node_t** node = stack[cvector_size(stack)-1];
-    // cvector_pop_back(stack);
     node_t** node = stack.back();
     stack.pop_back();
 
     bool bit = bit_set_read_bit(bit_set);
 
     if(!bit){//parent node
-      // printf("0 ");
       node_t* new_node = new node_t();
       new_node->leaf = false;
       new_node->left = NULL;
       new_node->right = NULL;
       *node = new_node;
       
-      // cvector_push_back(stack, &(new_node->right));
       stack.push_back(&(new_node->right));
       stack.push_back(&(new_node->left));
-      // cvector_push_back(stack, &(new_node->left));
     }else{//leaf node
       node_t* new_node = new node_t();
       new_node->byte = bit_set_read_byte(bit_set);
@@ -143,12 +98,10 @@ node_t* tree_read_from_bitset(bit_set_t* bit_set, uint8_t leaf_count){
       new_node->left = NULL;
       new_node->right = NULL;
       *node = new_node;
-      // printf("1 %c ", new_node->byte);
       leaves_read++;
     }
   }
 
-  // cvector_free(stack);
   return root;
 }
 

@@ -25,8 +25,6 @@ std::vector<unsigned char> decompress(std::vector<unsigned char> in_buffer){
   printf("-------------------------\n");
   //read huffman tree data
   node_t* root = tree_read_from_bitset(&bit_set, unique_byte_count);
-  //
-  // cvector_vector_type(unsigned char) leaf_bytes = NULL;
   std::vector<unsigned char> leaf_bytes;
   
   tree_extract_leaf_bytes(root, &leaf_bytes);
@@ -45,11 +43,8 @@ std::vector<unsigned char> decompress(std::vector<unsigned char> in_buffer){
   printf("-------------------------\n");
   
   free(codes);
-  // cvector_free(leaf_bytes);
 
   //read compressed data
-  // cvector_vector_type(unsigned char) out_buffer = NULL;
-  // cvector_reserve(out_buffer, total_byte_count);
   std::vector<unsigned char> out_buffer;
   uint32_t read_bytes = 0;
   node_t* node = root;
@@ -61,8 +56,6 @@ std::vector<unsigned char> decompress(std::vector<unsigned char> in_buffer){
       node = node->left;
     }
     if(node->leaf){
-      // printf("%c", node->byte);
-      // cvector_push_back(out_buffer, node->byte);
       out_buffer.push_back(node->byte);
       node = root;
       read_bytes++;

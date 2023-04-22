@@ -1,6 +1,5 @@
 #include "io.hpp"
 #include <stdio.h>
-// #include "c-vector/cvector.h"
 #include <vector>
 #include <stdlib.h>
 
@@ -23,16 +22,11 @@ std::vector<unsigned char> read_bytes_from_file(const char* filename){
 
   fclose(inputFile); // Close the file
 
-  // cvector_vector_type(unsigned char) vec = NULL;
-
-  // cvector_reserve(vec, filelen);
-
   std::vector<unsigned char> vec;
   vec.reserve(filelen);
 
   for(long i = 0; i < filelen; i++){
     vec.push_back(buffer[i]);
-    //cvector_push_back(vec, buffer[i]);
   }
 
   free(buffer);

@@ -8,7 +8,6 @@
 //array of bits, slice of a byte, 
 typedef struct byte_slice_t{
   unsigned char bits;
-  // uint64_t bits;
   int len;
 } byte_slice_t;
 

@@ -8,7 +8,6 @@
 #include "io.hpp"
 
 #define CVECTOR_LOGARITHMIC_GROWTH
-// #include "c-vector/cvector.h"
 
 void args_error_exit(){
   fprintf(stderr, "ERROR: wrong arguments!, run with -h to display help.\n");
@@ -55,19 +54,15 @@ int main(int argc, char** argv){
   }else{
     args_error_exit();
   }
-  // printf("1\n");
   
   std::vector<unsigned char> input_buffer = read_bytes_from_file(input_filename);
   std::vector<unsigned char> output_buffer;
 
-  // printf("2\n");
   if(doCompress){
     output_buffer = compress(input_buffer);
   }else{
-    // printf("3\n");
     output_buffer = decompress(input_buffer);
   }
-  // printf("4\n");
 
   FILE* output_file;
   
@@ -81,8 +76,6 @@ int main(int argc, char** argv){
   std::copy(output_buffer.begin(), output_buffer.end(), out_c_buff);
   fwrite(out_c_buff, sizeof(unsigned char), output_buffer.size(), output_file);
 
-  // cvector_free(input_buffer);
-  // cvector_free(output_buffer);
   fclose(output_file);
 
   return 0;

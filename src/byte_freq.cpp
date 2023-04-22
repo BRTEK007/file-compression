@@ -1,6 +1,5 @@
 #include "byte_freq.hpp"
 #include <stdlib.h>
-// #include "c-vector/cvector.h"
 #include <vector>
 
 int cmp_byte_freq (const void * a, const void * b) {
@@ -38,7 +37,6 @@ std::vector<byte_freq_t> get_byte_freq_arr(std::vector<unsigned char> input){
 
   //copy bytes with atleast 1 occurance to new array
   for(int i = 0; i < size; i++){
-    // cvector_push_back(bf_arr, arr[zeros+i]);
     bf_arr.push_back(arr[zeros+i]);
   }
 

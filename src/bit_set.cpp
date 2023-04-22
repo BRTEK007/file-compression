@@ -4,10 +4,7 @@
 #include <stdio.h>
 
 void bit_set_init(bit_set_t* bit_set){
-    // cvector_vector_type(unsigned char) bytes = NULL;
-    // printf("2 ");
     byte_slice_init(&(bit_set->byte_slice));
-    // bit_set->bytes = bytes;
     bit_set->read_id = 0;
     bit_set->owning_bytes = true;
 }
@@ -24,7 +21,6 @@ void bit_set_end_write(bit_set_t* bit_set){
     unsigned char byte = bit_set->byte_slice.bits;
     byte = byte << (BYTE_SLICE_BIT_COUNT-bit_set->byte_slice.len);
     
-    // cvector_push_back(bit_set->bytes, byte);
     bit_set->bytes.push_back(byte);
 }
 
@@ -37,9 +33,6 @@ void bit_set_begin_read(bit_set_t* bit_set){
 }
 
 void bit_set_free(bit_set_t* bit_set){
-    if(bit_set->owning_bytes){
-        // cvector_free(bit_set->bytes);
-    }
 }
 
 void bit_set_write_bit(bit_set_t* bit_set, bool bit){
@@ -47,7 +40,6 @@ void bit_set_write_bit(bit_set_t* bit_set, bool bit){
     byte_slice_t* slice = &(bit_set->byte_slice);
     byte_slice_write_bit(slice, bit);
     if(slice->len == BYTE_SLICE_BIT_COUNT){//is full, can be added to bytes
-        // cvector_push_back(bit_set->bytes, slice->bits);
         bit_set->bytes.push_back(slice->bits);
         byte_slice_init(slice);
     }

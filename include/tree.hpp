@@ -6,7 +6,6 @@
 #include "byte_freq.hpp"
 #include "byte_slice.hpp"
 #include "bit_set.hpp"
-// #include "bit_code.h"
 #include <vector>
 
 typedef struct node_t{

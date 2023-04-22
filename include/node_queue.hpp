@@ -8,7 +8,6 @@
 #include "tree.hpp"
 
 typedef struct node_queue_t{
-  // node_t** nodes;
   std::vector<node_t*> nodes;
 } node_queue_t;
 

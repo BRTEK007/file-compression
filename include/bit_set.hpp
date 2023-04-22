@@ -15,7 +15,6 @@
 //READ: copy n-th byte to byte_slice, read from byte_slice, if empty -> read copy another byte
 
 typedef struct bit_set_t{
-   // unsigned char* bytes;
    std::vector<unsigned char> bytes;
    byte_slice_t byte_slice;//byte slice to write or to read
    uint64_t read_id;//id of byte to read
@@ -46,8 +45,5 @@ std::vector<unsigned char> bit_set_extract_bytes(bit_set_t* bit_set);
 
 void bit_set_write_code(bit_set_t* bit_set, bit_code_t bc);
 
-// class BitSet{
-// 
-// };
 
 #endif
