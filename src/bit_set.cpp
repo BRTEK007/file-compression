@@ -5,7 +5,7 @@
 
 void bit_set_init(bit_set_t* bit_set){
     // cvector_vector_type(unsigned char) bytes = NULL;
-    printf("2 ");
+    // printf("2 ");
     byte_slice_init(&(bit_set->byte_slice));
     // bit_set->bytes = bytes;
     bit_set->read_id = 0;

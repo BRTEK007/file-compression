@@ -37,7 +37,7 @@ std::vector<unsigned char> compress(std::vector<unsigned char> in_buffer){
   }
   printf("-------------------------\n");
 
-  printf("1 ");
+  // printf("1 ");
   // exit(1);
 
   bit_set_t bit_set;
@@ -55,7 +55,7 @@ std::vector<unsigned char> compress(std::vector<unsigned char> in_buffer){
   //write 1 byte -> unique bytes count
   bit_set_write_byte(&bit_set, unique_byte_count);
   //write huffman tree data
-  tree_write_to_bitset(root, &bit_set);
+  tree_write_to_bitset(root, &bit_set);//TODO breaks here
   //write compressed data
   for(uint32_t i = 0; i < total_byte_count; i++){
     unsigned char byte = in_buffer[i];
