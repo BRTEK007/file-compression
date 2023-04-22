@@ -15,7 +15,7 @@ class BitCode{
         void writeBit(bool bit);
         bool readBit();
         int size();
-        void print();
+        std::string to_string();
 };
 
 #endif

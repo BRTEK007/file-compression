@@ -120,8 +120,6 @@ void tree_extract_codes_rec(node_t* node, BitCode code, BitCode* codes){
 
     code_left.writeBit(false);
     code_right.writeBit(true);
-    // byte_slice_write_bit(&slic_left, false);
-    // byte_slice_write_bit(&slice_right, true);
 
     tree_extract_codes_rec(node->left, code_left, codes);
     
@@ -132,9 +130,7 @@ void tree_extract_codes_rec(node_t* node, BitCode code, BitCode* codes){
 void tree_extract_leaf_bytes(node_t* node,  std::vector<unsigned char>* bytes){
   if(node == NULL) return;
   if(node->leaf){
-    // cvector_push_back(*bytes, node->byte);
     bytes->push_back(node->byte);
-    // printf("extracted %c ", node->byte);
   }else{
     tree_extract_leaf_bytes(node->left, bytes);
     tree_extract_leaf_bytes(node->right, bytes);

@@ -1,6 +1,7 @@
 #include "bit_code.hpp"
 #include <stdexcept>
 #include <iostream>
+#include <algorithm>
 
 BitCode::BitCode(){
     bits.reset();
@@ -15,7 +16,8 @@ void BitCode::writeBit(bool bit){
 
 bool BitCode::readBit(){
     // if(len == 0) throw std::runtime_error("can't read from empty bitcode");
-    bool bit = bits.test(len-1);
+    bool bit = bits.test(0);
+    bits = bits >> 1;
     len--;
     return bit;
 }
@@ -24,6 +26,9 @@ int BitCode::size(){
     return len;
 }
 
-void BitCode::print(){
-    std::cout<<bits.to_string();
+std::string BitCode::to_string(){
+    auto s = bits.to_string();
+    s.erase(0, 256 - len);
+    std::reverse(s.begin(), s.end());
+    return s;
 }

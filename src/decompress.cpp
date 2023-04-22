@@ -3,6 +3,7 @@
 #include "tree.hpp"
 #include <stdint.h>
 #include <stdio.h>
+#include <iostream>
 
 std::vector<unsigned char> decompress(std::vector<unsigned char> in_buffer){
   //create bit_set from in_buffer
@@ -37,7 +38,7 @@ std::vector<unsigned char> decompress(std::vector<unsigned char> in_buffer){
   printf("-----------\n");
   for(int i = 0; i < leaf_bytes.size(); i++){
     printf("%d (%c) | ", leaf_bytes[i], leaf_bytes[i]);
-    // byte_slice_print(codes[leaf_bytes[i]]);
+    std::cout<<codes[leaf_bytes[i]].to_string();
     printf("\n");
   }
   printf("-------------------------\n");

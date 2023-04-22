@@ -2,6 +2,7 @@
 #include "byte_freq.hpp"
 #include <stdint.h>
 #include <stdio.h>
+#include <iostream>
 #include "tree.hpp"
 #include "bit_set.hpp"
 #include "bit_code.hpp"
@@ -28,8 +29,7 @@ std::vector<unsigned char> compress(std::vector<unsigned char> in_buffer){
   for(int i = 0; i < unique_byte_count; i++){
     byte_freq_t bf = bf_arr[i];
     printf("%d (%c) | %9.1f | ", bf.byte, bf.byte, (float)(100*bf.freq) / total_byte_count);
-    // byte_slice_print(codes[bf.byte]);
-    codes[bf.byte].print();
+    std::cout<<codes[bf.byte].to_string();
     printf("\n");
   }
   printf("-------------------------\n");
