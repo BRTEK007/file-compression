@@ -1,12 +1,60 @@
-implement priority queue, min-max heap or whatever efficient...
-faster bit operations, macros
-limit max height of tree (code length) to 32/64 (uint64) bits 
+# file-compression
 
-save code in a bitset -> add bitset to bitset
-or store codes in a char arr[255] = "011011101";
-or bool array = true, false, true, false...
+c++ file compression and decompression, using Huffman coding
 
-tree extract nodes -> do it smarter, code copying when branching
+note: project is in a state of being converted from plain C
 
-rewrite to classes and better c++, use namespaces
-use google test
+## example
+ ```console
+> ./byte-compressor -c ../tests/files/22_total_5_unique.txt out.bin
+-------------------------
+COMPRESSING 21 BYTES, 5 UNIQUE
+-------------------------
+BYTE   | FREQUENCY | CODE
+-------------------------
+70 (F) |       4.8 | 1100
+77 (M) |       4.8 | 1101
+71 (G) |      19.0 | 111
+88 (X) |      23.8 | 10
+65 (A) |      47.6 | 0
+-------------------------
+size after compression: 17, 19.0% reduction
+-------------------------
+```
+
+```console
+> python3 tester.py 
+PASSED files/22_total_5_unique.txt
+FAILED files/iliad.txt (COMPARISSON)
+PASSED files/1000_digits.bin
+PASSED files/1000_lowercase.bin
+PASSED files/1000_printable.bin
+FAILED files/10000_all.bin (DECOMPRESSION)
+FAILED files/lena.tiff (DECOMPRESSION)
+FAILED files/mozart_symphony_40.wav (DECOMPRESSION)
+```
+## testing
+tests directory contains python script that tests compression then decompression and compares the files 
+
+unit tests in src/unit_tests.cpp, unit_tests Cmake target
+
+## build
+ ```console
+> mkdir build 
+> cd build 
+> cmake .. 
+> make
+```
+
+## TODO:
+implement priority queue for building tree, min-max heap or whatever efficient... 
+
+optimize bit operations, macros 
+
+limit max height of tree (code length) to 32/64 (uint64) bits or enable 256 bit long codes 
+
+look into some testing framework, maybe googletest
+
+introduce OOP and propper C++
+
+use std::bitset
