@@ -1,5 +1,6 @@
 import subprocess
 import os
+import time
 
 GREEN = '\033[92m'
 RED = '\033[91m'
@@ -23,6 +24,9 @@ class Tester:
 
     def run(self, filePath):
         absoluteFilePath = os.path.join(self.absolutePath, filePath)
+        
+        start = time.time()
+
         #compression
         process = subprocess.Popen([self.compressorPath, '-c', absoluteFilePath, 'temp.compressed'], stdout=subprocess.PIPE, stderr=subprocess.PIPE) 
         stream_out, stream_err = process.communicate()
@@ -39,11 +43,13 @@ class Tester:
         process = subprocess.Popen(['cmp', absoluteFilePath, 'temp.decompressed'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stream_out, stream_err = process.communicate()
         output = stream_out.decode('ASCII')
-        
+
+        elapsed = time.time() - start
+
         if output != "":
             return self.failed(filePath, 'COMPRESSION')
 
-        print(GREEN+"PASSED"+ENDC, filePath)
+        print('{0} {1:50}\t{2}ms'.format(GREEN+"PASSED"+ENDC, filePath, round(elapsed*1000, 2)))
 
 tester = Tester("../build/byte-compressor")
 tester.run("files/22_total_5_unique.txt")
