@@ -37,7 +37,7 @@ class Tester:
         process = subprocess.Popen([self.compressorPath, '-d', 'temp.compressed', 'temp.decompressed'], stdout=subprocess.PIPE, stderr=subprocess.PIPE) 
         stream_out, stream_err = process.communicate()
         if process.returncode != 0:
-            return self.failed(filePath, 'COMPRESSION', process.returncode, stream_err)
+            return self.failed(filePath, 'DECOMPRESSION', process.returncode, stream_err)
             
         #compare
         process = subprocess.Popen(['cmp', absoluteFilePath, 'temp.decompressed'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -47,7 +47,7 @@ class Tester:
         elapsed = time.time() - start
 
         if output != "":
-            return self.failed(filePath, 'COMPRESSION')
+            return self.failed(filePath, 'COMPARISSON')
 
         print('{0} {1:50}\t{2}ms'.format(GREEN+"PASSED"+ENDC, filePath, round(elapsed*1000, 2)))
 
