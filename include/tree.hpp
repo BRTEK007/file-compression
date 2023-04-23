@@ -7,6 +7,7 @@
 #include "byte_slice.hpp"
 #include "bit_set.hpp"
 #include <vector>
+#include <array>
 #include "bit_code.hpp"
 
 typedef struct node_t{
@@ -17,18 +18,22 @@ typedef struct node_t{
   struct node_t* right;
 } node_t;
 
-node_t* create_tree(std::vector<byte_freq_t> bf_arr);
-
-void tree_extract_codes(node_t* root, BitCode* codes);
-
-void tree_extract_codes_rec(node_t* root, BitCode code, BitCode* codes);
-
-void tree_extract_leaf_bytes(node_t* node, std::vector<unsigned char>* bytes);
-
-void tree_free(node_t* node);
-
-void tree_write_to_bitset(node_t* root, bit_set_t* bit_set);
-
-node_t* tree_read_from_bitset(bit_set_t* bit_set, uint8_t leaf_count);
+class Tree{
+    node_t* head;
+    node_t* node_ptr;
+  public:
+    Tree();
+    ~Tree();
+    void create_from_bytefreq(const std::vector<byte_freq_t>& bf_arr);
+    void extract_codes(std::array<BitCode, 256>& codes);
+    void extract_leaf_bytes(std::vector<unsigned char>& bytes);
+    void write_to_bitset(bit_set_t* bit_set);
+    void create_from_bitset(bit_set_t* bit_set, uint8_t leaf_count);
+    void ptr_reset();
+    void ptr_right();
+    void ptr_left();
+    bool ptr_is_leaf();
+    unsigned char ptr_read_byte();
+};
 
 #endif
