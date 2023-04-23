@@ -33,78 +33,74 @@ TEST_END
 
 
 TEST_BEGIN(bit_set_1)
-    bit_set_t bit_set;
-    bit_set_init(&bit_set);
+    BitSet bit_set;
 
     //11001101 1011
-    bit_set_write_bit(&bit_set, true);
-    bit_set_write_bit(&bit_set, true);
-    bit_set_write_bit(&bit_set, false);
-    bit_set_write_bit(&bit_set, false);
+    bit_set.write_bit(true);
+    bit_set.write_bit(true);
+    bit_set.write_bit(false);
+    bit_set.write_bit(false);
     
-    bit_set_write_bit(&bit_set, true);
-    bit_set_write_bit(&bit_set, true);
-    bit_set_write_bit(&bit_set, false);
-    bit_set_write_bit(&bit_set, true);
+    bit_set.write_bit(true);
+    bit_set.write_bit(true);
+    bit_set.write_bit(false);
+    bit_set.write_bit(true);
     
-    bit_set_write_bit(&bit_set, true);
-    bit_set_write_bit(&bit_set, false);
-    bit_set_write_bit(&bit_set, true);
-    bit_set_write_bit(&bit_set, true);
+    bit_set.write_bit(true);
+    bit_set.write_bit(false);
+    bit_set.write_bit(true);
+    bit_set.write_bit(true);
 
-    bit_set_end_write(&bit_set);
+    bit_set.end_write();
     
-    bit_set_begin_read(&bit_set);
+    bit_set.begin_read();
     //11001101 1011
-    assert(bit_set_read_bit(&bit_set) == true);
-    assert(bit_set_read_bit(&bit_set) == true);
-    assert(bit_set_read_bit(&bit_set) == false);
-    assert(bit_set_read_bit(&bit_set) == false);
+    assert(bit_set.read_bit() == true);
+    assert(bit_set.read_bit() == true);
+    assert(bit_set.read_bit() == false);
+    assert(bit_set.read_bit() == false);
     
-    assert(bit_set_read_bit(&bit_set) == true);
-    assert(bit_set_read_bit(&bit_set) == true);
-    assert(bit_set_read_bit(&bit_set) == false);
-    assert(bit_set_read_bit(&bit_set) == true);
+    assert(bit_set.read_bit() == true);
+    assert(bit_set.read_bit() == true);
+    assert(bit_set.read_bit() == false);
+    assert(bit_set.read_bit() == true);
    
-    assert(bit_set_read_bit(&bit_set) == true);
-    assert(bit_set_read_bit(&bit_set) == false);
-    assert(bit_set_read_bit(&bit_set) == true);
-    assert(bit_set_read_bit(&bit_set) == true);
+    assert(bit_set.read_bit() == true);
+    assert(bit_set.read_bit() == false);
+    assert(bit_set.read_bit() == true);
+    assert(bit_set.read_bit() == true);
    
-    bit_set_free(&bit_set);
 TEST_END
 
 TEST_BEGIN(bit_set_2)
-    bit_set_t bit_set;
-    bit_set_init(&bit_set);
+    BitSet bit_set;
 
     // 0 0 1 A 0 1 F 
-    bit_set_write_bit(&bit_set, false);
-    bit_set_write_bit(&bit_set, false);
-    bit_set_write_bit(&bit_set, true);
+    bit_set.write_bit(false);
+    bit_set.write_bit(false);
+    bit_set.write_bit(true);
 
-    bit_set_write_byte(&bit_set, 'A');
+    bit_set.write_byte('A');
     
-    bit_set_write_bit(&bit_set, false);
-    bit_set_write_bit(&bit_set, true);
+    bit_set.write_bit(false);
+    bit_set.write_bit(true);
 
-    bit_set_write_byte(&bit_set, 'F');
+    bit_set.write_byte('F');
     
-    bit_set_end_write(&bit_set);
+    bit_set.end_write();
     
-    bit_set_begin_read(&bit_set);
+    bit_set.begin_read();
     // 0 0 1 A 0 1 F 
-    assert(bit_set_read_bit(&bit_set) == false);
-    assert(bit_set_read_bit(&bit_set) == false);
-    assert(bit_set_read_bit(&bit_set) == true);
+    assert(bit_set.read_bit() == false);
+    assert(bit_set.read_bit() == false);
+    assert(bit_set.read_bit() == true);
     
-    assert(bit_set_read_byte(&bit_set) == 'A');
+    assert(bit_set.read_byte() == 'A');
     
-    assert(bit_set_read_bit(&bit_set) == false);
-    assert(bit_set_read_bit(&bit_set) == true);
+    assert(bit_set.read_bit() == false);
+    assert(bit_set.read_bit() == true);
 
-    assert(bit_set_read_byte(&bit_set) == 'F');
-    bit_set_free(&bit_set);
+    assert(bit_set.read_byte() == 'F');
 TEST_END
 
 TEST_BEGIN(bit_code_1)

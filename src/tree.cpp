@@ -107,7 +107,7 @@ void Tree::extract_leaf_bytes(std::vector<unsigned char>& bytes){
 
 }
 
-void Tree::write_to_bitset(bit_set_t* bit_set){
+void Tree::write_to_bitset(BitSet* bit_set){
   std::vector<node_t*> stack;
   
   stack.push_back(this->head->right);
@@ -121,17 +121,17 @@ void Tree::write_to_bitset(bit_set_t* bit_set){
       continue; 
     
     if(node->leaf){
-      bit_set_write_bit(bit_set, true);
-      bit_set_write_byte(bit_set, node->byte);
+      bit_set->write_bit(true);
+      bit_set->write_byte(node->byte);
     }else{
-      bit_set_write_bit(bit_set, false);
+      bit_set->write_bit(false);
       stack.push_back(node->right);
       stack.push_back(node->left);
     }
   }
 }
 
-void Tree::create_from_bitset(bit_set_t* bit_set, uint8_t leaf_count){
+void Tree::create_from_bitset(BitSet* bit_set, uint8_t leaf_count){
   node_t* root = new node_t();
   root->leaf = false;
   root->left = NULL;
@@ -147,7 +147,7 @@ void Tree::create_from_bitset(bit_set_t* bit_set, uint8_t leaf_count){
     node_t** node = stack.back();
     stack.pop_back();
 
-    bool bit = bit_set_read_bit(bit_set);
+    bool bit = bit_set->read_bit();
 
     if(!bit){//parent node
       node_t* new_node = new node_t();
@@ -160,7 +160,7 @@ void Tree::create_from_bitset(bit_set_t* bit_set, uint8_t leaf_count){
       stack.push_back(&(new_node->left));
     }else{//leaf node
       node_t* new_node = new node_t();
-      new_node->byte = bit_set_read_byte(bit_set);
+      new_node->byte = bit_set->read_byte();
       new_node->leaf = true;
       new_node->left = NULL;
       new_node->right = NULL;
