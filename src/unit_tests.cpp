@@ -108,7 +108,7 @@ TEST_BEGIN(bit_set_2)
 TEST_END
 
 TEST_BEGIN(bit_code_1)
-    BitCode code;
+    BitCode<256> code;
     code.writeBit(true);
     code.writeBit(true);
     code.writeBit(false);

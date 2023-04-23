@@ -17,7 +17,7 @@ std::vector<unsigned char> compress(const std::vector<unsigned char>& in_buffer)
   Tree tree;
   tree.create_from_bytefreq(bf_arr);
 
-  std::array<BitCode, 256> codes; 
+  std::array<BitCode<256>, 256> codes; 
 
   tree.extract_codes(codes);
 

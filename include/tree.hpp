@@ -25,7 +25,7 @@ class Tree{
     Tree();
     ~Tree();
     void create_from_bytefreq(const std::vector<byte_freq_t>& bf_arr);
-    void extract_codes(std::array<BitCode, 256>& codes);
+    void extract_codes(std::array<BitCode<256>, 256>& codes);
     void extract_leaf_bytes(std::vector<unsigned char>& bytes);
     void write_to_bitset(bit_set_t* bit_set);
     void create_from_bitset(bit_set_t* bit_set, uint8_t leaf_count);

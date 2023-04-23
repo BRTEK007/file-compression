@@ -3,32 +3,38 @@
 #include <iostream>
 #include <algorithm>
 
-BitCode::BitCode(){
+template class BitCode<256>;
+template class BitCode<8>;
+
+template<std::size_t N>
+BitCode<N>::BitCode(){
     bits.reset();
     len = 0;
 }
 
-void BitCode::writeBit(bool bit){
-    // if(len == 256) throw std::runtime_error("can't add bit to full bitcode");
+template<std::size_t N>
+void BitCode<N>::writeBit(bool bit){
     bits.set(len, bit);
     len++;
 }
 
-bool BitCode::readBit(){
-    // if(len == 0) throw std::runtime_error("can't read from empty bitcode");
+template<std::size_t N>
+bool BitCode<N>::readBit(){
     bool bit = bits.test(0);
     bits = bits >> 1;
     len--;
     return bit;
 }
 
-int BitCode::size(){
+template<std::size_t N>
+int BitCode<N>::size(){
     return len;
 }
 
-std::string BitCode::to_string(){
+template<std::size_t N>
+std::string BitCode<N>::to_string(){
     auto s = bits.to_string();
-    s.erase(0, 256 - len);
+    s.erase(0, N - len);
     std::reverse(s.begin(), s.end());
     return s;
 }

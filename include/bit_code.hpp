@@ -1,15 +1,15 @@
 #ifndef BIT_CODE_H
 #define BIT_CODE_H
 
-#include <stdbool.h>
 #include <bitset>
 
 //class for holding bit codes for bytes
 
+template<std::size_t N>
 class BitCode{
     private:
         int len;
-        std::bitset<256> bits;
+        std::bitset<N> bits;
     public:
         BitCode();
         void writeBit(bool bit);
