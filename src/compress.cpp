@@ -10,7 +10,7 @@
 std::vector<unsigned char> compress(std::vector<unsigned char> in_buffer){
   uint32_t total_byte_count = in_buffer.size();
 
-  std::vector<byte_freq_t> bf_arr = get_byte_freq_arr(in_buffer);
+  std::vector<byte_freq_t> bf_arr = get_byte_frequencies(in_buffer);
 
   unsigned char unique_byte_count = bf_arr.size();
   
