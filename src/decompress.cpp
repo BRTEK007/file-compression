@@ -19,7 +19,9 @@ std::vector<unsigned char> decompress(const std::vector<unsigned char>& in_buffe
   bytes[3] = bit_set_read_byte(&bit_set);
   uint32_t total_byte_count = *((uint32_t*)bytes);
   //read 1 byte -> unique bytes count
-  unsigned char unique_byte_count = bit_set_read_byte(&bit_set); 
+  bytes[0] = bit_set_read_byte(&bit_set);
+  bytes[1] = bit_set_read_byte(&bit_set);
+  uint16_t unique_byte_count = *((uint16_t*)bytes); 
   //
   printf("-------------------------\n");
   printf("DECOMPRESSING %d BYTES, %d UNIQUE\n", total_byte_count, unique_byte_count);
@@ -28,13 +30,12 @@ std::vector<unsigned char> decompress(const std::vector<unsigned char>& in_buffe
   Tree tree;
   tree.create_from_bitset(&bit_set, unique_byte_count);
   std::vector<unsigned char> leaf_bytes;
-  
   tree.extract_leaf_bytes(leaf_bytes);
 
   std::array<BitCode, 256> codes; 
   
   tree.extract_codes(codes);
-
+ 
   printf("BYTE   | CODE\n");
   printf("-----------\n");
   for(int i = 0; i < leaf_bytes.size(); i++){

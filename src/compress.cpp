@@ -12,7 +12,7 @@ std::vector<unsigned char> compress(const std::vector<unsigned char>& in_buffer)
 
   std::vector<byte_freq_t> bf_arr = get_byte_frequencies(in_buffer);
 
-  unsigned char unique_byte_count = bf_arr.size();
+  uint16_t unique_byte_count = bf_arr.size();
   
   Tree tree;
   tree.create_from_bytefreq(bf_arr);
@@ -45,8 +45,10 @@ std::vector<unsigned char> compress(const std::vector<unsigned char>& in_buffer)
   bit_set_write_byte(&bit_set, bytes[1]);
   bit_set_write_byte(&bit_set, bytes[2]);
   bit_set_write_byte(&bit_set, bytes[3]);
-  //write 1 byte -> unique bytes count
-  bit_set_write_byte(&bit_set, unique_byte_count);
+  //write 2 bytes -> unique bytes count
+  bytes = (unsigned char*)&unique_byte_count;
+  bit_set_write_byte(&bit_set, bytes[0]);
+  bit_set_write_byte(&bit_set, bytes[1]);
   //write huffman tree data
   tree.write_to_bitset(&bit_set);
   //write compressed data
