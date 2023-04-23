@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <assert.h>
+#include <iostream>
 
 #include "byte_slice.hpp"
 #include "bit_set.hpp"
@@ -106,10 +107,24 @@ TEST_BEGIN(bit_set_2)
     bit_set_free(&bit_set);
 TEST_END
 
+TEST_BEGIN(bit_code_1)
+    BitCode code;
+    code.writeBit(true);
+    code.writeBit(true);
+    code.writeBit(false);
+    code.writeBit(true);
+    //1101
+    assert(code.readBit() == true);
+    assert(code.readBit() == true);
+    assert(code.readBit() == false);
+    assert(code.readBit() == true);
+TEST_END
+
 int main(int argc, char** argv){
   TEST_RUN(byte_slice_1);
   TEST_RUN(bit_set_1);
   TEST_RUN(bit_set_2);
+  TEST_RUN(bit_code_1);
   return 0;
 }
 

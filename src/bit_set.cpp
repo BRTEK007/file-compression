@@ -88,8 +88,8 @@ std::vector<unsigned char> bit_set_extract_bytes(bit_set_t* bit_set){
     return bit_set->bytes;
 }
 
-void bit_set_write_code(bit_set_t* bit_set, bit_code_t code){
-    for(size_t i = 0; i < code.bits.size(); i++){
-        bit_set_write_bit(bit_set, code.bits[i]);
+void bit_set_write_code(bit_set_t* bit_set, BitCode code){
+    while(code.size() > 0){
+        bit_set_write_bit(bit_set, code.readBit());
     }
 }

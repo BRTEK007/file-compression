@@ -105,35 +105,32 @@ node_t* tree_read_from_bitset(bit_set_t* bit_set, uint8_t leaf_count){
   return root;
 }
 
-void tree_extract_codes(node_t* root, byte_slice_t* codes){
-  byte_slice_t slice;
-  byte_slice_init(&slice);
-  tree_extract_codes_rec(root, slice, codes);
+void tree_extract_codes(node_t* root, BitCode* codes){
+  BitCode code;
+  tree_extract_codes_rec(root, code, codes);
 }
 
-void tree_extract_codes_rec(node_t* node, byte_slice_t code, byte_slice_t* codes){
+void tree_extract_codes_rec(node_t* node, BitCode code, BitCode* codes){
   if(node == NULL) return;
   if(node->leaf){
     codes[node->byte] = code;
   }else{
-    byte_slice_t slice_left = code;
-    byte_slice_t slice_right = code;
+    BitCode code_left = code;
+    BitCode code_right = code;
 
-    byte_slice_write_bit(&slice_left, false);
-    byte_slice_write_bit(&slice_right, true);
+    code_left.writeBit(false);
+    code_right.writeBit(true);
 
-    tree_extract_codes_rec(node->left, slice_left, codes);
+    tree_extract_codes_rec(node->left, code_left, codes);
     
-    tree_extract_codes_rec(node->right, slice_right, codes);
+    tree_extract_codes_rec(node->right, code_right, codes);
   }
 }
 
 void tree_extract_leaf_bytes(node_t* node,  std::vector<unsigned char>* bytes){
   if(node == NULL) return;
   if(node->leaf){
-    // cvector_push_back(*bytes, node->byte);
     bytes->push_back(node->byte);
-    // printf("extracted %c ", node->byte);
   }else{
     tree_extract_leaf_bytes(node->left, bytes);
     tree_extract_leaf_bytes(node->right, bytes);

@@ -5,34 +5,45 @@ GREEN = '\033[92m'
 RED = '\033[91m'
 ENDC = '\033[0m'
 
-#TODO timeout detection, print return codes
+#TODO timeout detection
 
 class Tester:
     def __init__(self, compressorPath):
         self.absolutePath = os.path.dirname(__file__)
         self.compressorPath = os.path.join(self.absolutePath, compressorPath)
 
+    def failed(self, filePath, testname, retcode = None, stderr=None):
+        print(RED+"FAILED"+ENDC, filePath, "({})".format(testname))
+        if retcode != None:
+            print('return code: {}'.format(retcode))
+        if stderr != None:
+            print('stderr: ')
+            print(stderr.decode('ASCII'))
+        return 1
+
     def run(self, filePath):
         absoluteFilePath = os.path.join(self.absolutePath, filePath)
-        # print("<<TESTER>> : BEGIN COMPRESSION")
-        retcode = subprocess.call([self.compressorPath, '-c', absoluteFilePath, 'temp.compressed'], stdout=subprocess.DEVNULL) 
-        if retcode != 0:
-            print(RED+"FAILED"+ENDC, filePath, "(COMPRESSION)")
-            return    
-        # print("<<TESTER>> : BEGIN DECOMPRESSION")
-        retcode = subprocess.call([self.compressorPath, '-d', 'temp.compressed', 'temp.decompressed'], stdout=subprocess.DEVNULL) 
-        if retcode != 0:
-            print(RED+"FAILED"+ENDC, filePath, "(DECOMPRESSION)")
-            return    
-        # print("<<TESTER>> : BEGIN COMPARISSON")
-        p = subprocess.Popen(['cmp', absoluteFilePath, 'temp.decompressed'], stdout=subprocess.PIPE)
-        p.wait()
-        p.stdout.flush()
-        output = p.stdout.read().decode('ASCII')
-        if output == "":
-           print(GREEN+"PASSED"+ENDC, filePath)
-        else:
-            print(RED+"FAILED"+ENDC, filePath, "(COMPARISSON)")
+        #compression
+        process = subprocess.Popen([self.compressorPath, '-c', absoluteFilePath, 'temp.compressed'], stdout=subprocess.PIPE, stderr=subprocess.PIPE) 
+        stream_out, stream_err = process.communicate()
+        if process.returncode != 0:
+            return self.failed(filePath, 'COMPRESSION', process.returncode, stream_err)
+            
+        #decompression
+        process = subprocess.Popen([self.compressorPath, '-d', 'temp.compressed', 'temp.decompressed'], stdout=subprocess.PIPE, stderr=subprocess.PIPE) 
+        stream_out, stream_err = process.communicate()
+        if process.returncode != 0:
+            return self.failed(filePath, 'COMPRESSION', process.returncode, stream_err)
+            
+        #compare
+        process = subprocess.Popen(['cmp', absoluteFilePath, 'temp.decompressed'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stream_out, stream_err = process.communicate()
+        output = stream_out.decode('ASCII')
+        
+        if output != "":
+            return self.failed(filePath, 'COMPRESSION')
+
+        print(GREEN+"PASSED"+ENDC, filePath)
 
 tester = Tester("../build/byte-compressor")
 tester.run("files/22_total_5_unique.txt")

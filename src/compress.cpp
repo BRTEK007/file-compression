@@ -1,10 +1,11 @@
 #include "compress.hpp"
 #include "byte_freq.hpp"
-#include "bit_code.hpp"
 #include <stdint.h>
 #include <stdio.h>
+#include <iostream>
 #include "tree.hpp"
 #include "bit_set.hpp"
+#include "bit_code.hpp"
 
 std::vector<unsigned char> compress(std::vector<unsigned char> in_buffer){
   uint32_t total_byte_count = in_buffer.size();
@@ -15,7 +16,8 @@ std::vector<unsigned char> compress(std::vector<unsigned char> in_buffer){
   
   node_t* root = create_tree(bf_arr);
   
-  byte_slice_t* codes = (byte_slice_t*)calloc(256, sizeof(byte_slice_t));
+  // byte_slice_t* codes = (byte_slice_t*)calloc(256, sizeof(byte_slice_t));
+  BitCode* codes = (BitCode*)calloc(256, sizeof(BitCode));
 
   tree_extract_codes(root, codes);
 
@@ -27,7 +29,7 @@ std::vector<unsigned char> compress(std::vector<unsigned char> in_buffer){
   for(int i = 0; i < unique_byte_count; i++){
     byte_freq_t bf = bf_arr[i];
     printf("%d (%c) | %9.1f | ", bf.byte, bf.byte, (float)(100*bf.freq) / total_byte_count);
-    byte_slice_print(codes[bf.byte]);
+    std::cout<<codes[bf.byte].to_string();
     printf("\n");
   }
   printf("-------------------------\n");
@@ -50,8 +52,9 @@ std::vector<unsigned char> compress(std::vector<unsigned char> in_buffer){
   //write compressed data
   for(uint32_t i = 0; i < total_byte_count; i++){
     unsigned char byte = in_buffer[i];
-    byte_slice_t slice = codes[byte];
-    bit_set_write_slice(&bit_set, slice);
+    // byte_slice_t slice = codes[byte];
+    BitCode code = codes[byte];
+    bit_set_write_code(&bit_set, code);
   }
   bit_set_end_write(&bit_set);
 

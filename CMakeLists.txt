@@ -28,4 +28,5 @@ target_sources(unit_tests PRIVATE
     src/unit_tests.cpp
     src/byte_slice.cpp
     src/bit_set.cpp
+    src/bit_code.cpp
 )

@@ -25,7 +25,7 @@ size after compression: 17, 19.0% reduction
 ```console
 > python3 tester.py 
 PASSED files/22_total_5_unique.txt
-FAILED files/iliad.txt (COMPARISSON)
+PASSED files/iliad.txt
 PASSED files/1000_digits.bin
 PASSED files/1000_lowercase.bin
 PASSED files/1000_printable.bin
@@ -51,10 +51,6 @@ implement priority queue for building tree, min-max heap or whatever efficient..
 
 optimize bit operations, macros 
 
-limit max height of tree (code length) to 32/64 (uint64) bits or enable 256 bit long codes 
-
 look into some testing framework, maybe googletest
 
 introduce OOP and propper C++
-
-use std::bitset
