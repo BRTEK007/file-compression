@@ -3,6 +3,6 @@
 
 #include <vector>
 
-std::vector<unsigned char> compress(std::vector<unsigned char> in_buffer);
+std::vector<unsigned char> compress(const std::vector<unsigned char>& in_buffer);
 
 #endif

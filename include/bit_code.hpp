@@ -1,7 +1,6 @@
 #ifndef BIT_CODE_H
 #define BIT_CODE_H
 
-#include <stdbool.h>
 #include <bitset>
 
 //class for holding bit codes for bytes
@@ -14,6 +13,7 @@ class BitCode{
         BitCode();
         void writeBit(bool bit);
         bool readBit();
+        unsigned char readByte();
         int size();
         std::string to_string();
 };

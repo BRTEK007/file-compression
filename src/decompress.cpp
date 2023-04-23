@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <iostream>
 
-std::vector<unsigned char> decompress(std::vector<unsigned char> in_buffer){
+std::vector<unsigned char> decompress(const std::vector<unsigned char>& in_buffer){
   //create bit_set from in_buffer
   bit_set_t bit_set;
   bit_set_init_from_bytes(&bit_set, in_buffer);
@@ -25,14 +25,15 @@ std::vector<unsigned char> decompress(std::vector<unsigned char> in_buffer){
   printf("DECOMPRESSING %d BYTES, %d UNIQUE\n", total_byte_count, unique_byte_count);
   printf("-------------------------\n");
   //read huffman tree data
-  node_t* root = tree_read_from_bitset(&bit_set, unique_byte_count);
+  Tree tree;
+  tree.create_from_bitset(&bit_set, unique_byte_count);
   std::vector<unsigned char> leaf_bytes;
   
-  tree_extract_leaf_bytes(root, &leaf_bytes);
+  tree.extract_leaf_bytes(leaf_bytes);
 
-  BitCode* codes = (BitCode*) calloc(256, sizeof(BitCode)); 
+  std::array<BitCode, 256> codes; 
   
-  tree_extract_codes(root, codes);
+  tree.extract_codes(codes);
 
   printf("BYTE   | CODE\n");
   printf("-----------\n");
@@ -43,27 +44,25 @@ std::vector<unsigned char> decompress(std::vector<unsigned char> in_buffer){
   }
   printf("-------------------------\n");
   
-  free(codes);
 
-  //read compressed data
   std::vector<unsigned char> out_buffer;
   uint32_t read_bytes = 0;
-  node_t* node = root;
+  tree.ptr_reset();
   while(read_bytes < total_byte_count){
     bool bit = bit_set_read_bit(&bit_set);
-    if(bit){
-      node = node->right;
-    }else{
-      node = node->left;
-    }
-    if(node->leaf){
-      out_buffer.push_back(node->byte);
-      node = root;
+    
+    if(bit)
+      tree.ptr_right();
+    else
+      tree.ptr_left();
+    
+    if(tree.ptr_is_leaf()){
+      out_buffer.push_back(tree.ptr_read_byte());
+      tree.ptr_reset();
       read_bytes++;
     }
   }
 
   bit_set_free(&bit_set);
-  tree_free(root);
   return out_buffer;
 }

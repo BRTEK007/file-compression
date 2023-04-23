@@ -3,23 +3,34 @@
 #include <iostream>
 #include <algorithm>
 
+
 BitCode::BitCode(){
     bits.reset();
     len = 0;
 }
 
 void BitCode::writeBit(bool bit){
-    // if(len == 256) throw std::runtime_error("can't add bit to full bitcode");
     bits.set(len, bit);
     len++;
 }
 
 bool BitCode::readBit(){
-    // if(len == 0) throw std::runtime_error("can't read from empty bitcode");
     bool bit = bits.test(0);
     bits = bits >> 1;
     len--;
     return bit;
+}
+
+unsigned char BitCode::readByte(){
+    BitCode temp = *this;
+    unsigned char byte = 0;
+    for(int i = 0; i < 8; i++){
+        unsigned bit = static_cast<unsigned>(bits.test(i));
+        byte = byte | bit << (7-i);
+    }
+    bits = bits >> 8;
+    len -= 8;
+    return byte;
 }
 
 int BitCode::size(){
