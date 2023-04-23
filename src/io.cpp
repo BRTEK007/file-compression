@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 //reads bytes from file, returns them in a cvector
-std::vector<unsigned char> read_bytes_from_file(const char* filename){ 
+void read_bytes_from_file(const char* filename, std::vector<unsigned char>& out_bytes){ 
   FILE* inputFile;
   
   inputFile = fopen(filename, "rb");
@@ -17,18 +17,17 @@ std::vector<unsigned char> read_bytes_from_file(const char* filename){
   long filelen = ftell(inputFile);      // Get the current byte offset in the file
   rewind(inputFile);                      // Jump back to the beginning of the file
 
-  unsigned char* buffer = (unsigned char*) calloc(filelen, sizeof(unsigned char)); // Enough memory for the file
+  unsigned char* buffer = new unsigned char[filelen]; // Enough memory for the file
   fread(buffer, filelen, 1, inputFile); // Read in the entire file 
 
   fclose(inputFile); // Close the file
 
-  std::vector<unsigned char> vec;
-  vec.reserve(filelen);
+  out_bytes.clear();
+  out_bytes.reserve(filelen);
 
   for(long i = 0; i < filelen; i++){
-    vec.push_back(buffer[i]);
+    out_bytes.push_back(buffer[i]);
   }
 
-  free(buffer);
-  return vec;
+  delete buffer;
 }

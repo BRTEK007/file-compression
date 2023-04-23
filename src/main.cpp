@@ -55,7 +55,8 @@ int main(int argc, char** argv){
     args_error_exit();
   }
   
-  std::vector<unsigned char> input_buffer = read_bytes_from_file(input_filename);
+  std::vector<unsigned char> input_buffer;
+  read_bytes_from_file(input_filename, input_buffer);
   std::vector<unsigned char> output_buffer;
 
   if(doCompress){
