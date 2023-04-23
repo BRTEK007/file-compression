@@ -3,38 +3,36 @@
 #include <iostream>
 #include <algorithm>
 
-template class BitCode<256>;
-template class BitCode<8>;
 
-template<std::size_t N>
-BitCode<N>::BitCode(){
+BitCode::BitCode(){
     bits.reset();
     len = 0;
 }
 
-template<std::size_t N>
-void BitCode<N>::writeBit(bool bit){
+void BitCode::writeBit(bool bit){
     bits.set(len, bit);
     len++;
 }
 
-template<std::size_t N>
-bool BitCode<N>::readBit(){
+bool BitCode::readBit(){
     bool bit = bits.test(0);
     bits = bits >> 1;
     len--;
     return bit;
 }
 
-template<std::size_t N>
-int BitCode<N>::size(){
+unsigned char BitCode::readByte(){//TODO implement
+    unsigned char byte = 0;
+    return byte;
+}
+
+int BitCode::size(){
     return len;
 }
 
-template<std::size_t N>
-std::string BitCode<N>::to_string(){
+std::string BitCode::to_string(){
     auto s = bits.to_string();
-    s.erase(0, N - len);
+    s.erase(0, 256 - len);
     std::reverse(s.begin(), s.end());
     return s;
 }

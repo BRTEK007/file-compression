@@ -31,7 +31,7 @@ std::vector<unsigned char> decompress(const std::vector<unsigned char>& in_buffe
   
   tree.extract_leaf_bytes(leaf_bytes);
 
-  std::array<BitCode<256>, 256> codes; 
+  std::array<BitCode, 256> codes; 
   
   tree.extract_codes(codes);
 

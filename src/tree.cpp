@@ -57,10 +57,10 @@ void Tree::create_from_bytefreq(const std::vector<byte_freq_t>& bf_arr){
   this->head = node_queue.pop();
 }
 
-void Tree::extract_codes(std::array<BitCode<256>, 256>& codes){
-  std::vector<std::pair<node_t*, BitCode<256>>> stack;
+void Tree::extract_codes(std::array<BitCode, 256>& codes){
+  std::vector<std::pair<node_t*, BitCode>> stack;
   
-  BitCode<256> code;
+  BitCode code;
   stack.push_back({this->head, code});
 
   while(!stack.empty()){
@@ -68,11 +68,11 @@ void Tree::extract_codes(std::array<BitCode<256>, 256>& codes){
     stack.pop_back();
 
     node_t* node = node_code.first;
-    BitCode<256> code = node_code.second;
+    BitCode code = node_code.second;
 
     if(node != NULL){
-      BitCode<256> code_left = code;
-      BitCode<256> code_right = code;
+      BitCode code_left = code;
+      BitCode code_right = code;
 
       code_left.writeBit(false);
       code_right.writeBit(true);

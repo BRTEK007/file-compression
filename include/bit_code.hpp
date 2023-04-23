@@ -5,15 +5,15 @@
 
 //class for holding bit codes for bytes
 
-template<std::size_t N>
 class BitCode{
     private:
         int len;
-        std::bitset<N> bits;
+        std::bitset<256> bits;
     public:
         BitCode();
         void writeBit(bool bit);
         bool readBit();
+        unsigned char readByte();
         int size();
         std::string to_string();
 };

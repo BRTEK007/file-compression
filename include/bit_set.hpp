@@ -43,7 +43,7 @@ void bit_set_write_slice(bit_set_t* bit_set, byte_slice_t slice);
 
 std::vector<unsigned char> bit_set_extract_bytes(bit_set_t* bit_set);
 
-void bit_set_write_code(bit_set_t* bit_set, BitCode<256> bc);
+void bit_set_write_code(bit_set_t* bit_set, BitCode bc);
 
 
 #endif
