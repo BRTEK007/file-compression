@@ -7,7 +7,7 @@
 #include "bit_set.hpp"
 #include "bit_code.hpp"
 
-std::vector<unsigned char> compress(std::vector<unsigned char> in_buffer){
+std::vector<unsigned char> compress(const std::vector<unsigned char>& in_buffer){
   uint32_t total_byte_count = in_buffer.size();
 
   std::vector<byte_freq_t> bf_arr = get_byte_frequencies(in_buffer);

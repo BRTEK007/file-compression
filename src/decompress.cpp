@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <iostream>
 
-std::vector<unsigned char> decompress(std::vector<unsigned char> in_buffer){
+std::vector<unsigned char> decompress(const std::vector<unsigned char>& in_buffer){
   //create bit_set from in_buffer
   bit_set_t bit_set;
   bit_set_init_from_bytes(&bit_set, in_buffer);
