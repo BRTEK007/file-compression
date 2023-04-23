@@ -7,7 +7,7 @@
 #include "node_queue.hpp"
 
 node_t* create_tree(std::vector<byte_freq_t> bf_arr){
-  node_queue_t* node_queue = node_queue_create(bf_arr.size());
+  NodeQueue node_queue(bf_arr.size());
 
   //create a leaf node for each symbol
   for(int i = 0; i < bf_arr.size(); i++){
@@ -17,25 +17,24 @@ node_t* create_tree(std::vector<byte_freq_t> bf_arr){
     node->leaf = true;
     node->left = NULL;
     node->right = NULL;
-    node_queue_insert(node_queue, node);
+    node_queue.push(node);
   }
 
   //while more than one node in the queue
-  while(node_queue_size(node_queue) > 1){
+  while(node_queue.size() > 1){
     //remove two nodes of highest probability
-    node_t* nodeA = node_queue_pop(node_queue);
-    node_t* nodeB = node_queue_pop(node_queue);
+    node_t* nodeA = node_queue.pop();
+    node_t* nodeB = node_queue.pop();
     //create new internal node
     node_t* node_internal = (node_t*)malloc(sizeof(node_t));
     node_internal->freq = nodeA->freq + nodeB->freq;
     node_internal->leaf = false;
     node_internal->left = nodeA;
     node_internal->right = nodeB;
-    node_queue_insert(node_queue, node_internal);
+    node_queue.push(node_internal);
   }
   
-  node_t* root = node_queue_pop(node_queue);
-  node_queue_free(node_queue);
+  node_t* root = node_queue.pop();
   return root;
 }
 
