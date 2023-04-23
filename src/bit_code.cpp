@@ -21,8 +21,15 @@ bool BitCode::readBit(){
     return bit;
 }
 
-unsigned char BitCode::readByte(){//TODO implement
+unsigned char BitCode::readByte(){
+    BitCode temp = *this;
     unsigned char byte = 0;
+    for(int i = 0; i < 8; i++){
+        unsigned bit = static_cast<unsigned>(bits.test(i));
+        byte = byte | bit << (7-i);
+    }
+    bits = bits >> 8;
+    len -= 8;
     return byte;
 }
 
