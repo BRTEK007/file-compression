@@ -4,32 +4,33 @@
 
 #include "byte_slice.hpp"
 #include "bit_set.hpp"
+#include "byte_freq.hpp"
+#include "tree.hpp"
 
 #define TEST_BEGIN(name) void name() { \
                         printf("RUNNING TEST\n");
 #define TEST_END printf("SUCCESS\n");}
 #define TEST_RUN(name) name();
 
-// TEST_BEGIN(byte_slice_1)
-//     byte_slice_t byte_slice;
-//     byte_slice_init(&byte_slice);
+TEST_BEGIN(byte_slice_1)
+    ByteSlice byte_slice;
 
-//     //1101 
-//     byte_slice_write_bit(&byte_slice, true);
-//     byte_slice_write_bit(&byte_slice, true);
-//     byte_slice_write_bit(&byte_slice, false);
-//     byte_slice_write_bit(&byte_slice, true);
+    //1101 
+    byte_slice.write_bit(true);
+    byte_slice.write_bit(true);
+    byte_slice.write_bit(false);
+    byte_slice.write_bit(true);
 
-//     //1101 = 13
-//     assert(byte_slice.bits == (unsigned char)13);
+    //1101 = 13
+    assert(byte_slice.bits == (unsigned char)13);
 
-//     //1101
-//     assert(byte_slice_read_bit(&byte_slice) == true);
-//     assert(byte_slice_read_bit(&byte_slice) == true);
-//     assert(byte_slice_read_bit(&byte_slice) == false);
-//     assert(byte_slice_read_bit(&byte_slice) == true);
+    //1101
+    assert(byte_slice.read_bit() == true);
+    assert(byte_slice.read_bit() == true);
+    assert(byte_slice.read_bit() == false);
+    assert(byte_slice.read_bit() == true);
 
-// TEST_END
+TEST_END
 
 
 TEST_BEGIN(bit_set_1)
@@ -131,12 +132,35 @@ TEST_BEGIN(bit_code_2)
     assert(code.readByte() == 218);
 TEST_END
 
+TEST_BEGIN(all_bytes_1)
+    std::vector<byte_freq_t> bf_arr;
+    for(int i = 0; i < 256; i++){
+        byte_freq_t bf;
+        bf.byte = i;
+        bf.byte = 1;
+        bf_arr.push_back(bf);
+    }
+
+    Tree tree;
+    tree.create_from_bytefreq(bf_arr);
+
+    std::array<BitCode, 256> codes; 
+
+    tree.extract_codes(codes);
+
+    for(int i = 0; i < 256; i++){
+        assert(codes[i].size() > 0);
+    }
+
+TEST_END
+
 int main(int argc, char** argv){
-//   TEST_RUN(byte_slice_1);
+  TEST_RUN(byte_slice_1);
   TEST_RUN(bit_set_1);
   TEST_RUN(bit_set_2);
   TEST_RUN(bit_code_1);
   TEST_RUN(bit_code_2);
+  TEST_RUN(all_bytes_1);
   return 0;
 }
 

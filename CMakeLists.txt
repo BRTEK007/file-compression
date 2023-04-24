@@ -29,4 +29,6 @@ target_sources(unit_tests PRIVATE
     src/byte_slice.cpp
     src/bit_set.cpp
     src/bit_code.cpp
+    src/node_queue.cpp
+    src/tree.cpp
 )
