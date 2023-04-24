@@ -1,10 +1,9 @@
 #include "bit_set.hpp"
-
+#include "byte_slice.hpp"
 #include <vector>
 #include <stdio.h>
 
 BitSet::BitSet(){
-    byte_slice_init(&(byte_slice));
     read_id = 0;
     owning_bytes = true;
 }
@@ -12,7 +11,7 @@ BitSet::BitSet(){
 BitSet::~BitSet(){}
 
 void BitSet::create_from_bytes(std::vector<unsigned char> bytes){
-    byte_slice_init(&(byte_slice));
+    byte_slice = ByteSlice();
     this->bytes = bytes;
     read_id = 0;
     owning_bytes = false;
@@ -27,34 +26,30 @@ void BitSet::end_write(){
 }
 
 void BitSet::begin_read(){
-    byte_slice_t* slice = &(byte_slice);
     read_id = 0;
-    slice->bits = bytes[read_id];
-    slice->len = BYTE_SLICE_BIT_COUNT;
+    byte_slice.set_byte(bytes[read_id]);
     read_id++;
 }
 
 void BitSet::write_bit(bool bit){
     //write bit to slice, if slice full write slice to bytes
-    byte_slice_t* slice = &(byte_slice);
-    byte_slice_write_bit(slice, bit);
-    if(slice->len == BYTE_SLICE_BIT_COUNT){//is full, can be added to bytes
-        bytes.push_back(slice->bits);
-        byte_slice_init(slice);
+    byte_slice.write_bit(bit);
+    if(byte_slice.len == BYTE_SLICE_BIT_COUNT){//is full, can be added to bytes
+        bytes.push_back(byte_slice.bits);
+        byte_slice = ByteSlice();
     }
 }
 
 void BitSet::write_byte(unsigned char byte){
-    byte_slice_t slice;
-    slice.bits = byte;
-    slice.len = BYTE_SLICE_BIT_COUNT;
+    ByteSlice slice;
+    slice.set_byte(byte);
     this->write_slice(slice);
 }
 
-void BitSet::write_slice(byte_slice_t slice){
+void BitSet::write_slice(ByteSlice slice){
     //write slice bit by bit
     while(slice.len > 0){
-        this->write_bit(byte_slice_read_bit(&slice));
+        this->write_bit(slice.read_bit());
     }
 }
 
@@ -65,13 +60,10 @@ void BitSet::write_bitcode(BitCode bc){
 }
 
 bool BitSet::read_bit(){
-    byte_slice_t* slice = &(byte_slice);
+    bool bit = byte_slice.read_bit();
 
-    bool bit = byte_slice_read_bit(slice);
-
-    if(slice->len == 0){//slice is empty -> copy next byte to slice
-        slice->bits = bytes[read_id];
-        slice->len = BYTE_SLICE_BIT_COUNT;
+    if(byte_slice.len == 0){//slice is empty -> copy next byte to slice
+        byte_slice.set_byte(bytes[read_id]);
         read_id++;
     }
 
@@ -80,10 +72,9 @@ bool BitSet::read_bit(){
 
 unsigned char BitSet::read_byte(){
     //perform 8 bit reads
-   byte_slice_t slice;
-   byte_slice_init(&slice);
+   ByteSlice slice;
    while(slice.len < BYTE_SLICE_BIT_COUNT){
-        byte_slice_write_bit(&slice, this->read_bit());
+        slice.write_bit(this->read_bit());
    }
    return slice.bits; 
 }

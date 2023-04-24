@@ -12,6 +12,7 @@ class BitCode{
     public:
         BitCode();
         void writeBit(bool bit);
+        void writeByte(unsigned char byte);
         bool readBit();
         unsigned char readByte();
         int size();
