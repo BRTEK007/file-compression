@@ -137,7 +137,7 @@ TEST_BEGIN(all_bytes_1)
     for(int i = 0; i < 256; i++){
         byte_freq_t bf;
         bf.byte = i;
-        bf.byte = 1;
+        bf.freq = 1;
         bf_arr.push_back(bf);
     }
 
