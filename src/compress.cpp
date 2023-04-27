@@ -41,13 +41,13 @@ std::vector<unsigned char> compress(const std::vector<unsigned char>& in_buffer)
   BitSet bit_set;
 
   //write 4 bytes -> total bytes count
-  unsigned char* bytes = (unsigned char *)&total_byte_count;
+  unsigned char* bytes = reinterpret_cast<unsigned char *>(&total_byte_count);
   bit_set.write_byte(bytes[0]);
   bit_set.write_byte(bytes[1]);
   bit_set.write_byte(bytes[2]);
   bit_set.write_byte(bytes[3]);
   //write 2 bytes -> unique bytes count
-  bytes = (unsigned char*)&unique_byte_count;
+  bytes = reinterpret_cast<unsigned char *>(&unique_byte_count);
   bit_set.write_byte(bytes[0]);
   bit_set.write_byte(bytes[1]);
   //write huffman tree data

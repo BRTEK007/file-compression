@@ -17,11 +17,11 @@ std::vector<unsigned char> decompress(const std::vector<unsigned char>& in_buffe
   bytes[1] = bit_set.read_byte();
   bytes[2] = bit_set.read_byte();
   bytes[3] = bit_set.read_byte();
-  uint32_t total_byte_count = *((uint32_t*)bytes);
+  uint32_t total_byte_count = *(reinterpret_cast<uint32_t*>(bytes));
   //read 1 byte -> unique bytes count
   bytes[0] = bit_set.read_byte();
   bytes[1] = bit_set.read_byte();
-  uint16_t unique_byte_count = *((uint16_t*)bytes); 
+  uint16_t unique_byte_count = *(reinterpret_cast<uint16_t*>(bytes)); 
   //
   printf("-------------------------\n");
   printf("DECOMPRESSING %d BYTES, %d UNIQUE\n", total_byte_count, unique_byte_count);
