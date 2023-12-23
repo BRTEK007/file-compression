@@ -74,7 +74,7 @@ int main(int argc, char **argv)
   }
 
   std::vector<unsigned char> input_buffer;
-  read_bytes_from_file(input_filename, input_buffer);
+  read_bytes_from_file(input_filename, input_buffer); // move this to compress, pass just istream
 
   std::ofstream outStream;
   outStream.open(output_filename, std::ifstream::binary);

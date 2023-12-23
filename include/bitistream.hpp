@@ -7,7 +7,7 @@
 
 class BitIstream
 {
-    const std::vector<unsigned char> &buffer;
+    const std::vector<unsigned char> &buffer; // use istream
     ByteSlice byteSlice;
     size_t index;
 
