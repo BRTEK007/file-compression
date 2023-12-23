@@ -55,7 +55,6 @@ std::vector<unsigned char> compress(const std::vector<unsigned char>& in_buffer)
   //write compressed data
   for(uint32_t i = 0; i < total_byte_count; i++){
     unsigned char byte = in_buffer[i];
-    // byte_slice_t slice = codes[byte];
     BitCode code = codes[byte];
     bit_set.write_bitcode(code);
   }

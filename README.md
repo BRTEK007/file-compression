@@ -5,7 +5,8 @@ c++ file compression and decompression, using Huffman coding
 note: project is in a state of being converted from plain C
 
 ## example
- ```console
+
+```console
 > ./byte-compressor -c ../tests/files/22_total_5_unique.txt out.bin
 -------------------------
 COMPRESSING 21 BYTES, 5 UNIQUE
@@ -23,7 +24,7 @@ size after compression: 17, 19.0% reduction
 ```
 
 ```console
-> python3 tester.py 
+> python3 tester.py
 PASSED files/22_total_5_unique.txt
 PASSED files/iliad.txt
 PASSED files/1000_digits.bin
@@ -33,24 +34,32 @@ FAILED files/10000_all.bin (DECOMPRESSION)
 FAILED files/lena.tiff (DECOMPRESSION)
 FAILED files/mozart_symphony_40.wav (DECOMPRESSION)
 ```
+
 ## testing
-tests directory contains python script that tests compression then decompression and compares the files 
+
+tests directory contains python script that tests compression then decompression and compares the files
 
 unit tests in src/unit_tests.cpp, unit_tests Cmake target
 
 ## build
- ```console
-> mkdir build 
-> cd build 
-> cmake .. 
+
+```console
+> mkdir build
+> cd build
+> cmake ..
 > make
 ```
 
 ## TODO:
-implement priority queue for building tree, min-max heap or whatever efficient... 
 
-optimize bit operations, macros 
+implement priority queue for building tree, min-max heap or whatever efficient...
+
+optimize bit operations, macros
 
 look into some testing framework, maybe googletest
 
 introduce OOP and propper C++
+
+use streams
+use exceptions
+use c++ fstream file

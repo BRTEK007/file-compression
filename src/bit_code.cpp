@@ -14,31 +14,11 @@ void BitCode::writeBit(bool bit){
     len++;
 }
 
-void BitCode::writeByte(unsigned char byte){
-    for(int i = 0; i < 8; i++){
-        int bit = byte & 1u >> i;
-        bits.set(len, static_cast<bool>(bit));
-        len++;
-    }
-}
-
 bool BitCode::readBit(){
     bool bit = bits.test(0);
     bits = bits >> 1;
     len--;
     return bit;
-}
-
-unsigned char BitCode::readByte(){
-    BitCode temp = *this;
-    unsigned char byte = 0;
-    for(int i = 0; i < 8; i++){
-        unsigned bit = static_cast<unsigned>(bits.test(i));
-        byte = byte | bit << (7-i);
-    }
-    bits = bits >> 8;
-    len -= 8;
-    return byte;
 }
 
 int BitCode::size(){
