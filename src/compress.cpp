@@ -50,14 +50,14 @@ void compress(std::istream &inStream, std::ostream &outStream)
 
   // write 4 bytes -> total bytes count
   unsigned char *bytes = reinterpret_cast<unsigned char *>(&total_byte_count);
-  bitOstream.writeByte(bytes[0]);
-  bitOstream.writeByte(bytes[1]);
-  bitOstream.writeByte(bytes[2]);
-  bitOstream.writeByte(bytes[3]);
+  bitOstream.write(bytes[0]);
+  bitOstream.write(bytes[1]);
+  bitOstream.write(bytes[2]);
+  bitOstream.write(bytes[3]);
   // write 2 bytes -> unique bytes count
   bytes = reinterpret_cast<unsigned char *>(&unique_byte_count);
-  bitOstream.writeByte(bytes[0]);
-  bitOstream.writeByte(bytes[1]);
+  bitOstream.write(bytes[0]);
+  bitOstream.write(bytes[1]);
   // write huffman tree data
   tree.write_to_bitset(bitOstream);
   // write compressed data
@@ -65,7 +65,7 @@ void compress(std::istream &inStream, std::ostream &outStream)
   {
     unsigned char byte = in_buffer[i];
     BitCode code = codes[byte];
-    bitOstream.writeBitcode(code);
+    bitOstream.write(code);
   }
   bitOstream.flush();
 

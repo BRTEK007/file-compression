@@ -137,12 +137,12 @@ void Tree::write_to_bitset(BitOstream &bitOstream)
 
     if (node->leaf)
     {
-      bitOstream.writeBit(true);
-      bitOstream.writeByte(node->byte);
+      bitOstream.write(true);
+      bitOstream.write(node->byte);
     }
     else
     {
-      bitOstream.writeBit(false);
+      bitOstream.write(false);
       stack.push_back(node->right);
       stack.push_back(node->left);
     }
