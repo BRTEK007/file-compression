@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <fstream>
 
 #include "compress.hpp"
 #include "decompress.hpp"
@@ -57,27 +58,34 @@ int main(int argc, char** argv){
   
   std::vector<unsigned char> input_buffer;
   read_bytes_from_file(input_filename, input_buffer);
-  std::vector<unsigned char> output_buffer;
 
   if(doCompress){
+    std::vector<unsigned char> output_buffer;
     output_buffer = compress(input_buffer);
-  }else{
-    output_buffer = decompress(input_buffer);
-  }
-
-  FILE* output_file;
+    FILE* output_file;
   
-  output_file = fopen(output_filename, "wb");
-  if(output_file == NULL){
-    fprintf(stderr, "ERROR: could not open file: %s\n", output_filename);
-    exit(2);
+    output_file = fopen(output_filename, "wb");
+    if(output_file == NULL){
+      fprintf(stderr, "ERROR: could not open file: %s\n", output_filename);
+      exit(2);
+    }
+
+    unsigned char out_c_buff[output_buffer.size()];
+    std::copy(output_buffer.begin(), output_buffer.end(), out_c_buff);
+    fwrite(out_c_buff, sizeof(unsigned char), output_buffer.size(), output_file);
+
+    fclose(output_file);
+  }else{
+    std::ofstream fileStream;
+    fileStream.open(output_filename, std::ifstream::binary);
+    if(!fileStream.is_open()){
+      fprintf(stderr, "ERROR: could not open file: %s\n", output_filename);
+      exit(2);
+    }
+    decompress(input_buffer, fileStream);
+    fileStream.close();
   }
 
-  unsigned char out_c_buff[output_buffer.size()];
-  std::copy(output_buffer.begin(), output_buffer.end(), out_c_buff);
-  fwrite(out_c_buff, sizeof(unsigned char), output_buffer.size(), output_file);
-
-  fclose(output_file);
 
   return 0;
 }

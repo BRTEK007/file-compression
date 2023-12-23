@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <iostream>
 
-std::vector<unsigned char> decompress(const std::vector<unsigned char>& in_buffer){
+void decompress(const std::vector<unsigned char>& in_buffer, std::ostream& outStream){
   //create bit_set from in_buffer
   BitSet bit_set;
   bit_set.create_from_bytes(in_buffer);
@@ -46,7 +46,6 @@ std::vector<unsigned char> decompress(const std::vector<unsigned char>& in_buffe
   printf("-------------------------\n");
   
 
-  std::vector<unsigned char> out_buffer;
   uint32_t read_bytes = 0;
   tree.ptr_reset();
   while(read_bytes < total_byte_count){
@@ -58,11 +57,9 @@ std::vector<unsigned char> decompress(const std::vector<unsigned char>& in_buffe
       tree.ptr_left();
     
     if(tree.ptr_is_leaf()){
-      out_buffer.push_back(tree.ptr_read_byte());
+      outStream << tree.ptr_read_byte();
       tree.ptr_reset();
       read_bytes++;
     }
   }
-
-  return out_buffer;
 }
