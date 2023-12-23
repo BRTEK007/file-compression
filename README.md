@@ -52,14 +52,9 @@ unit tests in src/unit_tests.cpp, unit_tests Cmake target
 
 ## TODO:
 
-implement priority queue for building tree, min-max heap or whatever efficient...
-
-optimize bit operations, macros
-
-look into some testing framework, maybe googletest
-
-introduce OOP and propper C++
-
-use streams
 use exceptions
-use c++ fstream file
+googletest
+better python script
+args handling
+comments fix
+optimize?
