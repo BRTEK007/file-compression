@@ -73,10 +73,10 @@ int main(int argc, char **argv)
     args_error_exit();
   }
 
-  std::vector<unsigned char> input_buffer;
-  read_bytes_from_file(input_filename, input_buffer); // move this to compress, pass just istream
-
+  std::ifstream inStream;
   std::ofstream outStream;
+
+  inStream.open(input_filename, std::ifstream::binary);
   outStream.open(output_filename, std::ofstream::binary);
 
   if (!outStream.is_open())
@@ -84,19 +84,22 @@ int main(int argc, char **argv)
     fprintf(stderr, "ERROR: could not open file: %s\n", output_filename);
     exit(2);
   }
+  if (!inStream.is_open())
+  {
+    fprintf(stderr, "ERROR: could not open file: %s\n", input_filename);
+    exit(2);
+  }
 
   if (doCompress)
   {
-    compress(input_buffer, outStream);
+    compress(inStream, outStream);
   }
   else
   {
-    std::ifstream inStream;
-    inStream.open(input_filename, std::ifstream::binary);
     decompress(inStream, outStream);
-    inStream.close();
   }
 
+  inStream.close();
   outStream.close();
 
   return 0;

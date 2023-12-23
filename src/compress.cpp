@@ -7,9 +7,15 @@
 #include "bitostream.hpp"
 #include "bit_code.hpp"
 #include "bitostream.hpp"
+#include "io.hpp"
 
-void compress(const std::vector<unsigned char> &in_buffer, std::ostream &outStream)
+void compress(std::istream &inStream, std::ostream &outStream)
 {
+  std::vector<unsigned char> in_buffer;
+
+  read_bytes_from_file(inStream, in_buffer);
+  // TODO inStream to in_buffer
+
   uint32_t total_byte_count = in_buffer.size();
 
   std::vector<byte_freq_t> bf_arr = get_byte_frequencies(in_buffer);

@@ -2,6 +2,7 @@
 #define IO_H
 
 #include <vector>
-void read_bytes_from_file(const char* filename, std::vector<unsigned char>& out_bytes); 
+#include <istream>
+void read_bytes_from_file(std::istream &fileStream, std::vector<unsigned char> &out_bytes);
 
 #endif
