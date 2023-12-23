@@ -9,7 +9,6 @@ add_executable(byte-compressor)
 target_compile_options(byte-compressor PRIVATE -Werror)
 
 target_sources(byte-compressor PRIVATE 
-    src/bit_set.cpp 
     src/bit_code.cpp 
     src/main.cpp 
     src/node_queue.cpp 

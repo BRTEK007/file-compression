@@ -1,27 +1,25 @@
 #include "decompress.hpp"
-#include "bit_set.hpp"
 #include "tree.hpp"
+#include "bitistream.hpp"
 #include <stdint.h>
 #include <stdio.h>
 #include <iostream>
 
 void decompress(const std::vector<unsigned char> &in_buffer, std::ostream &outStream)
 {
-  // create bit_set from in_buffer
-  BitSet bit_set;
-  bit_set.create_from_bytes(in_buffer);
+  // create BitIstream from in_buffer
+  auto bitIstream = BitIstream(in_buffer);
 
-  bit_set.begin_read();
   // read 4 bytes -> total_characters count
   unsigned char bytes[4];
-  bytes[0] = bit_set.read_byte();
-  bytes[1] = bit_set.read_byte();
-  bytes[2] = bit_set.read_byte();
-  bytes[3] = bit_set.read_byte();
+  bytes[0] = bitIstream.readByte();
+  bytes[1] = bitIstream.readByte();
+  bytes[2] = bitIstream.readByte();
+  bytes[3] = bitIstream.readByte();
   uint32_t total_byte_count = *(reinterpret_cast<uint32_t *>(bytes));
   // read 1 byte -> unique bytes count
-  bytes[0] = bit_set.read_byte();
-  bytes[1] = bit_set.read_byte();
+  bytes[0] = bitIstream.readByte();
+  bytes[1] = bitIstream.readByte();
   uint16_t unique_byte_count = *(reinterpret_cast<uint16_t *>(bytes));
   //
   printf("-------------------------\n");
@@ -29,7 +27,7 @@ void decompress(const std::vector<unsigned char> &in_buffer, std::ostream &outSt
   printf("-------------------------\n");
   // read huffman tree data
   Tree tree;
-  tree.create_from_bitset(&bit_set, unique_byte_count); // TODO bug here
+  tree.create_from_bitset(bitIstream, unique_byte_count); // TODO bug here
   std::vector<unsigned char> leaf_bytes;
   tree.extract_leaf_bytes(leaf_bytes); // TODO or here
 
@@ -51,7 +49,7 @@ void decompress(const std::vector<unsigned char> &in_buffer, std::ostream &outSt
   tree.ptr_reset();
   while (read_bytes < total_byte_count)
   {
-    bool bit = bit_set.read_bit();
+    bool bit = bitIstream.readBit();
 
     if (bit)
       tree.ptr_right();
