@@ -11,19 +11,14 @@ void decompress(std::istream &inStream, std::ostream &outStream)
   auto bitIstream = BitIstream(inStream);
 
   // read 4 bytes -> total_characters count
-  unsigned char bytes[4];
-  bytes[0] = bitIstream.readByte();
-  bytes[1] = bitIstream.readByte();
-  bytes[2] = bitIstream.readByte();
-  bytes[3] = bitIstream.readByte();
-  uint32_t total_byte_count = *(reinterpret_cast<uint32_t *>(bytes));
-  // read 1 byte -> unique bytes count
+  unsigned char bytes[2];
+  //  read 1 byte -> unique bytes count
   bytes[0] = bitIstream.readByte();
   bytes[1] = bitIstream.readByte();
   uint16_t unique_byte_count = *(reinterpret_cast<uint16_t *>(bytes));
   //
   printf("-------------------------\n");
-  printf("DECOMPRESSING %d BYTES, %d UNIQUE\n", total_byte_count, unique_byte_count);
+  printf("DECOMPRESSING %d UNIQUE\n", unique_byte_count);
   printf("-------------------------\n");
   // read huffman tree data
   Tree tree;
@@ -47,7 +42,7 @@ void decompress(std::istream &inStream, std::ostream &outStream)
 
   uint32_t read_bytes = 0;
   tree.ptrReset();
-  while (read_bytes < total_byte_count)
+  while (!bitIstream.eof())
   {
     bool bit = bitIstream.readBit();
 

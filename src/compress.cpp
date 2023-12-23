@@ -21,14 +21,12 @@ inline void streamToVector(std::istream &inStream, std::vector<unsigned char> &o
 
 void compress(std::istream &inStream, std::ostream &outStream)
 {
-  std::vector<unsigned char> in_buffer;
+  std::vector<unsigned char> inBuffer;
 
-  streamToVector(inStream, in_buffer);
-  // TODO inStream to in_buffer
+  streamToVector(inStream, inBuffer);
+  // TODO inStream to inBuffer
 
-  uint32_t total_byte_count = in_buffer.size();
-
-  std::vector<ByteFreq> bf_arr = findByteFrequencies(in_buffer);
+  std::vector<ByteFreq> bf_arr = findByteFrequencies(inBuffer);
 
   uint16_t unique_byte_count = bf_arr.size();
 
@@ -38,8 +36,9 @@ void compress(std::istream &inStream, std::ostream &outStream)
 
   tree.extractCodes(codes);
 
+  auto total_byte_count = inBuffer.size();
   printf("-------------------------\n");
-  printf("COMPRESSING %d BYTES, %d UNIQUE\n", total_byte_count, unique_byte_count);
+  printf("COMPRESSING %ld BYTES, %d UNIQUE\n", total_byte_count, unique_byte_count);
   printf("-------------------------\n");
   printf("BYTE   | FREQUENCY | CODE\n");
   printf("-------------------------\n");
@@ -57,22 +56,15 @@ void compress(std::istream &inStream, std::ostream &outStream)
 
   auto bitOstream = BitOstream(outStream);
 
-  // write 4 bytes -> total bytes count
-  unsigned char *bytes = reinterpret_cast<unsigned char *>(&total_byte_count);
-  bitOstream.write(bytes[0]);
-  bitOstream.write(bytes[1]);
-  bitOstream.write(bytes[2]);
-  bitOstream.write(bytes[3]);
-  // write 2 bytes -> unique bytes count
-  bytes = reinterpret_cast<unsigned char *>(&unique_byte_count);
+  //  write 2 bytes -> unique bytes count
+  unsigned char *bytes = reinterpret_cast<unsigned char *>(&unique_byte_count);
   bitOstream.write(bytes[0]);
   bitOstream.write(bytes[1]);
   // write huffman tree data
   tree.writeTo(bitOstream);
   // write compressed data
-  for (uint32_t i = 0; i < total_byte_count; i++)
+  for (auto byte : inBuffer)
   {
-    unsigned char byte = in_buffer[i];
     BitCode code = codes[byte];
     bitOstream.write(code);
   }
@@ -80,7 +72,7 @@ void compress(std::istream &inStream, std::ostream &outStream)
 
   // extract to out_buffer from bitOutSream
 
-  // double reduction = 100.f * (1.f - ((double)out_buffer.size() / (double)in_buffer.size()));
+  // double reduction = 100.f * (1.f - ((double)out_buffer.size() / (double)inBuffer.size()));
   // printf("size after compression: %ld, %.1f%% reduction\n", out_buffer.size(), reduction);
   // printf("-------------------------\n");
 }

@@ -14,6 +14,7 @@ public:
     BitIstream(std::istream &stream);
     bool readBit();
     unsigned char readByte();
+    bool eof();
 };
 
 #endif

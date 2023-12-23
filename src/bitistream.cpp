@@ -18,6 +18,11 @@ bool BitIstream::readBit()
 
 // TODO implement eof
 
+bool BitIstream::eof()
+{
+    return byteSlice.size() > 0;
+}
+
 unsigned char BitIstream::readByte()
 {
     // perform 8 bit reads

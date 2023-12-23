@@ -149,7 +149,7 @@ void Tree::writeTo(BitOstream &bitOstream)
   }
 }
 
-void Tree::readFrom(BitIstream &bitIstream, uint8_t leaf_count)
+void Tree::readFrom(BitIstream &bitIstream, size_t leaf_count)
 {
   Node *root = new Node();
   root->leaf = false;
@@ -161,7 +161,7 @@ void Tree::readFrom(BitIstream &bitIstream, uint8_t leaf_count)
   stack.push_back(&(root->right));
   stack.push_back(&(root->left));
 
-  uint8_t leaves_read = 0;
+  size_t leaves_read = 0;
   while (leaves_read < leaf_count)
   {
     Node **node = stack.back();

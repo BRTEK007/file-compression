@@ -29,7 +29,7 @@ public:
   Tree();
   Tree(const std::vector<ByteFreq> &bf_arr);
   ~Tree();
-  void readFrom(BitIstream &bitIstream, uint8_t leaf_count);
+  void readFrom(BitIstream &bitIstream, size_t leaf_count);
   void extractCodes(std::array<BitCode, 256> &codes);
   void extractLeafBytes(std::vector<unsigned char> &bytes);
   void writeTo(BitOstream &bitOstream);
