@@ -7,27 +7,36 @@
 #include "bitostream.hpp"
 #include "bitcode.hpp"
 #include "bitostream.hpp"
-#include "io.hpp"
+
+inline void streamToVector(std::istream &inStream, std::vector<unsigned char> &outVector)
+{
+  inStream.seekg(0, std::ios::end);
+  auto streamSize = inStream.tellg();
+  inStream.seekg(0, std::ios::beg);
+
+  outVector.clear();
+  outVector.resize(streamSize);
+  inStream.read(reinterpret_cast<char *>(outVector.data()), streamSize);
+}
 
 void compress(std::istream &inStream, std::ostream &outStream)
 {
   std::vector<unsigned char> in_buffer;
 
-  read_bytes_from_file(inStream, in_buffer);
+  streamToVector(inStream, in_buffer);
   // TODO inStream to in_buffer
 
   uint32_t total_byte_count = in_buffer.size();
 
-  std::vector<byte_freq_t> bf_arr = get_byte_frequencies(in_buffer);
+  std::vector<ByteFreq> bf_arr = findByteFrequencies(in_buffer);
 
   uint16_t unique_byte_count = bf_arr.size();
 
-  Tree tree;
-  tree.create_from_bytefreq(bf_arr);
+  auto tree = Tree(bf_arr);
 
   std::array<BitCode, 256> codes;
 
-  tree.extract_codes(codes);
+  tree.extractCodes(codes);
 
   printf("-------------------------\n");
   printf("COMPRESSING %d BYTES, %d UNIQUE\n", total_byte_count, unique_byte_count);
@@ -36,7 +45,7 @@ void compress(std::istream &inStream, std::ostream &outStream)
   printf("-------------------------\n");
   for (int i = 0; i < unique_byte_count; i++)
   {
-    byte_freq_t bf = bf_arr[i];
+    ByteFreq bf = bf_arr[i];
     if (std::isprint(bf.byte))
       printf("%d (%c) | %9.1f | ", bf.byte, bf.byte, (float)(100 * bf.freq) / total_byte_count);
     else
@@ -59,7 +68,7 @@ void compress(std::istream &inStream, std::ostream &outStream)
   bitOstream.write(bytes[0]);
   bitOstream.write(bytes[1]);
   // write huffman tree data
-  tree.write_to_bitset(bitOstream);
+  tree.writeTo(bitOstream);
   // write compressed data
   for (uint32_t i = 0; i < total_byte_count; i++)
   {

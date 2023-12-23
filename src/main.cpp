@@ -6,7 +6,6 @@
 
 #include "compress.hpp"
 #include "decompress.hpp"
-#include "io.hpp"
 
 #define CVECTOR_LOGARITHMIC_GROWTH
 

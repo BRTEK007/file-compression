@@ -14,7 +14,6 @@ target_sources(byte-compressor PRIVATE
     src/node_queue.cpp 
     src/tree.cpp 
     src/byte_slice.cpp
-    src/io.cpp
     src/byte_freq.cpp
     src/compress.cpp
     src/decompress.cpp

@@ -27,13 +27,13 @@ void decompress(std::istream &inStream, std::ostream &outStream)
   printf("-------------------------\n");
   // read huffman tree data
   Tree tree;
-  tree.create_from_bitset(bitIstream, unique_byte_count); // TODO bug here
+  tree.readFrom(bitIstream, unique_byte_count); // TODO bug here
   std::vector<unsigned char> leaf_bytes;
-  tree.extract_leaf_bytes(leaf_bytes); // TODO or here
+  tree.extractLeafBytes(leaf_bytes); // TODO or here
 
   std::array<BitCode, 256> codes;
 
-  tree.extract_codes(codes);
+  tree.extractCodes(codes);
 
   printf("BYTE   | CODE\n");
   printf("-----------\n");
@@ -46,21 +46,21 @@ void decompress(std::istream &inStream, std::ostream &outStream)
   printf("-------------------------\n");
 
   uint32_t read_bytes = 0;
-  tree.ptr_reset();
+  tree.ptrReset();
   while (read_bytes < total_byte_count)
   {
     bool bit = bitIstream.readBit();
 
     if (bit)
-      tree.ptr_right();
+      tree.ptrRight();
     else
-      tree.ptr_left();
+      tree.ptrLeft();
 
-    if (tree.ptr_is_leaf())
+    if (tree.ptrIsLeaf())
     {
-      auto byte = tree.ptr_read_byte();
+      auto byte = tree.ptrReadByte();
       outStream.write(reinterpret_cast<const char *>(&byte), 1);
-      tree.ptr_reset();
+      tree.ptrReset();
       read_bytes++;
     }
   }
