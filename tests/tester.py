@@ -1,6 +1,7 @@
 import subprocess
 import os
 import time
+import sys
 
 GREEN = '\033[92m'
 RED = '\033[91m'
@@ -26,15 +27,17 @@ class Tester:
         absoluteFilePath = os.path.join(self.absolutePath, filePath)
         
         start = time.time()
+        stdoutRedirect = subprocess.PIPE
+        #stdoutRedirect = sys.stdout
 
         #compression
-        process = subprocess.Popen([self.compressorPath, '-c', absoluteFilePath, 'temp.compressed'], stdout=subprocess.PIPE, stderr=subprocess.PIPE) 
+        process = subprocess.Popen([self.compressorPath, '-c', absoluteFilePath, 'temp.compressed'], stdout=stdoutRedirect, stderr=subprocess.PIPE) 
         stream_out, stream_err = process.communicate()
         if process.returncode != 0:
             return self.failed(filePath, 'COMPRESSION', process.returncode, stream_err)
-            
+
         #decompression
-        process = subprocess.Popen([self.compressorPath, '-d', 'temp.compressed', 'temp.decompressed'], stdout=subprocess.PIPE, stderr=subprocess.PIPE) 
+        process = subprocess.Popen([self.compressorPath, '-d', 'temp.compressed', 'temp.decompressed'], stdout=stdoutRedirect, stderr=subprocess.PIPE) 
         stream_out, stream_err = process.communicate()
         if process.returncode != 0:
             return self.failed(filePath, 'DECOMPRESSION', process.returncode, stream_err)
@@ -53,10 +56,10 @@ class Tester:
 
 tester = Tester("../build/byte-compressor")
 tester.run("files/22_total_5_unique.txt")
-tester.run("files/iliad.txt")
 tester.run("files/1000_digits.bin")
 tester.run("files/1000_lowercase.bin")
 tester.run("files/1000_printable.bin")
+tester.run("files/iliad.txt")
 tester.run("files/10000_all.bin")
 #tester.run("files/lena.tiff")
 #tester.run("files/mozart_symphony_40.wav")

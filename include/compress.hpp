@@ -3,8 +3,7 @@
 
 #include <vector>
 #include <ostream>
-#include <istream>
 
-void compress(std::istream &inStream, std::ostream &outStream);
+void compress(const std::vector<unsigned char> &in_buffer, std::ostream &outStream);
 
 #endif

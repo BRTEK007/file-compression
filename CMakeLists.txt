@@ -19,7 +19,8 @@ target_sources(byte-compressor PRIVATE
     src/byte_freq.cpp
     src/compress.cpp
     src/decompress.cpp
-    src/bitostream.cpp)
+    src/bitostream.cpp
+    src/bitistream.cpp)
 
 #add_executable(unit_tests)
 

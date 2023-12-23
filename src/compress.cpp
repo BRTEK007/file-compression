@@ -23,21 +23,22 @@ void compress(const std::vector<unsigned char> &in_buffer, std::ostream &outStre
 
   tree.extract_codes(codes);
 
-  // printf("-------------------------\n");
-  // printf("COMPRESSING %d BYTES, %d UNIQUE\n", total_byte_count, unique_byte_count);
-  // printf("-------------------------\n");
-  // printf("BYTE   | FREQUENCY | CODE\n");
-  // printf("-------------------------\n");
-  // for(int i = 0; i < unique_byte_count; i++){
-  // byte_freq_t bf = bf_arr[i];
-  // if(std::isprint(bf.byte))
-  // printf("%d (%c) | %9.1f | ", bf.byte, bf.byte, (float)(100*bf.freq) / total_byte_count);
-  // else
-  // printf("%d | %9.1f | ", bf.byte, (float)(100*bf.freq) / total_byte_count);
-  // std::cout<<codes[bf.byte].to_string();
-  // printf("\n");
-  //}
-  // printf("-------------------------\n");
+  printf("-------------------------\n");
+  printf("COMPRESSING %d BYTES, %d UNIQUE\n", total_byte_count, unique_byte_count);
+  printf("-------------------------\n");
+  printf("BYTE   | FREQUENCY | CODE\n");
+  printf("-------------------------\n");
+  for (int i = 0; i < unique_byte_count; i++)
+  {
+    byte_freq_t bf = bf_arr[i];
+    if (std::isprint(bf.byte))
+      printf("%d (%c) | %9.1f | ", bf.byte, bf.byte, (float)(100 * bf.freq) / total_byte_count);
+    else
+      printf("%d | %9.1f | ", bf.byte, (float)(100 * bf.freq) / total_byte_count);
+    std::cout << codes[bf.byte].to_string();
+    printf("\n");
+  }
+  printf("-------------------------\n");
 
   auto bitOstream = BitOstream(outStream);
 
