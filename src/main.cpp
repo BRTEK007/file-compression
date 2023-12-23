@@ -77,7 +77,7 @@ int main(int argc, char **argv)
   read_bytes_from_file(input_filename, input_buffer); // move this to compress, pass just istream
 
   std::ofstream outStream;
-  outStream.open(output_filename, std::ifstream::binary);
+  outStream.open(output_filename, std::ofstream::binary);
 
   if (!outStream.is_open())
   {
@@ -91,7 +91,10 @@ int main(int argc, char **argv)
   }
   else
   {
-    decompress(input_buffer, outStream);
+    std::ifstream inStream;
+    inStream.open(input_filename, std::ifstream::binary);
+    decompress(inStream, outStream);
+    inStream.close();
   }
 
   outStream.close();

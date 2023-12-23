@@ -1,23 +1,22 @@
 #include "bitistream.hpp"
 
-BitIstream::BitIstream(const std::vector<unsigned char> &buffer) : buffer(buffer), byteSlice(), index(0)
-{
-    byteSlice.set_byte(buffer[index]);
-    index++;
-};
+BitIstream::BitIstream(std::istream &stream) : stream(stream), byteSlice(){};
 
 bool BitIstream::readBit()
 {
-    bool bit = byteSlice.read_bit();
-
     if (byteSlice.len == 0)
-    { // slice is empty -> copy next byte to slice
-        byteSlice.set_byte(buffer[index]);
-        index++;
+    {
+        unsigned char byte;
+        stream.read(reinterpret_cast<char *>(&byte), 1);
+        byteSlice.set_byte(byte);
     }
+
+    bool bit = byteSlice.read_bit();
 
     return bit;
 }
+
+// TODO implement eof
 
 unsigned char BitIstream::readByte()
 {

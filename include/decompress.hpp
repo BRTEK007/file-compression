@@ -3,6 +3,6 @@
 #include <vector>
 #include <ostream>
 
-void decompress(const std::vector<unsigned char>& in_buffer, std::ostream& outStream);
+void decompress(std::istream &inStream, std::ostream &outStream);
 
 #endif

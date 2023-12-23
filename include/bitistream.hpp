@@ -1,18 +1,17 @@
 #ifndef BIT_ISTREAM_HPP
 #define BIT_ISTREAM_HPP
 
-#include <vector>
+#include <istream>
 #include "byte_slice.hpp"
 #include <stdlib.h>
 
 class BitIstream
 {
-    const std::vector<unsigned char> &buffer; // use istream
+    std::istream &stream;
     ByteSlice byteSlice;
-    size_t index;
 
 public:
-    BitIstream(const std::vector<unsigned char> &buffer);
+    BitIstream(std::istream &stream);
     bool readBit();
     unsigned char readByte();
 };

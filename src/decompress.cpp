@@ -5,10 +5,10 @@
 #include <stdio.h>
 #include <iostream>
 
-void decompress(const std::vector<unsigned char> &in_buffer, std::ostream &outStream)
+void decompress(std::istream &inStream, std::ostream &outStream)
 {
   // create BitIstream from in_buffer
-  auto bitIstream = BitIstream(in_buffer);
+  auto bitIstream = BitIstream(inStream);
 
   // read 4 bytes -> total_characters count
   unsigned char bytes[4];
