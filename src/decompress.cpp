@@ -37,7 +37,7 @@ void decompress(std::istream &inStream, std::ostream &outStream)
 
   printf("BYTE   | CODE\n");
   printf("-----------\n");
-  for (int i = 0; i < leaf_bytes.size(); i++)
+  for (size_t i = 0; i < leaf_bytes.size(); i++)
   {
     printf("%d (%c) | ", leaf_bytes[i], leaf_bytes[i]);
     std::cout << codes[leaf_bytes[i]].to_string();

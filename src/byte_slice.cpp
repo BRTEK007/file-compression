@@ -1,7 +1,7 @@
 #include "byte_slice.hpp"
 #include <stdio.h>
 
-ByteSlice::ByteSlice() : len(0), bits(0) {}
+ByteSlice::ByteSlice() : bits(0), len(0) {}
 
 void ByteSlice::writeBit(bool bit)
 {

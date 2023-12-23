@@ -34,7 +34,7 @@ void Tree::create_from_bytefreq(const std::vector<byte_freq_t> &bf_arr)
   NodeQueue node_queue(bf_arr.size());
 
   // create a leaf node for each symbol
-  for (int i = 0; i < bf_arr.size(); i++)
+  for (size_t i = 0; i < bf_arr.size(); i++)
   {
     node_t *node = new node_t;
     node->byte = bf_arr[i].byte;

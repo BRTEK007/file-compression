@@ -6,7 +6,7 @@ include_directories(include)
 
 add_executable(byte-compressor)
 
-target_compile_options(byte-compressor PRIVATE -Werror)
+target_compile_options(byte-compressor PRIVATE -Werror -Wall)
 
 target_sources(byte-compressor PRIVATE 
     src/bitcode.cpp 
