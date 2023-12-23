@@ -23,7 +23,7 @@ struct Node
 class Tree
 {
   Node *head;
-  Node *node_ptr;
+  Node *nodePtr;
 
 public:
   Tree();

@@ -15,16 +15,16 @@ void decompress(std::istream &inStream, std::ostream &outStream)
   //  read 1 byte -> unique bytes count
   bytes[0] = bitIstream.readByte();
   bytes[1] = bitIstream.readByte();
-  uint16_t unique_byte_count = *(reinterpret_cast<uint16_t *>(bytes));
+  uint16_t uniqueByteCount = *(reinterpret_cast<uint16_t *>(bytes));
   //
   printf("-------------------------\n");
-  printf("DECOMPRESSING %d UNIQUE\n", unique_byte_count);
+  printf("DECOMPRESSING %d UNIQUE\n", uniqueByteCount);
   printf("-------------------------\n");
   // read huffman tree data
   Tree tree;
-  tree.readFrom(bitIstream, unique_byte_count); // TODO bug here
-  std::vector<unsigned char> leaf_bytes;
-  tree.extractLeafBytes(leaf_bytes); // TODO or here
+  tree.readFrom(bitIstream, uniqueByteCount); // TODO bug here
+  std::vector<unsigned char> leafBytes;
+  tree.extractLeafBytes(leafBytes); // TODO or here
 
   std::array<BitCode, 256> codes;
 
@@ -32,15 +32,14 @@ void decompress(std::istream &inStream, std::ostream &outStream)
 
   printf("BYTE   | CODE\n");
   printf("-----------\n");
-  for (size_t i = 0; i < leaf_bytes.size(); i++)
+  for (size_t i = 0; i < leafBytes.size(); i++)
   {
-    printf("%d (%c) | ", leaf_bytes[i], leaf_bytes[i]);
-    std::cout << codes[leaf_bytes[i]].to_string();
+    printf("%d (%c) | ", leafBytes[i], leafBytes[i]);
+    std::cout << codes[leafBytes[i]].to_string();
     printf("\n");
   }
   printf("-------------------------\n");
 
-  uint32_t read_bytes = 0;
   tree.ptrReset();
   while (!bitIstream.eof())
   {
@@ -56,7 +55,6 @@ void decompress(std::istream &inStream, std::ostream &outStream)
       auto byte = tree.ptrReadByte();
       outStream.write(reinterpret_cast<const char *>(&byte), 1);
       tree.ptrReset();
-      read_bytes++;
     }
   }
 }

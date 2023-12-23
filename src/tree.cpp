@@ -9,7 +9,7 @@
 Tree::Tree()
 {
   this->head = NULL;
-  this->node_ptr = NULL;
+  this->nodePtr = NULL;
 }
 
 Tree::~Tree()
@@ -31,7 +31,7 @@ Tree::~Tree()
 
 Tree::Tree(const std::vector<ByteFreq> &bf_arr)
 {
-  NodeQueue node_queue(bf_arr.size());
+  NodeQueue queue(bf_arr.size());
 
   // create a leaf node for each symbol
   for (size_t i = 0; i < bf_arr.size(); i++)
@@ -42,25 +42,25 @@ Tree::Tree(const std::vector<ByteFreq> &bf_arr)
     node->leaf = true;
     node->left = NULL;
     node->right = NULL;
-    node_queue.push(node);
+    queue.push(node);
   }
 
   // while more than one node in the queue
-  while (node_queue.size() > 1)
+  while (queue.size() > 1)
   {
     // remove two nodes of highest probability
-    Node *nodeA = node_queue.pop();
-    Node *nodeB = node_queue.pop();
+    Node *nodeA = queue.pop();
+    Node *nodeB = queue.pop();
     // create new internal node
-    Node *node_internal = new Node;
-    node_internal->freq = nodeA->freq + nodeB->freq;
-    node_internal->leaf = false;
-    node_internal->left = nodeA;
-    node_internal->right = nodeB;
-    node_queue.push(node_internal);
+    Node *nodeInternal = new Node;
+    nodeInternal->freq = nodeA->freq + nodeB->freq;
+    nodeInternal->leaf = false;
+    nodeInternal->left = nodeA;
+    nodeInternal->right = nodeB;
+    queue.push(nodeInternal);
   }
 
-  this->head = node_queue.pop();
+  this->head = queue.pop();
 }
 
 void Tree::extractCodes(std::array<BitCode, 256> &codes)
@@ -72,22 +72,22 @@ void Tree::extractCodes(std::array<BitCode, 256> &codes)
 
   while (!stack.empty())
   {
-    auto node_code = stack.back();
+    auto nodeCode = stack.back();
     stack.pop_back();
 
-    Node *node = node_code.first;
-    BitCode code = node_code.second;
+    Node *node = nodeCode.first;
+    BitCode code = nodeCode.second;
 
     if (node != NULL)
     {
-      BitCode code_left = code;
-      BitCode code_right = code;
+      BitCode codeLeft = code;
+      BitCode codeRight = code;
 
-      code_left.writeBit(false);
-      code_right.writeBit(true);
+      codeLeft.writeBit(false);
+      codeRight.writeBit(true);
 
-      stack.push_back({node->right, code_right});
-      stack.push_back({node->left, code_left});
+      stack.push_back({node->right, codeRight});
+      stack.push_back({node->left, codeLeft});
 
       if (node->leaf)
       {
@@ -161,8 +161,8 @@ void Tree::readFrom(BitIstream &bitIstream, size_t leaf_count)
   stack.push_back(&(root->right));
   stack.push_back(&(root->left));
 
-  size_t leaves_read = 0;
-  while (leaves_read < leaf_count)
+  size_t leavesRead = 0;
+  while (leavesRead < leaf_count)
   {
     Node **node = stack.back();
     stack.pop_back();
@@ -171,24 +171,24 @@ void Tree::readFrom(BitIstream &bitIstream, size_t leaf_count)
 
     if (!bit)
     { // parent node
-      Node *new_node = new Node();
-      new_node->leaf = false;
-      new_node->left = NULL;
-      new_node->right = NULL;
-      *node = new_node;
+      Node *newNode = new Node();
+      newNode->leaf = false;
+      newNode->left = NULL;
+      newNode->right = NULL;
+      *node = newNode;
 
-      stack.push_back(&(new_node->right));
-      stack.push_back(&(new_node->left));
+      stack.push_back(&(newNode->right));
+      stack.push_back(&(newNode->left));
     }
     else
     { // leaf node
-      Node *new_node = new Node();
-      new_node->byte = bitIstream.readByte();
-      new_node->leaf = true;
-      new_node->left = NULL;
-      new_node->right = NULL;
-      *node = new_node;
-      leaves_read++;
+      Node *newNode = new Node();
+      newNode->byte = bitIstream.readByte();
+      newNode->leaf = true;
+      newNode->left = NULL;
+      newNode->right = NULL;
+      *node = newNode;
+      leavesRead++;
     }
   }
   this->head = root;
@@ -196,25 +196,25 @@ void Tree::readFrom(BitIstream &bitIstream, size_t leaf_count)
 
 void Tree::ptrReset()
 {
-  this->node_ptr = this->head;
+  this->nodePtr = this->head;
 }
 
 void Tree::ptrRight()
 {
-  this->node_ptr = this->node_ptr->right;
+  this->nodePtr = this->nodePtr->right;
 }
 
 void Tree::ptrLeft()
 {
-  this->node_ptr = this->node_ptr->left;
+  this->nodePtr = this->nodePtr->left;
 }
 
 bool Tree::ptrIsLeaf()
 {
-  return this->node_ptr->leaf;
+  return this->nodePtr->leaf;
 }
 
 unsigned char Tree::ptrReadByte()
 {
-  return this->node_ptr->byte;
+  return this->nodePtr->byte;
 }

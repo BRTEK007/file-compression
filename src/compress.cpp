@@ -26,9 +26,9 @@ void compress(std::istream &inStream, std::ostream &outStream)
   streamToVector(inStream, inBuffer);
   // TODO inStream to inBuffer
 
-  std::vector<ByteFreq> bf_arr = findByteFrequencies(inBuffer);
+  auto bf_arr = findByteFrequencies(inBuffer);
 
-  uint16_t unique_byte_count = bf_arr.size();
+  uint16_t uniqueByteCount = bf_arr.size();
 
   auto tree = Tree(bf_arr);
 
@@ -36,19 +36,19 @@ void compress(std::istream &inStream, std::ostream &outStream)
 
   tree.extractCodes(codes);
 
-  auto total_byte_count = inBuffer.size();
+  auto totalByteCount = inBuffer.size();
   printf("-------------------------\n");
-  printf("COMPRESSING %ld BYTES, %d UNIQUE\n", total_byte_count, unique_byte_count);
+  printf("COMPRESSING %ld BYTES, %d UNIQUE\n", totalByteCount, uniqueByteCount);
   printf("-------------------------\n");
   printf("BYTE   | FREQUENCY | CODE\n");
   printf("-------------------------\n");
-  for (int i = 0; i < unique_byte_count; i++)
+  for (int i = 0; i < uniqueByteCount; i++)
   {
     ByteFreq bf = bf_arr[i];
     if (std::isprint(bf.byte))
-      printf("%d (%c) | %9.1f | ", bf.byte, bf.byte, (float)(100 * bf.freq) / total_byte_count);
+      printf("%d (%c) | %9.1f | ", bf.byte, bf.byte, (float)(100 * bf.freq) / totalByteCount);
     else
-      printf("%d | %9.1f | ", bf.byte, (float)(100 * bf.freq) / total_byte_count);
+      printf("%d | %9.1f | ", bf.byte, (float)(100 * bf.freq) / totalByteCount);
     std::cout << codes[bf.byte].to_string();
     printf("\n");
   }
@@ -57,7 +57,7 @@ void compress(std::istream &inStream, std::ostream &outStream)
   auto bitOstream = BitOstream(outStream);
 
   //  write 2 bytes -> unique bytes count
-  unsigned char *bytes = reinterpret_cast<unsigned char *>(&unique_byte_count);
+  unsigned char *bytes = reinterpret_cast<unsigned char *>(&uniqueByteCount);
   bitOstream.write(bytes[0]);
   bitOstream.write(bytes[1]);
   // write huffman tree data
