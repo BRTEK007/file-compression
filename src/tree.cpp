@@ -107,7 +107,7 @@ void Tree::extract_leaf_bytes(std::vector<unsigned char>& bytes){
 
 }
 
-void Tree::write_to_bitset(BitSet* bit_set){
+void Tree::write_to_bitset(BitOstream& bitOstream){
   std::vector<node_t*> stack;
   
   stack.push_back(this->head->right);
@@ -121,10 +121,10 @@ void Tree::write_to_bitset(BitSet* bit_set){
       continue; 
     
     if(node->leaf){
-      bit_set->write_bit(true);
-      bit_set->write_byte(node->byte);
+      bitOstream.writeBit(true);
+      bitOstream.writeByte(node->byte);
     }else{
-      bit_set->write_bit(false);
+      bitOstream.writeBit(false);
       stack.push_back(node->right);
       stack.push_back(node->left);
     }

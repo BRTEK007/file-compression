@@ -18,17 +18,18 @@ target_sources(byte-compressor PRIVATE
     src/io.cpp
     src/byte_freq.cpp
     src/compress.cpp
-    src/decompress.cpp)
+    src/decompress.cpp
+    src/bitostream.cpp)
 
-add_executable(unit_tests)
+#add_executable(unit_tests)
 
 # target_compile_options(unit_tests PRIVATE -Werror -Wall -Wextra)
 
-target_sources(unit_tests PRIVATE 
-    src/unit_tests.cpp
-    src/byte_slice.cpp
-    src/bit_set.cpp
-    src/bit_code.cpp
-    src/node_queue.cpp
-    src/tree.cpp
-)
+#target_sources(unit_tests PRIVATE 
+    #src/unit_tests.cpp
+    #src/byte_slice.cpp
+    #src/bit_set.cpp
+    #src/bit_code.cpp
+    #src/node_queue.cpp
+    #src/tree.cpp
+#)

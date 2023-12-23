@@ -9,6 +9,7 @@
 #include <vector>
 #include <array>
 #include "bit_code.hpp"
+#include "bitostream.hpp"
 
 typedef struct node_t{
   unsigned char byte;
@@ -27,7 +28,7 @@ class Tree{
     void create_from_bytefreq(const std::vector<byte_freq_t>& bf_arr);
     void extract_codes(std::array<BitCode, 256>& codes);
     void extract_leaf_bytes(std::vector<unsigned char>& bytes);
-    void write_to_bitset(BitSet* bit_set);
+    void write_to_bitset(BitOstream& bitOstream);
     void create_from_bitset(BitSet* bit_set, uint8_t leaf_count);
     void ptr_reset();
     void ptr_right();
