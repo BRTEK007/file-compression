@@ -7,7 +7,7 @@
 #include "byte_slice.hpp"
 #include <vector>
 #include <array>
-#include "bit_code.hpp"
+#include "bitcode.hpp"
 #include "bitostream.hpp"
 #include "bitistream.hpp"
 

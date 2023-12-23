@@ -5,7 +5,7 @@
 #include <iostream>
 #include "tree.hpp"
 #include "bitostream.hpp"
-#include "bit_code.hpp"
+#include "bitcode.hpp"
 #include "bitostream.hpp"
 #include "io.hpp"
 

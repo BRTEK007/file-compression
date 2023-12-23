@@ -4,14 +4,14 @@ BitIstream::BitIstream(std::istream &stream) : stream(stream), byteSlice(){};
 
 bool BitIstream::readBit()
 {
-    if (byteSlice.len == 0)
+    if (byteSlice.size() == 0)
     {
         unsigned char byte;
         stream.read(reinterpret_cast<char *>(&byte), 1);
-        byteSlice.set_byte(byte);
+        byteSlice.setByte(byte);
     }
 
-    bool bit = byteSlice.read_bit();
+    bool bit = byteSlice.readBit();
 
     return bit;
 }
@@ -22,9 +22,9 @@ unsigned char BitIstream::readByte()
 {
     // perform 8 bit reads
     ByteSlice slice;
-    while (slice.len < BYTE_SLICE_BIT_COUNT)
+    while (slice.size() < BYTE_SLICE_BIT_COUNT) // TODO this may overlap with readBit, need to reset byteSlice
     {
-        slice.write_bit(readBit());
+        slice.writeBit(readBit());
     }
-    return slice.bits;
+    return slice.getByte();
 }

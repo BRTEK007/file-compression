@@ -4,14 +4,21 @@
 #define BYTE_SLICE_BIT_COUNT 8
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdlib.h>
 
-struct ByteSlice{
+class ByteSlice
+{
   unsigned char bits;
-  int len;
+  size_t len;
+
+public:
   ByteSlice();
-  void write_bit(bool bit);//adds bit to the end
-  bool read_bit(); //pop bit from beggining
-  void set_byte(unsigned char byte);
+  void writeBit(bool bit); // adds bit to the end
+  bool readBit();          // pop bit from beggining
+  void setByte(unsigned char byte);
+  unsigned char getByte();
+  size_t size();
+  bool full();
 };
 
 #endif

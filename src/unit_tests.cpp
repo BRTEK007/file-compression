@@ -16,19 +16,19 @@ TEST_BEGIN(byte_slice_1)
     ByteSlice byte_slice;
 
     //1101 
-    byte_slice.write_bit(true);
-    byte_slice.write_bit(true);
-    byte_slice.write_bit(false);
-    byte_slice.write_bit(true);
+    byte_slice.writeBit(true);
+    byte_slice.writeBit(true);
+    byte_slice.writeBit(false);
+    byte_slice.writeBit(true);
 
     //1101 = 13
     assert(byte_slice.bits == (unsigned char)13);
 
     //1101
-    assert(byte_slice.read_bit() == true);
-    assert(byte_slice.read_bit() == true);
-    assert(byte_slice.read_bit() == false);
-    assert(byte_slice.read_bit() == true);
+    assert(byte_slice.readBit() == true);
+    assert(byte_slice.readBit() == true);
+    assert(byte_slice.readBit() == false);
+    assert(byte_slice.readBit() == true);
 
 TEST_END
 

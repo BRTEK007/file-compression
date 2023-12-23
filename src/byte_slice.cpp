@@ -1,13 +1,9 @@
 #include "byte_slice.hpp"
 #include <stdio.h>
 
-ByteSlice::ByteSlice()
-{
-  len = 0;
-  bits = 0;
-}
+ByteSlice::ByteSlice() : len(0), bits(0) {}
 
-void ByteSlice::write_bit(bool bit)
+void ByteSlice::writeBit(bool bit)
 {
   bits = bits << 1; // shift left
   if (bit)          // place bit at the end
@@ -15,15 +11,30 @@ void ByteSlice::write_bit(bool bit)
   len++;
 }
 
-bool ByteSlice::read_bit()
+bool ByteSlice::readBit()
 {
   len--;
   bool bit = bits & (1u << len);
   return bit;
 }
 
-void ByteSlice::set_byte(unsigned char byte)
+void ByteSlice::setByte(unsigned char byte)
 {
   bits = byte;
   len = BYTE_SLICE_BIT_COUNT;
+}
+
+unsigned char ByteSlice::getByte()
+{
+  return bits;
+}
+
+size_t ByteSlice::size()
+{
+  return len;
+};
+
+bool ByteSlice::full()
+{
+  return len == BYTE_SLICE_BIT_COUNT;
 }
