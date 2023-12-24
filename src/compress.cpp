@@ -4,9 +4,9 @@
 #include <stdio.h>
 #include <iostream>
 #include "tree.hpp"
-#include "bitostream.hpp"
-#include "bitcode.hpp"
-#include "bitostream.hpp"
+#include "bit_ostream.hpp"
+#include "bit_code.hpp"
+#include "bit_ostream.hpp"
 
 inline void streamToVector(std::istream &inStream, std::vector<unsigned char> &outVector)
 {
@@ -26,11 +26,11 @@ void compress(std::istream &inStream, std::ostream &outStream)
   streamToVector(inStream, inBuffer);
   // TODO inStream to inBuffer
 
-  auto bf_arr = findByteFrequencies(inBuffer);
+  auto byteFreqArr = findByteFrequencies(inBuffer);
 
-  uint16_t uniqueByteCount = bf_arr.size();
+  uint16_t uniqueByteCount = byteFreqArr.size();
 
-  auto tree = Tree(bf_arr);
+  auto tree = Tree(byteFreqArr);
 
   std::array<BitCode, 256> codes;
 
@@ -44,7 +44,7 @@ void compress(std::istream &inStream, std::ostream &outStream)
   printf("-------------------------\n");
   for (int i = 0; i < uniqueByteCount; i++)
   {
-    ByteFreq bf = bf_arr[i];
+    ByteFreq bf = byteFreqArr[i];
     if (std::isprint(bf.byte))
       printf("%d (%c) | %9.1f | ", bf.byte, bf.byte, (float)(100 * bf.freq) / totalByteCount);
     else

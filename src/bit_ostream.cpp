@@ -1,4 +1,4 @@
-#include "bitostream.hpp"
+#include "bit_ostream.hpp"
 
 BitOstream::BitOstream(std::ostream &s) : stream(s), byteSlice(){};
 

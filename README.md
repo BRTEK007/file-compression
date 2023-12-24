@@ -54,7 +54,8 @@ unit tests in src/unit_tests.cpp, unit_tests Cmake target
 
 use exceptions
 googletest
-better python script
+better python script, timeout, .log, automatic file search
 args handling
 comments fix
 optimize?
+readme

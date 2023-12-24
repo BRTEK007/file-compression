@@ -1,6 +1,6 @@
 #include "decompress.hpp"
 #include "tree.hpp"
-#include "bitistream.hpp"
+#include "bit_istream.hpp"
 #include <stdint.h>
 #include <stdio.h>
 #include <iostream>

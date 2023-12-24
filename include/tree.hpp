@@ -7,9 +7,9 @@
 #include "byte_slice.hpp"
 #include <vector>
 #include <array>
-#include "bitcode.hpp"
-#include "bitostream.hpp"
-#include "bitistream.hpp"
+#include "bit_code.hpp"
+#include "bit_ostream.hpp"
+#include "bit_istream.hpp"
 
 struct Node
 {

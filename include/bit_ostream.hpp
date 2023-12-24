@@ -3,7 +3,7 @@
 
 #include <ostream>
 #include "byte_slice.hpp"
-#include "bitcode.hpp"
+#include "bit_code.hpp"
 
 class BitOstream
 {

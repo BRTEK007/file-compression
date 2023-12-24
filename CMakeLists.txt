@@ -9,7 +9,7 @@ add_executable(byte-compressor)
 target_compile_options(byte-compressor PRIVATE -Werror -Wall -O2)
 
 target_sources(byte-compressor PRIVATE 
-    src/bitcode.cpp 
+    src/bit_code.cpp 
     src/main.cpp 
     src/node_queue.cpp 
     src/tree.cpp 
@@ -17,8 +17,8 @@ target_sources(byte-compressor PRIVATE
     src/byte_freq.cpp
     src/compress.cpp
     src/decompress.cpp
-    src/bitostream.cpp
-    src/bitistream.cpp)
+    src/bit_ostream.cpp
+    src/bit_istream.cpp)
 
 #add_executable(unit_tests)
 
