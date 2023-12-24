@@ -56,6 +56,7 @@ use exceptions
 googletest
 better python script, timeout, .log, automatic file search
 args handling
-comments fix
+comments fix, TODOS...
 optimize?
 readme
+testfiles

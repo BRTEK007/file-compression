@@ -1,171 +1,127 @@
-#include <stdio.h>
-#include <assert.h>
-#include <iostream>
+#include <gtest/gtest.h>
 
 #include "byte_slice.hpp"
-#include "bit_set.hpp"
 #include "byte_freq.hpp"
 #include "tree.hpp"
 
-#define TEST_BEGIN(name) \
-    void name()          \
-    {                    \
-        printf("RUNNING TEST\n");
-#define TEST_END         \
-    printf("SUCCESS\n"); \
+TEST(ByteSlice, WriteReadEqual)
+{
+    //---ARRANGE
+    ByteSlice byteSlice;
+
+    //---ACT
+
+    // 1101
+    byteSlice.writeBit(true);
+    byteSlice.writeBit(true);
+    byteSlice.writeBit(false);
+    byteSlice.writeBit(true);
+
+    //---ASSERT
+
+    // 1101 = D
+    EXPECT_EQ(byteSlice.getByte(), (unsigned char)'\x0D');
+
+    // 1101
+    EXPECT_EQ(byteSlice.readBit(), true);
+    EXPECT_EQ(byteSlice.readBit(), true);
+    EXPECT_EQ(byteSlice.readBit(), false);
+    EXPECT_EQ(byteSlice.readBit(), true);
+}
+
+TEST(BitCode, WriteReadEqual)
+{
+    //---ARRANGE
+    BitCode code;
+
+    //---ACT
+    code.writeBit(true);
+    code.writeBit(true);
+    code.writeBit(false);
+    code.writeBit(true);
+
+    //---ASSERT
+    EXPECT_EQ(code.readBit(), true);
+    EXPECT_EQ(code.readBit(), true);
+    EXPECT_EQ(code.readBit(), false);
+    EXPECT_EQ(code.readBit(), true);
+}
+
+TEST(Tree, CreateFromAllBytesValid)
+{
+    //---ARRANGE
+    std::vector<ByteFreq> byteFreqArr;
+    for (int i = 0; i < 256; i++)
+    {
+        ByteFreq bf;
+        bf.byte = i;
+        bf.freq = 1;
+        byteFreqArr.push_back(bf);
     }
-#define TEST_RUN(name) name();
+    auto tree = Tree(byteFreqArr);
 
-TEST_BEGIN(byte_slice_1)
-ByteSlice byte_slice;
+    //---ACT
+    std::array<BitCode, 256> codes;
+    tree.extractCodes(codes);
 
-// 1101
-byte_slice.writeBit(true);
-byte_slice.writeBit(true);
-byte_slice.writeBit(false);
-byte_slice.writeBit(true);
-
-// 1101 = 13
-assert(byte_slice.bits == (unsigned char)13);
-
-// 1101
-assert(byte_slice.readBit() == true);
-assert(byte_slice.readBit() == true);
-assert(byte_slice.readBit() == false);
-assert(byte_slice.readBit() == true);
-
-TEST_END
-
-TEST_BEGIN(bit_set_1)
-BitSet bit_set;
-
-// 11001101 1011
-bit_set.write_bit(true);
-bit_set.write_bit(true);
-bit_set.write_bit(false);
-bit_set.write_bit(false);
-
-bit_set.write_bit(true);
-bit_set.write_bit(true);
-bit_set.write_bit(false);
-bit_set.write_bit(true);
-
-bit_set.write_bit(true);
-bit_set.write_bit(false);
-bit_set.write_bit(true);
-bit_set.write_bit(true);
-
-bit_set.end_write();
-
-bit_set.begin_read();
-// 11001101 1011
-assert(bit_set.read_bit() == true);
-assert(bit_set.read_bit() == true);
-assert(bit_set.read_bit() == false);
-assert(bit_set.read_bit() == false);
-
-assert(bit_set.read_bit() == true);
-assert(bit_set.read_bit() == true);
-assert(bit_set.read_bit() == false);
-assert(bit_set.read_bit() == true);
-
-assert(bit_set.read_bit() == true);
-assert(bit_set.read_bit() == false);
-assert(bit_set.read_bit() == true);
-assert(bit_set.read_bit() == true);
-
-TEST_END
-
-TEST_BEGIN(bit_set_2)
-BitSet bit_set;
-
-// 0 0 1 A 0 1 F
-bit_set.write_bit(false);
-bit_set.write_bit(false);
-bit_set.write_bit(true);
-
-bit_set.write_byte('A');
-
-bit_set.write_bit(false);
-bit_set.write_bit(true);
-
-bit_set.write_byte('F');
-
-bit_set.end_write();
-
-bit_set.begin_read();
-// 0 0 1 A 0 1 F
-assert(bit_set.read_bit() == false);
-assert(bit_set.read_bit() == false);
-assert(bit_set.read_bit() == true);
-
-assert(bit_set.read_byte() == 'A');
-
-assert(bit_set.read_bit() == false);
-assert(bit_set.read_bit() == true);
-
-assert(bit_set.read_byte() == 'F');
-TEST_END
-
-TEST_BEGIN(bit_code_1)
-BitCode code;
-code.writeBit(true);
-code.writeBit(true);
-code.writeBit(false);
-code.writeBit(true);
-// 1101
-assert(code.readBit() == true);
-assert(code.readBit() == true);
-assert(code.readBit() == false);
-assert(code.readBit() == true);
-TEST_END
-
-// TEST_BEGIN(bit_code_2)
-// BitCode code;
-
-// code.writeBit(true);
-// code.writeBit(true);
-// code.writeBit(false);
-// code.writeBit(true);
-// code.writeBit(true);
-// code.writeBit(false);
-// code.writeBit(true);
-// code.writeBit(false);
-////11011010 = 218
-// assert(code.readByte() == 218);
-// TEST_END
-
-TEST_BEGIN(all_bytes_1)
-std::vector<ByteFreq> bf_arr;
-for (int i = 0; i < 256; i++)
-{
-    ByteFreq bf;
-    bf.byte = i;
-    bf.freq = 1;
-    bf_arr.push_back(bf);
+    //---ASSERT
+    for (int i = 0; i < 256; i++)
+    {
+        assert(codes[i].size() > 0);
+    }
 }
 
-Tree tree;
-tree.createFromBytefreq(bf_arr);
-
-std::array<BitCode, 256> codes;
-
-tree.extractCodes(codes);
-
-for (int i = 0; i < 256; i++)
+TEST(BitOstream, WriteCorrectBitsBytes)
 {
-    assert(codes[i].size() > 0);
+    //---ARRANGE
+    std::ostringstream stream;
+    auto bitOstream = BitOstream(stream);
+    //---ACT
+    // 1001 11011000(D8) 0110
+    bitOstream.write(true);
+    bitOstream.write(false);
+    bitOstream.write(false);
+    bitOstream.write(true);
+
+    bitOstream.write((unsigned char)'\xD8');
+
+    bitOstream.write(false);
+    bitOstream.write(true);
+    bitOstream.write(true);
+    bitOstream.write(false);
+    //---ASSERT
+    // 10011101(9D) 10000110(86)
+    auto bytes = stream.str().c_str();
+    EXPECT_EQ((unsigned char)bytes[0], (unsigned char)'\x9D');
+    EXPECT_EQ((unsigned char)bytes[1], (unsigned char)'\x86');
 }
 
-TEST_END
+TEST(BitIstream, ReadCorrectBitsBytes)
+{
+    //---ARRANGE
+    std::istringstream stream("\x9D\x86"); // 10011101(9D) 10000110(86)
+    auto bitIstream = BitIstream(stream);
+    //---ACT & ASSERT
+    EXPECT_FALSE(bitIstream.eof());
+    // 1001 11011000(D8) 0110
+    EXPECT_EQ(bitIstream.readBit(), true);
+    EXPECT_EQ(bitIstream.readBit(), false);
+    EXPECT_EQ(bitIstream.readBit(), false);
+    EXPECT_EQ(bitIstream.readBit(), true);
+
+    EXPECT_EQ(bitIstream.readByte(), (unsigned char)'\xD8');
+
+    EXPECT_EQ(bitIstream.readBit(), false);
+    EXPECT_EQ(bitIstream.readBit(), true);
+    EXPECT_EQ(bitIstream.readBit(), true);
+    EXPECT_EQ(bitIstream.readBit(), false);
+
+    // std::cout << "<" << bitIstream.readBit() << ">";
+    EXPECT_TRUE(bitIstream.eof());
+}
 
 int main(int argc, char **argv)
 {
-    TEST_RUN(byte_slice_1);
-    TEST_RUN(bit_set_1);
-    TEST_RUN(bit_set_2);
-    TEST_RUN(bit_code_1);
-    // TEST_RUN(bit_code_2);
-    TEST_RUN(all_bytes_1);
-    return 0;
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
 }

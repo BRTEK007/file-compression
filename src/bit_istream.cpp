@@ -27,7 +27,7 @@ unsigned char BitIstream::readByte()
 {
     // perform 8 bit reads
     ByteSlice slice;
-    while (slice.size() < BYTE_SLICE_BIT_COUNT) // TODO this may overlap with readBit, need to reset byteSlice
+    while (!slice.full()) // TODO this may overlap with readBit, need to reset byteSlice
     {
         slice.writeBit(readBit());
     }
