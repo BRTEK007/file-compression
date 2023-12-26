@@ -2,5 +2,7 @@
   "files.associations": {
     "*.embeddedhtml": "html",
     "streambuf": "cpp"
-  }
+  },
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.autoImportCompletions": true
 }

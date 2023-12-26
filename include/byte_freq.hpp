@@ -2,11 +2,12 @@
 #define BYTE_FREQ_H
 
 #include <vector>
+#include <stdlib.h>
 
 struct ByteFreq
 {
   unsigned char byte;
-  int freq;
+  size_t freq;
 };
 
 std::vector<ByteFreq> findByteFrequencies(const std::vector<unsigned char> &bytes_in);

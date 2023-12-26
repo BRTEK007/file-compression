@@ -60,3 +60,5 @@ comments fix, TODOS...
 optimize?
 readme
 testfiles
+
+# test images: https://imagecompression.info/test_images/
