@@ -1,7 +1,12 @@
 #include "byte_slice.hpp"
-#include <stdio.h>
 
 ByteSlice::ByteSlice() : bits(0), len(0) {}
+
+void ByteSlice::reset()
+{
+  bits = 0;
+  len = 0;
+}
 
 void ByteSlice::writeBit(bool bit)
 {

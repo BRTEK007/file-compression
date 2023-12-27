@@ -3,7 +3,6 @@
 
 #include <istream>
 #include "byte_slice.hpp"
-#include <stdlib.h>
 
 class BitIstream
 {

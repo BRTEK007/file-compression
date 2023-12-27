@@ -1,5 +1,6 @@
 #ifndef DECOMPRESS_H
 #define DECOMPRESS_H
+
 #include <vector>
 #include <ostream>
 

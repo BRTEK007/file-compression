@@ -4,12 +4,11 @@ BitOstream::BitOstream(std::ostream &s) : stream(s), byteSlice(){};
 
 void BitOstream::write(bool bit)
 {
-    // TODO better ByteSlice
     byteSlice.writeBit(bit);
     if (byteSlice.full())
     {
         stream << byteSlice.getByte();
-        byteSlice = ByteSlice();
+        byteSlice.reset();
     }
 }
 
@@ -29,7 +28,6 @@ void BitOstream::write(unsigned char byte)
 
 void BitOstream::write(ByteSlice slice)
 {
-    // write slice bit by bit
     while (slice.size() > 0)
     {
         write(slice.readBit());

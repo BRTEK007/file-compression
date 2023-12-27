@@ -1,12 +1,11 @@
 #ifndef TREE_H
 #define TREE_H
 
-#include <stdbool.h>
+#include <vector>
+#include <array>
 
 #include "byte_freq.hpp"
 #include "byte_slice.hpp"
-#include <vector>
-#include <array>
 #include "bit_code.hpp"
 #include "bit_ostream.hpp"
 #include "bit_istream.hpp"

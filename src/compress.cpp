@@ -1,12 +1,12 @@
 #include "compress.hpp"
+
 #include "byte_freq.hpp"
-#include <stdint.h>
-#include <stdio.h>
-#include <iostream>
 #include "tree.hpp"
 #include "bit_ostream.hpp"
 #include "bit_code.hpp"
 #include "bit_ostream.hpp"
+
+#include <iostream>
 
 inline void streamToVector(std::istream &inStream, std::vector<unsigned char> &outVector)
 {

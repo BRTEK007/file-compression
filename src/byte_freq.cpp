@@ -1,6 +1,5 @@
 #include "byte_freq.hpp"
-#include <stdlib.h>
-#include <array>
+
 #include <algorithm>
 
 // returns array of byte_frequencies from input byte buffer
@@ -9,7 +8,7 @@ std::vector<ByteFreq> findByteFrequencies(const std::vector<unsigned char> &byte
   std::array<ByteFreq, 256> arr;
 
   for (int i = 0; i < 256; i++)
-  { // init array
+  {
     arr[i].byte = (unsigned char)i;
     arr[i].freq = 0;
   }

@@ -2,8 +2,6 @@
 #define BYTE_SLICE_H
 
 #define BYTE_SLICE_BIT_COUNT 8
-#include <stdbool.h>
-#include <stdint.h>
 #include <stdlib.h>
 
 class ByteSlice
@@ -19,6 +17,7 @@ public:
   unsigned char getByte();
   size_t size();
   bool full();
+  void reset();
 };
 
 #endif

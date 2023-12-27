@@ -1,13 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdbool.h>
-#include <fstream>
-
 #include "compress.hpp"
 #include "decompress.hpp"
 
-#define CVECTOR_LOGARITHMIC_GROWTH
+#include <iostream>
+#include <string.h>
+#include <fstream>
 
 void args_error_exit()
 {

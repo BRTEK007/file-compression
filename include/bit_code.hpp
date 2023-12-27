@@ -3,8 +3,6 @@
 
 #include <bitset>
 
-// class for holding bit codes for bytes
-
 class BitCode
 {
 private:

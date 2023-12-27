@@ -1,6 +1,4 @@
 #include "bit_code.hpp"
-#include <stdexcept>
-#include <iostream>
 #include <algorithm>
 
 BitCode::BitCode() : len(0)

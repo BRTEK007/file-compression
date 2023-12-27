@@ -1,9 +1,5 @@
 #include "tree.hpp"
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <iostream>
-
 #include "node_queue.hpp"
 
 Tree::Tree()
@@ -167,7 +163,7 @@ void Tree::readFrom(BitIstream &bitIstream, size_t leaf_count)
     Node **node = stack.back();
     stack.pop_back();
 
-    bool bit = bitIstream.readBit();
+    bool bit = bitIstream.readBit(); // TODO check eof, and throw
 
     if (!bit)
     { // parent node

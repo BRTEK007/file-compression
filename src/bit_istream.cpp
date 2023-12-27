@@ -16,8 +16,6 @@ bool BitIstream::readBit()
     return bit;
 }
 
-// TODO implement eof
-
 bool BitIstream::eof()
 {
     return byteSlice.size() > 0;
