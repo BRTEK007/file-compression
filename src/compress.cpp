@@ -6,6 +6,8 @@
 #include "bit_code.hpp"
 #include "bit_ostream.hpp"
 
+#include <stdexcept>
+
 inline void streamToVector(std::istream &inStream, std::vector<unsigned char> &outVector)
 {
   inStream.seekg(0, std::ios::end);
@@ -21,6 +23,11 @@ void compress(std::istream &inStream, std::ostream &outStream)
 {
   std::vector<unsigned char> inBuffer;
   streamToVector(inStream, inBuffer);
+
+  if (inBuffer.size() == 0)
+  {
+    throw std::runtime_error("Can't compress 0B file.");
+  }
 
   auto byteFreqArr = findByteFrequencies(inBuffer);
 

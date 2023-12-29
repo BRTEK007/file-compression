@@ -85,9 +85,19 @@ int main(int argc, char **argv)
     exit(2);
   }
 
+  bool wasError = false;
+
   if (doCompress)
   {
-    compress(inStream, outStream);
+    try
+    {
+      compress(inStream, outStream);
+    }
+    catch (std::exception &e)
+    {
+      std::cout << "ERROR: " << e.what() << '\n';
+      wasError = true;
+    }
   }
   else
   {
@@ -97,5 +107,5 @@ int main(int argc, char **argv)
   inStream.close();
   outStream.close();
 
-  return 0;
+  return wasError ? 1 : 0;
 }
