@@ -2,6 +2,7 @@ import subprocess
 import os
 import time
 import sys
+from tkinter.messagebox import NO
 
 GREEN = '\033[92m'
 RED = '\033[91m'
@@ -24,6 +25,9 @@ class Tester:
         return 1
 
     def runAll(self, dir_path):
+        #for root, dirs, files in os.walk(dir_path):
+            #for filename in files:
+                #print(root, dirs, files)
         for root, _, files in os.walk(dir_path):
             for filename in files:
                 file_path = os.path.join(root, filename)
@@ -38,17 +42,19 @@ class Tester:
 
         #compression
         file_stats = os.stat(file_path)
-        print('{0:42} {1}B'.format(file_path, file_stats.st_size))
+        print('{0:32} {1:10}B'.format(file_path, file_stats.st_size), end='\t')
         process = subprocess.Popen([self.compressor_path, '-c', absoluteFilePath, 'temp.compressed'], stdout=stdoutRedirect, stderr=subprocess.PIPE) 
         stream_out, stream_err = process.communicate()
         if process.returncode != 0:
             return self.failed(file_path, 'COMPRESSION', process.returncode, stream_err)
-
         #decompression
         process = subprocess.Popen([self.compressor_path, '-d', 'temp.compressed', 'temp.decompressed'], stdout=stdoutRedirect, stderr=subprocess.PIPE) 
-        stream_out, stream_err = process.communicate()
-        if process.returncode != 0:
-            return self.failed(file_path, 'DECOMPRESSION', process.returncode, stream_err)
+        try:
+            stream_out, stream_err = process.communicate(timeout=3)
+            if process.returncode != 0:
+                return self.failed(file_path, 'DECOMPRESSION', process.returncode, stream_err)
+        except subprocess.TimeoutExpired:
+            return self.failed(file_path, 'DECOMPRESSION timeout', None, None)
 
         #compare
         process = subprocess.Popen(['cmp', absoluteFilePath, 'temp.decompressed'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -69,13 +75,4 @@ class Tester:
         #print('{0} {1:50}\t{2}ms'.format(GREEN+"PASSED"+ENDC, file_path, round(elapsed*1000, 2)))
 
 tester = Tester("../build/byte-compressor")
-tester.runAll("files")
-#tester.run("files/21_total_5_unique.txt")
-#tester.run("files/1000_digits.bin")
-#tester.run("files/1000_lowercase.bin")
-#tester.run("files/1000_printable.bin")
-#tester.run("files/iliad.txt")
-#tester.run("files/10000_all.bin")
-##tester.run("files/lena.tiff")
-##tester.run("files/mozart_symphony_40.wav")
-#tester.run("files/img/hdr.pgm")
+tester.runAll("both")

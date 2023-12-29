@@ -60,4 +60,19 @@ optimize?
 readme
 testfiles
 
+tests/
+    compression/
+        0B/
+            in ""
+            rc 1
+    decompression/
+        invalid_tree/
+            in "not compressed file"
+            rc 1
+    both/
+        1000B_all/
+            in "..."
+            rc 0
+
+
 # test images: https://imagecompression.info/test_images/
