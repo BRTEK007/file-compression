@@ -2,8 +2,6 @@
 
 c++ file compression and decompression, using Huffman coding
 
-note: project is in a state of being converted from plain C
-
 ## example
 
 ```console
@@ -39,7 +37,7 @@ FAILED files/mozart_symphony_40.wav (DECOMPRESSION)
 
 tests directory contains python script that tests compression then decompression and compares the files
 
-unit tests in src/unit_tests.cpp, unit_tests Cmake target
+unit tests in src/unit_tests.cpp, unit_tests Cmake target, googletest required
 
 ## build
 
@@ -49,30 +47,5 @@ unit tests in src/unit_tests.cpp, unit_tests Cmake target
 > cmake ..
 > make
 ```
-
-## TODO:
-
-use exceptions
-better python script, timeout, .log, automatic file search
-args handling
-comments fix, TODOS...
-optimize?
-readme
-testfiles
-
-tests/
-    compression/
-        0B/
-            in ""
-            rc 1
-    decompression/
-        invalid_tree/
-            in "not compressed file"
-            rc 1
-    both/
-        1000B_all/
-            in "..."
-            rc 0
-
 
 # test images: https://imagecompression.info/test_images/
