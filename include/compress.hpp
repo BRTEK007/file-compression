@@ -1,8 +1,9 @@
 #ifndef COMPRESS_H
 #define COMPRESS_H
 
-#include <vector>
+#include <ostream>
+#include <istream>
 
-std::vector<unsigned char> compress(const std::vector<unsigned char>& in_buffer);
+void compress(std::istream &inStream, std::ostream &outStream);
 
 #endif

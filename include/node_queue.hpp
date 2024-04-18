@@ -5,14 +5,16 @@
 
 #include "tree.hpp"
 
-class NodeQueue{
-  private:
-    std::vector<node_t*> nodes;
-  public: 
-    NodeQueue(size_t size);
-    size_t size();
-    void push(node_t* node);
-    node_t* pop();
+class NodeQueue
+{
+private:
+  std::vector<Node *> nodes;
+
+public:
+  NodeQueue(size_t size);
+  size_t size();
+  void push(Node *node);
+  Node *pop();
 };
 
 #endif

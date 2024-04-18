@@ -1,23 +1,23 @@
 #include "tree.hpp"
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <iostream>
-
 #include "node_queue.hpp"
 
-Tree::Tree(){
+Tree::Tree()
+{
   this->head = NULL;
-  this->node_ptr = NULL;
+  this->nodePtr = NULL;
 }
 
-Tree::~Tree(){
-  std::vector<node_t*> stack;
+Tree::~Tree()
+{
+  std::vector<Node *> stack;
   stack.push_back(this->head);
-  while(!stack.empty()){
-    node_t* node = stack.back();
+  while (!stack.empty())
+  {
+    Node *node = stack.back();
     stack.pop_back();
-    if(node != NULL){
+    if (node != NULL)
+    {
       stack.push_back(node->right);
       stack.push_back(node->left);
       delete node;
@@ -25,168 +25,192 @@ Tree::~Tree(){
   }
 }
 
+Tree::Tree(const std::vector<ByteFreq> &bf_arr)
+{
+  NodeQueue queue(bf_arr.size());
 
-void Tree::create_from_bytefreq(const std::vector<byte_freq_t>& bf_arr){
-  NodeQueue node_queue(bf_arr.size());
-
-  //create a leaf node for each symbol
-  for(int i = 0; i < bf_arr.size(); i++){
-    node_t* node = new node_t;
+  // create a leaf node for each symbol
+  for (size_t i = 0; i < bf_arr.size(); i++)
+  {
+    Node *node = new Node;
     node->byte = bf_arr[i].byte;
     node->freq = bf_arr[i].freq;
     node->leaf = true;
     node->left = NULL;
     node->right = NULL;
-    node_queue.push(node);
+    queue.push(node);
   }
 
-  //while more than one node in the queue
-  while(node_queue.size() > 1){
-    //remove two nodes of highest probability
-    node_t* nodeA = node_queue.pop();
-    node_t* nodeB = node_queue.pop();
-    //create new internal node
-    node_t* node_internal = new node_t;
-    node_internal->freq = nodeA->freq + nodeB->freq;
-    node_internal->leaf = false;
-    node_internal->left = nodeA;
-    node_internal->right = nodeB;
-    node_queue.push(node_internal);
+  // while more than one node in the queue
+  while (queue.size() > 1)
+  {
+    // remove two nodes of highest probability
+    Node *nodeA = queue.pop();
+    Node *nodeB = queue.pop();
+    // create new internal node
+    Node *nodeInternal = new Node;
+    nodeInternal->freq = nodeA->freq + nodeB->freq;
+    nodeInternal->leaf = false;
+    nodeInternal->left = nodeA;
+    nodeInternal->right = nodeB;
+    queue.push(nodeInternal);
   }
-  
-  this->head = node_queue.pop();
+
+  this->head = queue.pop();
 }
 
-void Tree::extract_codes(std::array<BitCode, 256>& codes){
-  std::vector<std::pair<node_t*, BitCode>> stack;
-  
+void Tree::extractCodes(std::array<BitCode, 256> &codes)
+{
+  std::vector<std::pair<Node *, BitCode>> stack;
+
   BitCode code;
   stack.push_back({this->head, code});
 
-  while(!stack.empty()){
-    auto node_code = stack.back();
+  while (!stack.empty())
+  {
+    auto nodeCode = stack.back();
     stack.pop_back();
 
-    node_t* node = node_code.first;
-    BitCode code = node_code.second;
+    Node *node = nodeCode.first;
+    BitCode code = nodeCode.second;
 
-    if(node != NULL){
-      BitCode code_left = code;
-      BitCode code_right = code;
+    if (node != NULL)
+    {
+      BitCode codeLeft = code;
+      BitCode codeRight = code;
 
-      code_left.writeBit(false);
-      code_right.writeBit(true);
+      codeLeft.writeBit(false);
+      codeRight.writeBit(true);
 
-      stack.push_back({node->right, code_right});
-      stack.push_back({node->left, code_left});
-      
-      if(node->leaf){
+      stack.push_back({node->right, codeRight});
+      stack.push_back({node->left, codeLeft});
+
+      if (node->leaf)
+      {
         codes[node->byte] = code;
       }
     }
   }
 }
 
-void Tree::extract_leaf_bytes(std::vector<unsigned char>& bytes){
-  std::vector<node_t*> stack;
+void Tree::extractLeafBytes(std::vector<unsigned char> &bytes)
+{
+  std::vector<Node *> stack;
   stack.push_back(this->head);
 
   bytes.clear();
 
-  while(!stack.empty()){
-    node_t* node = stack.back();
+  while (!stack.empty())
+  {
+    Node *node = stack.back();
     stack.pop_back();
-    if(node != NULL){
+    if (node != NULL)
+    {
       stack.push_back(node->right);
       stack.push_back(node->left);
-      if(node->leaf){
+      if (node->leaf)
+      {
         bytes.push_back(node->byte);
       }
     }
   }
-
 }
 
-void Tree::write_to_bitset(bit_set_t* bit_set){
-  std::vector<node_t*> stack;
-  
+void Tree::writeTo(BitOstream &bitOstream)
+{
+  std::vector<Node *> stack;
+
   stack.push_back(this->head->right);
   stack.push_back(this->head->left);
 
-  while(!stack.empty()){
-    node_t* node = stack.back();
+  while (!stack.empty())
+  {
+    Node *node = stack.back();
     stack.pop_back();
 
-    if(!node)
-      continue; 
-    
-    if(node->leaf){
-      bit_set_write_bit(bit_set, true);
-      bit_set_write_byte(bit_set, node->byte);
-    }else{
-      bit_set_write_bit(bit_set, false);
+    if (!node)
+      continue;
+
+    if (node->leaf)
+    {
+      bitOstream.write(true);
+      bitOstream.write(node->byte);
+    }
+    else
+    {
+      bitOstream.write(false);
       stack.push_back(node->right);
       stack.push_back(node->left);
     }
   }
 }
 
-void Tree::create_from_bitset(bit_set_t* bit_set, uint8_t leaf_count){
-  node_t* root = new node_t();
+void Tree::readFrom(BitIstream &bitIstream, size_t leaf_count)
+{
+  Node *root = new Node();
   root->leaf = false;
   root->left = NULL;
   root->right = NULL;
 
-  std::vector<node_t**> stack;
+  std::vector<Node **> stack;
 
   stack.push_back(&(root->right));
   stack.push_back(&(root->left));
 
-  uint8_t leaves_read = 0;
-  while(leaves_read < leaf_count){
-    node_t** node = stack.back();
+  size_t leavesRead = 0;
+  while (leavesRead < leaf_count)
+  {
+    Node **node = stack.back();
     stack.pop_back();
 
-    bool bit = bit_set_read_bit(bit_set);
+    bool bit = bitIstream.readBit(); // TODO check eof, and throw
 
-    if(!bit){//parent node
-      node_t* new_node = new node_t();
-      new_node->leaf = false;
-      new_node->left = NULL;
-      new_node->right = NULL;
-      *node = new_node;
-      
-      stack.push_back(&(new_node->right));
-      stack.push_back(&(new_node->left));
-    }else{//leaf node
-      node_t* new_node = new node_t();
-      new_node->byte = bit_set_read_byte(bit_set);
-      new_node->leaf = true;
-      new_node->left = NULL;
-      new_node->right = NULL;
-      *node = new_node;
-      leaves_read++;
+    if (!bit)
+    { // parent node
+      Node *newNode = new Node();
+      newNode->leaf = false;
+      newNode->left = NULL;
+      newNode->right = NULL;
+      *node = newNode;
+
+      stack.push_back(&(newNode->right));
+      stack.push_back(&(newNode->left));
+    }
+    else
+    { // leaf node
+      Node *newNode = new Node();
+      newNode->byte = bitIstream.readByte();
+      newNode->leaf = true;
+      newNode->left = NULL;
+      newNode->right = NULL;
+      *node = newNode;
+      leavesRead++;
     }
   }
   this->head = root;
 }
 
-void Tree::ptr_reset(){
-  this->node_ptr = this->head;
+void Tree::ptrReset()
+{
+  this->nodePtr = this->head;
 }
 
-void Tree::ptr_right(){
-  this->node_ptr = this->node_ptr->right;
+void Tree::ptrRight()
+{
+  this->nodePtr = this->nodePtr->right;
 }
 
-void Tree::ptr_left(){
-  this->node_ptr = this->node_ptr->left;
+void Tree::ptrLeft()
+{
+  this->nodePtr = this->nodePtr->left;
 }
 
-bool Tree::ptr_is_leaf(){
-  return this->node_ptr->leaf;
+bool Tree::ptrIsLeaf()
+{
+  return this->nodePtr->leaf;
 }
 
-unsigned char Tree::ptr_read_byte(){
-  return this->node_ptr->byte;
+unsigned char Tree::ptrReadByte()
+{
+  return this->nodePtr->byte;
 }

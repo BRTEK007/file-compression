@@ -1,26 +1,45 @@
 #include "byte_slice.hpp"
-#include <stdio.h>
 
-void byte_slice_print(byte_slice_t slice){
-  while(slice.len > 0){
-    printf("%d", byte_slice_read_bit(&slice));
-  }
+ByteSlice::ByteSlice() : bits(0), len(0) {}
+
+void ByteSlice::reset()
+{
+  bits = 0;
+  len = 0;
 }
 
-void byte_slice_init(byte_slice_t* byte_slice){
-  byte_slice->len = 0;
-  byte_slice->bits = 0;
+void ByteSlice::writeBit(bool bit)
+{
+  bits = bits << 1; // shift left
+  if (bit)          // place bit at the end
+    bits = bits | 1u;
+  len++;
 }
 
-void byte_slice_write_bit(byte_slice_t* byte_slice, bool bit){
-  byte_slice->bits = byte_slice->bits << 1;//shift left
-  if(bit)//place bit at the end
-    byte_slice->bits = byte_slice->bits | 1u;
-  byte_slice->len++;
-}
-
-bool byte_slice_read_bit(byte_slice_t* byte_slice){
-  byte_slice->len--;
-  bool bit = byte_slice->bits & (1u << byte_slice->len);
+bool ByteSlice::readBit()
+{
+  len--;
+  bool bit = bits & (1u << len);
   return bit;
+}
+
+void ByteSlice::setByte(unsigned char byte)
+{
+  bits = byte;
+  len = BYTE_SLICE_BIT_COUNT;
+}
+
+unsigned char ByteSlice::getByte()
+{
+  return bits;
+}
+
+size_t ByteSlice::size()
+{
+  return len;
+};
+
+bool ByteSlice::full()
+{
+  return len == BYTE_SLICE_BIT_COUNT;
 }

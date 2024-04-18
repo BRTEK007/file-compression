@@ -3,19 +3,18 @@
 
 #include <bitset>
 
-//class for holding bit codes for bytes
+class BitCode
+{
+private:
+    size_t len;
+    std::bitset<256> bits;
 
-class BitCode{
-    private:
-        int len;
-        std::bitset<256> bits;
-    public:
-        BitCode();
-        void writeBit(bool bit);
-        bool readBit();
-        unsigned char readByte();
-        int size();
-        std::string to_string();
+public:
+    BitCode();
+    void writeBit(bool bit);
+    bool readBit();
+    size_t size();
+    std::string to_string();
 };
 
 #endif

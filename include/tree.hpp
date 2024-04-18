@@ -1,39 +1,42 @@
 #ifndef TREE_H
 #define TREE_H
 
-#include <stdbool.h>
+#include <vector>
+#include <array>
 
 #include "byte_freq.hpp"
 #include "byte_slice.hpp"
-#include "bit_set.hpp"
-#include <vector>
-#include <array>
 #include "bit_code.hpp"
+#include "bit_ostream.hpp"
+#include "bit_istream.hpp"
 
-typedef struct node_t{
+struct Node
+{
   unsigned char byte;
   bool leaf;
-  int freq;
-  struct node_t* left;
-  struct node_t* right;
-} node_t;
+  unsigned freq;
+  struct Node *left;
+  struct Node *right;
+};
 
-class Tree{
-    node_t* head;
-    node_t* node_ptr;
-  public:
-    Tree();
-    ~Tree();
-    void create_from_bytefreq(const std::vector<byte_freq_t>& bf_arr);
-    void extract_codes(std::array<BitCode, 256>& codes);
-    void extract_leaf_bytes(std::vector<unsigned char>& bytes);
-    void write_to_bitset(bit_set_t* bit_set);
-    void create_from_bitset(bit_set_t* bit_set, uint8_t leaf_count);
-    void ptr_reset();
-    void ptr_right();
-    void ptr_left();
-    bool ptr_is_leaf();
-    unsigned char ptr_read_byte();
+class Tree
+{
+  Node *head;
+  Node *nodePtr;
+
+public:
+  Tree();
+  Tree(const std::vector<ByteFreq> &bf_arr);
+  ~Tree();
+  void readFrom(BitIstream &bitIstream, size_t leaf_count);
+  void extractCodes(std::array<BitCode, 256> &codes);
+  void extractLeafBytes(std::vector<unsigned char> &bytes);
+  void writeTo(BitOstream &bitOstream);
+  void ptrReset();
+  void ptrRight();
+  void ptrLeft();
+  bool ptrIsLeaf();
+  unsigned char ptrReadByte();
 };
 
 #endif

@@ -1,146 +1,127 @@
-#include <stdio.h>
-#include <assert.h>
-#include <iostream>
+#include <gtest/gtest.h>
 
 #include "byte_slice.hpp"
-#include "bit_set.hpp"
+#include "byte_freq.hpp"
+#include "tree.hpp"
 
-#define TEST_BEGIN(name) void name() { \
-                        printf("RUNNING TEST\n");
-#define TEST_END printf("SUCCESS\n");}
-#define TEST_RUN(name) name();
+TEST(ByteSlice, WriteReadEqual)
+{
+    //---ARRANGE
+    ByteSlice byteSlice;
 
-TEST_BEGIN(byte_slice_1)
-    byte_slice_t byte_slice;
-    byte_slice_init(&byte_slice);
+    //---ACT
 
-    //1101 
-    byte_slice_write_bit(&byte_slice, true);
-    byte_slice_write_bit(&byte_slice, true);
-    byte_slice_write_bit(&byte_slice, false);
-    byte_slice_write_bit(&byte_slice, true);
+    // 1101
+    byteSlice.writeBit(true);
+    byteSlice.writeBit(true);
+    byteSlice.writeBit(false);
+    byteSlice.writeBit(true);
 
-    //1101 = 13
-    assert(byte_slice.bits == (unsigned char)13);
+    //---ASSERT
 
-    //1101
-    assert(byte_slice_read_bit(&byte_slice) == true);
-    assert(byte_slice_read_bit(&byte_slice) == true);
-    assert(byte_slice_read_bit(&byte_slice) == false);
-    assert(byte_slice_read_bit(&byte_slice) == true);
+    // 1101 = D
+    EXPECT_EQ(byteSlice.getByte(), (unsigned char)'\x0D');
 
-TEST_END
-
-
-TEST_BEGIN(bit_set_1)
-    bit_set_t bit_set;
-    bit_set_init(&bit_set);
-
-    //11001101 1011
-    bit_set_write_bit(&bit_set, true);
-    bit_set_write_bit(&bit_set, true);
-    bit_set_write_bit(&bit_set, false);
-    bit_set_write_bit(&bit_set, false);
-    
-    bit_set_write_bit(&bit_set, true);
-    bit_set_write_bit(&bit_set, true);
-    bit_set_write_bit(&bit_set, false);
-    bit_set_write_bit(&bit_set, true);
-    
-    bit_set_write_bit(&bit_set, true);
-    bit_set_write_bit(&bit_set, false);
-    bit_set_write_bit(&bit_set, true);
-    bit_set_write_bit(&bit_set, true);
-
-    bit_set_end_write(&bit_set);
-    
-    bit_set_begin_read(&bit_set);
-    //11001101 1011
-    assert(bit_set_read_bit(&bit_set) == true);
-    assert(bit_set_read_bit(&bit_set) == true);
-    assert(bit_set_read_bit(&bit_set) == false);
-    assert(bit_set_read_bit(&bit_set) == false);
-    
-    assert(bit_set_read_bit(&bit_set) == true);
-    assert(bit_set_read_bit(&bit_set) == true);
-    assert(bit_set_read_bit(&bit_set) == false);
-    assert(bit_set_read_bit(&bit_set) == true);
-   
-    assert(bit_set_read_bit(&bit_set) == true);
-    assert(bit_set_read_bit(&bit_set) == false);
-    assert(bit_set_read_bit(&bit_set) == true);
-    assert(bit_set_read_bit(&bit_set) == true);
-   
-    bit_set_free(&bit_set);
-TEST_END
-
-TEST_BEGIN(bit_set_2)
-    bit_set_t bit_set;
-    bit_set_init(&bit_set);
-
-    // 0 0 1 A 0 1 F 
-    bit_set_write_bit(&bit_set, false);
-    bit_set_write_bit(&bit_set, false);
-    bit_set_write_bit(&bit_set, true);
-
-    bit_set_write_byte(&bit_set, 'A');
-    
-    bit_set_write_bit(&bit_set, false);
-    bit_set_write_bit(&bit_set, true);
-
-    bit_set_write_byte(&bit_set, 'F');
-    
-    bit_set_end_write(&bit_set);
-    
-    bit_set_begin_read(&bit_set);
-    // 0 0 1 A 0 1 F 
-    assert(bit_set_read_bit(&bit_set) == false);
-    assert(bit_set_read_bit(&bit_set) == false);
-    assert(bit_set_read_bit(&bit_set) == true);
-    
-    assert(bit_set_read_byte(&bit_set) == 'A');
-    
-    assert(bit_set_read_bit(&bit_set) == false);
-    assert(bit_set_read_bit(&bit_set) == true);
-
-    assert(bit_set_read_byte(&bit_set) == 'F');
-    bit_set_free(&bit_set);
-TEST_END
-
-TEST_BEGIN(bit_code_1)
-    BitCode code;
-    code.writeBit(true);
-    code.writeBit(true);
-    code.writeBit(false);
-    code.writeBit(true);
-    //1101
-    assert(code.readBit() == true);
-    assert(code.readBit() == true);
-    assert(code.readBit() == false);
-    assert(code.readBit() == true);
-TEST_END
-
-TEST_BEGIN(bit_code_2)
-    BitCode code;
-    
-    code.writeBit(true);
-    code.writeBit(true);
-    code.writeBit(false);
-    code.writeBit(true);
-    code.writeBit(true);
-    code.writeBit(false);
-    code.writeBit(true);
-    code.writeBit(false);
-    //11011010 = 218
-    assert(code.readByte() == 218);
-TEST_END
-
-int main(int argc, char** argv){
-  TEST_RUN(byte_slice_1);
-  TEST_RUN(bit_set_1);
-  TEST_RUN(bit_set_2);
-  TEST_RUN(bit_code_1);
-  TEST_RUN(bit_code_2);
-  return 0;
+    // 1101
+    EXPECT_EQ(byteSlice.readBit(), true);
+    EXPECT_EQ(byteSlice.readBit(), true);
+    EXPECT_EQ(byteSlice.readBit(), false);
+    EXPECT_EQ(byteSlice.readBit(), true);
 }
 
+TEST(BitCode, WriteReadEqual)
+{
+    //---ARRANGE
+    BitCode code;
+
+    //---ACT
+    code.writeBit(true);
+    code.writeBit(true);
+    code.writeBit(false);
+    code.writeBit(true);
+
+    //---ASSERT
+    EXPECT_EQ(code.readBit(), true);
+    EXPECT_EQ(code.readBit(), true);
+    EXPECT_EQ(code.readBit(), false);
+    EXPECT_EQ(code.readBit(), true);
+}
+
+TEST(Tree, CreateFromAllBytesValid)
+{
+    //---ARRANGE
+    std::vector<ByteFreq> byteFreqArr;
+    for (int i = 0; i < 256; i++)
+    {
+        ByteFreq bf;
+        bf.byte = i;
+        bf.freq = 1;
+        byteFreqArr.push_back(bf);
+    }
+    auto tree = Tree(byteFreqArr);
+
+    //---ACT
+    std::array<BitCode, 256> codes;
+    tree.extractCodes(codes);
+
+    //---ASSERT
+    for (int i = 0; i < 256; i++)
+    {
+        assert(codes[i].size() > 0);
+    }
+}
+
+TEST(BitOstream, WriteCorrectBitsBytes)
+{
+    //---ARRANGE
+    std::ostringstream stream;
+    auto bitOstream = BitOstream(stream);
+    //---ACT
+    // 1001 11011000(D8) 0110
+    bitOstream.write(true);
+    bitOstream.write(false);
+    bitOstream.write(false);
+    bitOstream.write(true);
+
+    bitOstream.write((unsigned char)'\xD8');
+
+    bitOstream.write(false);
+    bitOstream.write(true);
+    bitOstream.write(true);
+    bitOstream.write(false);
+    //---ASSERT
+    // 10011101(9D) 10000110(86)
+    auto bytes = stream.str().c_str();
+    EXPECT_EQ((unsigned char)bytes[0], (unsigned char)'\x9D');
+    EXPECT_EQ((unsigned char)bytes[1], (unsigned char)'\x86');
+}
+
+TEST(BitIstream, ReadCorrectBitsBytes)
+{
+    //---ARRANGE
+    std::istringstream stream("\x9D\x86"); // 10011101(9D) 10000110(86)
+    auto bitIstream = BitIstream(stream);
+    //---ACT & ASSERT
+    EXPECT_FALSE(bitIstream.eof());
+    // 1001 11011000(D8) 0110
+    EXPECT_EQ(bitIstream.readBit(), true);
+    EXPECT_EQ(bitIstream.readBit(), false);
+    EXPECT_EQ(bitIstream.readBit(), false);
+    EXPECT_EQ(bitIstream.readBit(), true);
+
+    EXPECT_EQ(bitIstream.readByte(), (unsigned char)'\xD8');
+
+    EXPECT_EQ(bitIstream.readBit(), false);
+    EXPECT_EQ(bitIstream.readBit(), true);
+    EXPECT_EQ(bitIstream.readBit(), true);
+    EXPECT_EQ(bitIstream.readBit(), false);
+
+    // std::cout << "<" << bitIstream.readBit() << ">";
+    EXPECT_TRUE(bitIstream.eof());
+}
+
+int main(int argc, char **argv)
+{
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

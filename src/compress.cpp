@@ -1,71 +1,55 @@
 #include "compress.hpp"
+
 #include "byte_freq.hpp"
-#include <stdint.h>
-#include <stdio.h>
-#include <iostream>
 #include "tree.hpp"
-#include "bit_set.hpp"
+#include "bit_ostream.hpp"
 #include "bit_code.hpp"
+#include "bit_ostream.hpp"
 
-std::vector<unsigned char> compress(const std::vector<unsigned char>& in_buffer){
-  uint32_t total_byte_count = in_buffer.size();
+#include <stdexcept>
 
-  std::vector<byte_freq_t> bf_arr = get_byte_frequencies(in_buffer);
+inline void streamToVector(std::istream &inStream, std::vector<unsigned char> &outVector)
+{
+  inStream.seekg(0, std::ios::end);
+  auto streamSize = inStream.tellg();
+  inStream.seekg(0, std::ios::beg);
 
-  unsigned char unique_byte_count = bf_arr.size();
-  
-  Tree tree;
-  tree.create_from_bytefreq(bf_arr);
+  outVector.clear();
+  outVector.resize(streamSize);
+  inStream.read(reinterpret_cast<char *>(outVector.data()), streamSize);
+}
 
-  std::array<BitCode, 256> codes; 
+void compress(std::istream &inStream, std::ostream &outStream)
+{
+  std::vector<unsigned char> inBuffer;
+  streamToVector(inStream, inBuffer);
 
-  tree.extract_codes(codes);
-
-  printf("-------------------------\n");
-  printf("COMPRESSING %d BYTES, %d UNIQUE\n", total_byte_count, unique_byte_count);
-  printf("-------------------------\n");
-  printf("BYTE   | FREQUENCY | CODE\n");
-  printf("-------------------------\n");
-  for(int i = 0; i < unique_byte_count; i++){
-    byte_freq_t bf = bf_arr[i];
-    printf("%d (%c) | %9.1f | ", bf.byte, bf.byte, (float)(100*bf.freq) / total_byte_count);
-    std::cout<<codes[bf.byte].to_string();
-    printf("\n");
+  if (inBuffer.size() == 0)
+  {
+    throw std::runtime_error("Can't compress 0B file.");
   }
-  printf("-------------------------\n");
 
+  auto byteFreqArr = findByteFrequencies(inBuffer);
 
-  bit_set_t bit_set;
-  bit_set_init(&bit_set);
+  auto tree = Tree(byteFreqArr);
 
+  std::array<BitCode, 256> codes;
+  tree.extractCodes(codes);
 
-  //write 4 bytes -> total bytes count
-  unsigned char* bytes = (unsigned char *)&total_byte_count;
-  bit_set_write_byte(&bit_set, bytes[0]);
-  bit_set_write_byte(&bit_set, bytes[1]);
-  bit_set_write_byte(&bit_set, bytes[2]);
-  bit_set_write_byte(&bit_set, bytes[3]);
-  //write 1 byte -> unique bytes count
-  bit_set_write_byte(&bit_set, unique_byte_count);
-  //write huffman tree data
-  tree.write_to_bitset(&bit_set);
-  //write compressed data
-  for(uint32_t i = 0; i < total_byte_count; i++){
-    unsigned char byte = in_buffer[i];
-    // byte_slice_t slice = codes[byte];
+  auto bitOstream = BitOstream(outStream);
+
+  //  write 2 bytes -> unique bytes count
+  uint16_t uniqueByteCount = byteFreqArr.size();
+  unsigned char *bytes = reinterpret_cast<unsigned char *>(&uniqueByteCount);
+  bitOstream.write(bytes[0]);
+  bitOstream.write(bytes[1]);
+  // write huffman tree data
+  tree.writeTo(bitOstream);
+  // write compressed data
+  for (auto byte : inBuffer)
+  {
     BitCode code = codes[byte];
-    bit_set_write_code(&bit_set, code);
+    bitOstream.write(code);
   }
-  bit_set_end_write(&bit_set);
-
-  std::vector<unsigned char> out_buffer = bit_set_extract_bytes(&bit_set);
-  //extract to out_buffer from bit_set
-
-  bit_set_free(&bit_set);
-
-  double reduction = 100.f * (1.f - ((double)out_buffer.size() / (double)in_buffer.size())); 
-  printf("size after compression: %ld, %.1f%% reduction\n", out_buffer.size(), reduction);
-  printf("-------------------------\n");
-  
-  return out_buffer;
+  bitOstream.flush();
 }
