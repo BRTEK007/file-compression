@@ -1,4 +1,4 @@
-#include "compress.hpp"
+#include "oddcod.hpp"
 
 #include "byte_freq.hpp"
 #include "tree.hpp"
@@ -19,7 +19,7 @@ inline void streamToVector(std::istream &inStream, std::vector<unsigned char> &o
   inStream.read(reinterpret_cast<char *>(outVector.data()), streamSize);
 }
 
-void compress(std::istream &inStream, std::ostream &outStream)
+oddcod::CodingResult oddcod::huffman::encode(std::istream &inStream, std::ostream &outStream)
 {
   std::vector<unsigned char> inBuffer;
   streamToVector(inStream, inBuffer);
@@ -52,4 +52,6 @@ void compress(std::istream &inStream, std::ostream &outStream)
     bitOstream.write(code);
   }
   bitOstream.flush();
+
+  return oddcod::CodingResult::OK;
 }

@@ -1,0 +1,4 @@
+get rid of exceptions
+make for char* buffer functionality
+byte type definition using/typedef oddcod::byte unsigned char
+fix unit test

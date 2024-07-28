@@ -1,9 +1,9 @@
-#include "decompress.hpp"
+#include "oddcod.hpp"
 
 #include "tree.hpp"
 #include "bit_istream.hpp"
 
-void decompress(std::istream &inStream, std::ostream &outStream)
+oddcod::CodingResult oddcod::huffman::decode(std::istream &inStream, std::ostream &outStream)
 {
   auto bitIstream = BitIstream(inStream);
 
@@ -39,4 +39,5 @@ void decompress(std::istream &inStream, std::ostream &outStream)
       tree.ptrReset();
     }
   }
+  return oddcod::CodingResult::OK;
 }
