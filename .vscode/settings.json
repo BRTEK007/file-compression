@@ -1,7 +1,8 @@
 {
   "files.associations": {
     "*.embeddedhtml": "html",
-    "streambuf": "cpp"
+    "streambuf": "cpp",
+    "array": "cpp"
   },
   "python.analysis.typeCheckingMode": "basic",
   "python.analysis.autoImportCompletions": true

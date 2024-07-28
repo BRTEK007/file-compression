@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.7)
 
-project(file_compression)
-
-include_directories(include)
+project(oddcl_exaple)
 
 add_executable(byte-compressor)
 
