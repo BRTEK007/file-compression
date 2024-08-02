@@ -8,9 +8,9 @@
 
 #include <stdexcept>
 
-static oddcod::Result huffman_encode(const std::vector<oddcod::word_t> &inBuffer, BitOstream &bitOstream)
+static oddcod::Result huffman_encode(BitIstream &bitIstream, BitOstream &bitOstream)
 {
-  if (inBuffer.size() == 0)
+  if (bitIstream.eof())
   {
     throw std::runtime_error("Can't compress 0B file.");
   }

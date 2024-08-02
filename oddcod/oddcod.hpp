@@ -17,83 +17,46 @@ namespace oddcod
         ENCODE_ERR = 2
     };
 
+    union IOType
+    {
+        std::istream *inStream;
+        std::ostream *outStream;
+        const std::vector<word_t> *inVec;
+        std::vector<word_t> *outVec;
+
+        IOType() : inStream(nullptr) {}
+    };
+
+    enum class IOTypeFlags
+    {
+        IN_STREAM = 1,
+        OUT_STREAM,
+        IN_VEC,
+        OUT_VEC
+    };
+
     class Input
     {
     public:
-        virtual word_t read() = 0;
-        virtual bool canRead() = 0;
-        virtual void readAll(std::vector<word_t> *outVector) = 0;
+        Input(std::istream &inStream) : m_srcFlags(IOTypeFlags::IN_STREAM)
+        {
+            m_src.inStream = &inStream;
+        };
+        Input(const std::vector<word_t> &inVec);
 
     private:
-        std::istream &stream;
-        ByteSlice byteSlice;
+        IOType m_src;
+        IOTypeFlags m_srcFlags;
     };
-
-    //
-
-    class BitIstream
-    {
-        std::istream &stream;
-        ByteSlice byteSlice;
-
-    public:
-        BitIstream(std::istream &stream);
-        bool readBit();
-        unsigned char readByte();
-        bool eof();
-    };
-
-    //
 
     class Output
     {
-    public:
-        virtual void write(word_t word) = 0;
-    };
-
-    class StreamInput : public Input
-    {
-    public:
-        StreamInput(std::istream &stream) : m_stream(stream) {}
-
-        word_t read() override
-        {
-        }
-        bool canRead() override
-        {
-        }
-        void readAll(std::vector<word_t> *outVector)
-        {
-            m_stream.seekg(0, std::ios::end);
-            auto streamSize = m_stream.tellg();
-            m_stream.seekg(0, std::ios::beg);
-
-            outVector->clear();
-            outVector->resize(streamSize);
-            m_stream.read(reinterpret_cast<char *>(outVector->data()), streamSize);
-        }
-
-    private:
-        std::istream &m_stream;
-    };
-
-    class StreamOutput : public Output
-    {
-    public:
-        StreamOutput(std::istream &stream) : m_stream(stream) {}
-
-        void write(word_t word) override
-        {
-        }
-
-    private:
-        std::istream &m_stream;
     };
 
     namespace huffman
     {
-        Result encode(Input &input, Output &output);
-        Result decode(Input &input, Output &output);
+        Result encode(std::istream &inStream, std::ostream &outStream);
+        Result decode(std::istream &inStream, std::ostream &outStream);
     };
 };
 
