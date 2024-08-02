@@ -17,31 +17,53 @@ namespace oddcod
         ENCODE_ERR = 2
     };
 
-    template <typename T>
     class Input
     {
     public:
-        virtual Input(T &source) = 0;
-
         virtual word_t read() = 0;
         virtual bool canRead() = 0;
         virtual void readAll(std::vector<word_t> *outVector) = 0;
+
+    private:
+        std::istream &stream;
+        ByteSlice byteSlice;
     };
 
-    template <>
-    class Input<std::istream>
+    //
+
+    class BitIstream
+    {
+        std::istream &stream;
+        ByteSlice byteSlice;
+
+    public:
+        BitIstream(std::istream &stream);
+        bool readBit();
+        unsigned char readByte();
+        bool eof();
+    };
+
+    //
+
+    class Output
     {
     public:
-        Input(std::istream &stream) : m_stream(stream) {}
-        word_t read() {
+        virtual void write(word_t word) = 0;
+    };
 
-        };
-        bool canRead() {
+    class StreamInput : public Input
+    {
+    public:
+        StreamInput(std::istream &stream) : m_stream(stream) {}
 
-        };
+        word_t read() override
+        {
+        }
+        bool canRead() override
+        {
+        }
         void readAll(std::vector<word_t> *outVector)
         {
-            assert(outVector);
             m_stream.seekg(0, std::ios::end);
             auto streamSize = m_stream.tellg();
             m_stream.seekg(0, std::ios::beg);
@@ -50,44 +72,28 @@ namespace oddcod
             outVector->resize(streamSize);
             m_stream.read(reinterpret_cast<char *>(outVector->data()), streamSize);
         }
+
+    private:
         std::istream &m_stream;
     };
-    template <typename T>
-    class Output
+
+    class StreamOutput : public Output
     {
     public:
-        explicit Output(T &destination) : m_dest(destination)
-        {
-            init();
-        }
+        StreamOutput(std::istream &stream) : m_stream(stream) {}
 
-        virtual void write(word_t word) = 0;
-
-    private:
-        virtual void init() = 0;
-        T &m_dest;
-    };
-
-    template <>
-    class Output<std::ostream &>
-    {
-    public:
-        void write(word_t word)
+        void write(word_t word) override
         {
         }
 
     private:
-        void init()
-        {
-        }
+        std::istream &m_stream;
     };
 
     namespace huffman
     {
-        template <typename TI, typename TO>
-        Result encode(Input<TI> input, Output<TO> output);
-        template <typename TI, typename TO>
-        Result decode(Input<TI> input, Output<TO> output);
+        Result encode(Input &input, Output &output);
+        Result decode(Input &input, Output &output);
     };
 };
 

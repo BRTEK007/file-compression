@@ -41,16 +41,6 @@ static oddcod::Result huffman_encode(const std::vector<oddcod::word_t> &inBuffer
 }
 namespace oddcod
 {
-  inline static void streamToVector(std::istream &inStream, std::vector<word_t> &outVector)
-  {
-    inStream.seekg(0, std::ios::end);
-    auto streamSize = inStream.tellg();
-    inStream.seekg(0, std::ios::beg);
-
-    outVector.clear();
-    outVector.resize(streamSize);
-    inStream.read(reinterpret_cast<char *>(outVector.data()), streamSize);
-  }
 
   // Result huffman::encode(const std::vector<word_t> &inBuffer, std::vector<word_t> &outBuffer)
   //{
