@@ -3,7 +3,7 @@
 #include "tree.hpp"
 #include "bit_istream.hpp"
 
-oddcod::CodingResult oddcod::huffman::decode(std::istream &inStream, std::ostream &outStream)
+oddcod::Result oddcod::huffman::decode(std::istream &inStream, std::ostream &outStream)
 {
   auto bitIstream = BitIstream(inStream);
 
@@ -39,5 +39,5 @@ oddcod::CodingResult oddcod::huffman::decode(std::istream &inStream, std::ostrea
       tree.ptrReset();
     }
   }
-  return oddcod::CodingResult::OK;
+  return oddcod::Result::OK;
 }

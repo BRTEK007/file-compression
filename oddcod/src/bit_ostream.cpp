@@ -1,22 +1,21 @@
 #include "bit_ostream.hpp"
-
-BitOstream::BitOstream(std::ostream &s) : stream(s), byteSlice(){};
+BitOstream::BitOstream(ByteWritable &s) : m_byteWritable(s), m_byteSlice() {};
 
 void BitOstream::write(bool bit)
 {
-    byteSlice.writeBit(bit);
-    if (byteSlice.full())
+    m_byteSlice.writeBit(bit);
+    if (m_byteSlice.full())
     {
-        stream << byteSlice.getByte();
-        byteSlice.reset();
+        m_byteWritable << m_byteSlice.getByte();
+        m_byteSlice.reset();
     }
 }
 
 void BitOstream::flush()
 {
-    unsigned char byte = byteSlice.getByte();
-    byte = byte << (BYTE_SLICE_BIT_COUNT - byteSlice.size());
-    stream << byte;
+    unsigned char byte = m_byteSlice.getByte();
+    byte = byte << (BYTE_SLICE_BIT_COUNT - m_byteSlice.size());
+    m_byteWritable << byte;
 }
 
 void BitOstream::write(unsigned char byte)

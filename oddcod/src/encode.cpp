@@ -8,22 +8,8 @@
 
 #include <stdexcept>
 
-inline void streamToVector(std::istream &inStream, std::vector<unsigned char> &outVector)
+static oddcod::Result huffman_encode(const std::vector<oddcod::word_t> &inBuffer, BitOstream &bitOstream)
 {
-  inStream.seekg(0, std::ios::end);
-  auto streamSize = inStream.tellg();
-  inStream.seekg(0, std::ios::beg);
-
-  outVector.clear();
-  outVector.resize(streamSize);
-  inStream.read(reinterpret_cast<char *>(outVector.data()), streamSize);
-}
-
-oddcod::CodingResult oddcod::huffman::encode(std::istream &inStream, std::ostream &outStream)
-{
-  std::vector<unsigned char> inBuffer;
-  streamToVector(inStream, inBuffer);
-
   if (inBuffer.size() == 0)
   {
     throw std::runtime_error("Can't compress 0B file.");
@@ -35,8 +21,6 @@ oddcod::CodingResult oddcod::huffman::encode(std::istream &inStream, std::ostrea
 
   std::array<BitCode, 256> codes;
   tree.extractCodes(codes);
-
-  auto bitOstream = BitOstream(outStream);
 
   //  write 2 bytes -> unique bytes count
   uint16_t uniqueByteCount = byteFreqArr.size();
@@ -53,5 +37,34 @@ oddcod::CodingResult oddcod::huffman::encode(std::istream &inStream, std::ostrea
   }
   bitOstream.flush();
 
-  return oddcod::CodingResult::OK;
+  return oddcod::Result::OK;
 }
+namespace oddcod
+{
+  inline static void streamToVector(std::istream &inStream, std::vector<word_t> &outVector)
+  {
+    inStream.seekg(0, std::ios::end);
+    auto streamSize = inStream.tellg();
+    inStream.seekg(0, std::ios::beg);
+
+    outVector.clear();
+    outVector.resize(streamSize);
+    inStream.read(reinterpret_cast<char *>(outVector.data()), streamSize);
+  }
+
+  // Result huffman::encode(const std::vector<word_t> &inBuffer, std::vector<word_t> &outBuffer)
+  //{
+  // VectorByteWritable vectorByteWritable(outBuffer);
+  // auto bitOstream = BitOstream(vectorByteWritable);
+  // return huffman::encode(inBuffer, bitOstream);
+  //}
+
+  Result huffman::encode(std::istream &inStream, std::ostream &outStream)
+  {
+    std::vector<word_t> inBuffer;
+    streamToVector(inStream, inBuffer);
+    StreamByteWritable streamByteWritable(outStream);
+    auto bitOstream = BitOstream(streamByteWritable);
+    return huffman_encode(inBuffer, bitOstream);
+  }
+};
