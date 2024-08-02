@@ -59,7 +59,8 @@ namespace oddcod
   // return huffman::encode(inBuffer, bitOstream);
   //}
 
-  Result huffman::encode(std::istream &inStream, std::ostream &outStream)
+  template <typename T>
+  Result huffman::decode(Input<T> input, Output<T> output);
   {
     std::vector<word_t> inBuffer;
     streamToVector(inStream, inBuffer);

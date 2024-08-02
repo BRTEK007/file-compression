@@ -3,6 +3,7 @@
 
 #include <istream>
 #include <ostream>
+#include <assert.h>
 
 namespace oddcod
 {
@@ -16,58 +17,77 @@ namespace oddcod
         ENCODE_ERR = 2
     };
 
-    // template <typename T>
-    // class Input
-    //{
-    // public:
-    // explicit Input(T &source) : m_source(source)
-    //{
-    // init();
-    //}
+    template <typename T>
+    class Input
+    {
+    public:
+        virtual Input(T &source) = 0;
 
-    // virtual word_t read() = 0;
-    // virtual bool canRead() = 0;
+        virtual word_t read() = 0;
+        virtual bool canRead() = 0;
+        virtual void readAll(std::vector<word_t> *outVector) = 0;
+    };
 
-    // private:
-    // virtual void init() = 0;
-    // T &m_source;
-    //};
+    template <>
+    class Input<std::istream>
+    {
+    public:
+        Input(std::istream &stream) : m_stream(stream) {}
+        word_t read() {
 
-    // template <>
-    // class Input<const std::vector<word_t> &>
-    //{
-    // public:
-    // word_t read() {
+        };
+        bool canRead() {
 
-    //};
-    // bool canRead() {
+        };
+        void readAll(std::vector<word_t> *outVector)
+        {
+            assert(outVector);
+            m_stream.seekg(0, std::ios::end);
+            auto streamSize = m_stream.tellg();
+            m_stream.seekg(0, std::ios::beg);
 
-    //};
+            outVector->clear();
+            outVector->resize(streamSize);
+            m_stream.read(reinterpret_cast<char *>(outVector->data()), streamSize);
+        }
+        std::istream &m_stream;
+    };
+    template <typename T>
+    class Output
+    {
+    public:
+        explicit Output(T &destination) : m_dest(destination)
+        {
+            init();
+        }
 
-    // private:
-    // void init()
-    //{
-    // }
-    //};
+        virtual void write(word_t word) = 0;
+
+    private:
+        virtual void init() = 0;
+        T &m_dest;
+    };
+
+    template <>
+    class Output<std::ostream &>
+    {
+    public:
+        void write(word_t word)
+        {
+        }
+
+    private:
+        void init()
+        {
+        }
+    };
 
     namespace huffman
     {
-        // template <typename T>
-        // Result decode(Input<T> input, Output<T> output);
-        // template <typename T>
-        // Result encode(Input<T> input, Output<T> output);
-        ////
-        // Result decode(const std::vector<word_t> &inBuffer, std::vector<word_t> &outBuffer);
-        // Result encode(const std::vector<word_t> &inBuffer, std::vector<word_t> &outBuffer);
-        ////
-        Result decode(std::istream &inStream, std::ostream &outStream);
-        Result encode(std::istream &inStream, std::ostream &outStream);
-        ////
-        // Result decode(std::istream &inStream, std::vector<word_t> &outBuffer);
-        // Result encode(std::istream &inStream, std::vector<word_t> &outBuffer);
-        ////
-        // Result decode(const std::vector<word_t> &inBuffer, std::ostream &outStream);
-        // Result encode(const std::vector<word_t> &inBuffer, std::ostream &outStream);
+        template <typename TI, typename TO>
+        Result encode(Input<TI> input, Output<TO> output);
+        template <typename TI, typename TO>
+        Result decode(Input<TI> input, Output<TO> output);
     };
 };
 
