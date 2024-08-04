@@ -10,33 +10,36 @@
 #include "bit_ostream.hpp"
 #include "bit_istream.hpp"
 
-struct Node
+namespace oddcod
 {
-  unsigned char byte;
-  bool leaf;
-  unsigned freq;
-  struct Node *left;
-  struct Node *right;
+
+  struct Node
+  {
+    unsigned char byte;
+    bool leaf;
+    unsigned freq;
+    struct Node *left;
+    struct Node *right;
+  };
+
+  class Tree
+  {
+    Node *head;
+    Node *nodePtr;
+
+  public:
+    Tree();
+    Tree(const std::vector<ByteFreq> &bf_arr);
+    ~Tree();
+    void readFrom(Input &bitIstream, size_t leaf_count);
+    void extractCodes(std::array<BitCode, 256> &codes);
+    void extractLeafBytes(std::vector<unsigned char> &bytes);
+    void writeTo(Output &bitOstream);
+    void ptrReset();
+    void ptrRight();
+    void ptrLeft();
+    bool ptrIsLeaf();
+    unsigned char ptrReadByte();
+  };
 };
-
-class Tree
-{
-  Node *head;
-  Node *nodePtr;
-
-public:
-  Tree();
-  Tree(const std::vector<ByteFreq> &bf_arr);
-  ~Tree();
-  void readFrom(BitIstream &bitIstream, size_t leaf_count);
-  void extractCodes(std::array<BitCode, 256> &codes);
-  void extractLeafBytes(std::vector<unsigned char> &bytes);
-  void writeTo(BitOstream &bitOstream);
-  void ptrReset();
-  void ptrRight();
-  void ptrLeft();
-  bool ptrIsLeaf();
-  unsigned char ptrReadByte();
-};
-
 #endif

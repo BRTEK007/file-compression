@@ -3,18 +3,21 @@
 
 #include <bitset>
 
-class BitCode
+namespace oddcod
 {
-private:
-    size_t len;
-    std::bitset<256> bits;
+    class BitCode
+    {
+    private:
+        size_t len;
+        std::bitset<256> bits;
 
-public:
-    BitCode();
-    void writeBit(bool bit);
-    bool readBit();
-    size_t size();
-    std::string to_string();
+    public:
+        BitCode();
+        void writeBit(bool bit);
+        bool readBit();
+        size_t size();
+        std::string to_string();
+    };
 };
 
 #endif

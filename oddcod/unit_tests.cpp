@@ -4,6 +4,8 @@
 #include "byte_freq.hpp"
 #include "tree.hpp"
 
+using namespace oddcod;
+
 TEST(ByteSlice, WriteReadEqual)
 {
     //---ARRANGE
@@ -71,11 +73,11 @@ TEST(Tree, CreateFromAllBytesValid)
     }
 }
 
-TEST(BitOstream, WriteCorrectBitsBytes)
+TEST(Output, WriteCorrectBitsBytes)
 {
     //---ARRANGE
     std::ostringstream stream;
-    auto bitOstream = BitOstream(stream);
+    auto bitOstream = StreamOutput(stream);
     //---ACT
     // 1001 11011000(D8) 0110
     bitOstream.write(true);
@@ -96,11 +98,11 @@ TEST(BitOstream, WriteCorrectBitsBytes)
     EXPECT_EQ((unsigned char)bytes[1], (unsigned char)'\x86');
 }
 
-TEST(BitIstream, ReadCorrectBitsBytes)
+TEST(Input, ReadCorrectBitsBytes)
 {
     //---ARRANGE
     std::istringstream stream("\x9D\x86"); // 10011101(9D) 10000110(86)
-    auto bitIstream = BitIstream(stream);
+    auto bitIstream = StreamInput(stream);
     //---ACT & ASSERT
     EXPECT_FALSE(bitIstream.eof());
     // 1001 11011000(D8) 0110

@@ -4,12 +4,17 @@
 #include <vector>
 #include <stdlib.h>
 
-struct ByteFreq
+namespace oddcod
 {
-  unsigned char byte;
-  size_t freq;
-};
 
-std::vector<ByteFreq> findByteFrequencies(const std::vector<unsigned char> &bytes_in);
+  struct ByteFreq
+  {
+    unsigned char byte;
+    size_t freq;
+  };
+
+  std::vector<ByteFreq> findByteFrequencies(const std::vector<unsigned char> &bytes_in);
+
+};
 
 #endif
