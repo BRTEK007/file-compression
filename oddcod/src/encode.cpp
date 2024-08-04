@@ -13,16 +13,12 @@ namespace oddcod
 
   static Result huffman_encode(Input &bitIstream, Output &bitOstream)
   {
-    std::vector<word_t> inBuffer;
-
-    bitIstream.writeToVec(&inBuffer); // TODO don't write to vector for large files, just do 2 reads
-
-    if (inBuffer.size() == 0)
+    if (bitIstream.eofAligend())
     {
-      throw std::runtime_error("Can't compress 0B file.");
+      return Result::ERR_ENCODE_EMPTY;
     }
 
-    auto byteFreqArr = findByteFrequencies(inBuffer);
+    auto byteFreqArr = findByteFrequencies(bitIstream);
 
     auto tree = Tree(byteFreqArr);
 
@@ -37,8 +33,10 @@ namespace oddcod
     // write huffman tree data
     tree.writeTo(bitOstream);
     // write compressed data
-    for (auto byte : inBuffer)
+    bitIstream.resetToBegin();
+    while (!bitIstream.eofAligend())
     {
+      auto byte = bitIstream.readAligned();
       BitCode code = codes[byte];
       bitOstream.write(code);
     }

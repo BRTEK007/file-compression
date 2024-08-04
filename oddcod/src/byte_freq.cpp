@@ -4,7 +4,7 @@
 namespace oddcod
 {
   // returns array of byte_frequencies from input byte buffer
-  std::vector<ByteFreq> findByteFrequencies(const std::vector<unsigned char> &bytes_in)
+  std::vector<ByteFreq> findByteFrequencies(Input &input)
   {
     std::array<ByteFreq, 256> arr;
 
@@ -15,8 +15,9 @@ namespace oddcod
     }
 
     // count bytes
-    for (auto byte : bytes_in)
+    while (!input.eof())
     {
+      auto byte = input.readAligned();
       arr[byte].freq++;
     }
 

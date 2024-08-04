@@ -35,10 +35,13 @@ namespace oddcod
         }
         bool eof()
         {
-            return byteSlice.size() > 0;
+            return byteSlice.size() > 0; // TODO won't work in readAlignedMode
         }
+        virtual bool eofAligend() = 0;
 
-        virtual void writeToVec(std::vector<word_t> *outVec) = 0;
+        virtual word_t readAligned() = 0;
+
+        virtual void resetToBegin() = 0;
 
     protected:
         virtual void readFullWord() = 0;
@@ -50,15 +53,35 @@ namespace oddcod
     public:
         StreamInput(std::istream &stream) : Input(), m_stream(stream) {};
 
-        void writeToVec(std::vector<word_t> *outVec) override
-        {
-            m_stream.seekg(0, std::ios::end);
-            auto streamSize = m_stream.tellg();
-            m_stream.seekg(0, std::ios::beg);
+        // void writeToVec(std::vector<word_t> *outVec) override
+        //{
+        // m_stream.seekg(0, std::ios::end);
+        // auto streamSize = m_stream.tellg();
+        // m_stream.seekg(0, std::ios::beg);
 
-            outVec->clear();
-            outVec->resize(streamSize);
-            m_stream.read(reinterpret_cast<char *>(outVec->data()), streamSize);
+        // outVec->clear();
+        // outVec->resize(streamSize);
+        // m_stream.read(reinterpret_cast<char *>(outVec->data()), streamSize);
+        //};
+
+        // TODO check if read correct amout, check m_stream.fail()
+
+        bool eofAligend() override
+        {
+            return m_stream.eof();
+        }
+
+        word_t readAligned() override
+        {
+            word_t word;
+            m_stream.read(reinterpret_cast<char *>(&word), 1);
+            return word;
+        };
+
+        void resetToBegin() override
+        {
+            m_stream.clear();
+            m_stream.seekg(0, std::ios_base::beg);
         };
 
     protected:

@@ -11,8 +11,7 @@ namespace oddcod
     enum class Result
     {
         OK = 0,
-        DECODE_ERR = 1,
-        ENCODE_ERR = 2
+        ERR_ENCODE_EMPTY = 1,
     };
 
     // have interface for INput and Output, extend with classes, pass that to a function, unify with Bitistream and BitOstream

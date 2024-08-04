@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <stdlib.h>
+#include "bit_istream.hpp"
 
 namespace oddcod
 {
@@ -13,7 +14,7 @@ namespace oddcod
     size_t freq;
   };
 
-  std::vector<ByteFreq> findByteFrequencies(const std::vector<unsigned char> &bytes_in);
+  std::vector<ByteFreq> findByteFrequencies(Input &input);
 
 };
 
