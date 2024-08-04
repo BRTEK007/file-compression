@@ -1,9 +1,8 @@
-#include "compress.hpp"
-#include "decompress.hpp"
-
 #include <iostream>
 #include <string.h>
 #include <fstream>
+
+#include "oddcod.hpp"
 
 void args_error_exit()
 {
@@ -91,7 +90,7 @@ int main(int argc, char **argv)
   {
     try
     {
-      compress(inStream, outStream);
+      oddcod::huffman::encode(inStream, outStream);
     }
     catch (std::exception &e)
     {
@@ -101,7 +100,7 @@ int main(int argc, char **argv)
   }
   else
   {
-    decompress(inStream, outStream);
+    oddcod::huffman::decode(inStream, outStream);
   }
 
   inStream.close();

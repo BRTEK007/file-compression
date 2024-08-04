@@ -1,35 +1,14 @@
 cmake_minimum_required(VERSION 3.7)
 
-project(oddcl_exaple)
+project(oddcod_exaples)
 
-add_executable(byte-compressor)
+add_executable(file-compression)
 
-target_compile_options(byte-compressor PRIVATE -Werror -Wall -Wextra -O2)
+target_compile_options(file-compression PRIVATE -Werror -Wall -Wextra -O2)
 
-target_sources(byte-compressor PRIVATE 
-    src/bit_code.cpp 
-    src/main.cpp 
-    src/node_queue.cpp 
-    src/tree.cpp 
-    src/byte_slice.cpp
-    src/byte_freq.cpp
-    src/compress.cpp
-    src/decompress.cpp
-    src/bit_ostream.cpp
-    src/bit_istream.cpp)
+target_sources(file-compression PRIVATE file-compression.cpp)
 
-add_executable(unit_tests)
 
-target_compile_options(unit_tests PRIVATE -Werror -Wall -Wextra)
+include_directories(../oddcod)
 
-target_link_libraries(unit_tests gtest)
-
-target_sources(unit_tests PRIVATE
-    src/bit_ostream.cpp
-    src/bit_istream.cpp
-    src/unit_tests.cpp
-    src/byte_slice.cpp
-    src/bit_code.cpp
-    src/node_queue.cpp
-    src/tree.cpp
-)
+target_link_libraries(file-compression PRIVATE ${CMAKE_SOURCE_DIR}/../oddcod/build/liboddcod.a)

@@ -13,8 +13,6 @@ file(GLOB ODDCOD_SRC src/*.cpp)
 
 target_sources(oddcod PRIVATE ${ODDCOD_SRC})
 
-
-
 add_executable(unit_tests)
 
 target_compile_options(unit_tests PRIVATE -Werror -Wall -Wextra)

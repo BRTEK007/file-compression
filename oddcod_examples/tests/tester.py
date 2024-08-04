@@ -2,7 +2,6 @@ import subprocess
 import os
 import time
 import sys
-from tkinter.messagebox import NO
 
 GREEN = '\033[92m'
 RED = '\033[91m'
@@ -74,5 +73,5 @@ class Tester:
         ))
         #print('{0} {1:50}\t{2}ms'.format(GREEN+"PASSED"+ENDC, file_path, round(elapsed*1000, 2)))
 
-tester = Tester("../build/byte-compressor")
+tester = Tester("../build/file-compression")
 tester.runAll("both")
