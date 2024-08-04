@@ -3,6 +3,7 @@
 
 #include <istream>
 #include <vector>
+#include <iostream>
 #include "byte_slice.hpp"
 #include "oddcod.hpp"
 
@@ -26,6 +27,7 @@ namespace oddcod
         unsigned char readByte()
         {
             // perform 8 bit reads
+            // TODO optimize this
             ByteSlice slice;
             while (!slice.full()) // TODO this may overlap with readBit, need to reset byteSlice
             {
@@ -35,7 +37,7 @@ namespace oddcod
         }
         bool eof()
         {
-            return byteSlice.size() > 0; // TODO won't work in readAlignedMode
+            return byteSlice.size() == 0;
         }
         virtual bool eofAligend() = 0;
 
@@ -51,7 +53,11 @@ namespace oddcod
     class StreamInput : public Input
     {
     public:
-        StreamInput(std::istream &stream) : Input(), m_stream(stream) {};
+        StreamInput(std::istream &stream) : Input(), m_stream(stream)
+        {
+            // prepera first byte slice
+            readFullWord(); // messes up aligned read
+        };
 
         // void writeToVec(std::vector<word_t> *outVec) override
         //{
@@ -73,6 +79,10 @@ namespace oddcod
 
         word_t readAligned() override
         {
+            if (byteSlice.full())
+            {
+                return readByte();
+            }
             word_t word;
             m_stream.read(reinterpret_cast<char *>(&word), 1);
             return word;

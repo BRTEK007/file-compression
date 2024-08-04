@@ -122,6 +122,18 @@ TEST(Input, ReadCorrectBitsBytes)
     EXPECT_TRUE(bitIstream.eof());
 }
 
+TEST(Input, ReadAligned)
+{
+    std::istringstream stream("\x9D\x86"); // 10011101(9D) 10000110(86)
+    auto bitIstream = StreamInput(stream);
+
+    EXPECT_FALSE(bitIstream.eofAligend());
+    EXPECT_EQ(bitIstream.readAligned(), 0x9D);
+    EXPECT_FALSE(bitIstream.eofAligend());
+    EXPECT_EQ(bitIstream.readAligned(), 0x86);
+    EXPECT_TRUE(bitIstream.eofAligend());
+}
+
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
