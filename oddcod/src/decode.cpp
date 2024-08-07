@@ -4,12 +4,12 @@
 #include "bit_istream.hpp"
 namespace oddcod
 {
-  static Result huffman_decode(BitReader &bitIstream, Writer &outStream)
+  static Result huffman_decode(std::shared_ptr<BitReader> bitIstream, std::shared_ptr<AlignedWriter> outStream)
   {
     // read 2 bytes -> unique bytes count
     unsigned char bytes[2];
-    bytes[0] = bitIstream.readByte(); // TODO possible error/ might file be too small
-    bytes[1] = bitIstream.readByte();
+    bytes[0] = bitIstream->readByte(); // TODO possible error/ might file be too small
+    bytes[1] = bitIstream->readByte();
     uint16_t uniqueByteCount = *(reinterpret_cast<uint16_t *>(bytes));
 
     Tree tree;
@@ -22,9 +22,9 @@ namespace oddcod
     tree.extractCodes(codes);
 
     tree.ptrReset();
-    while (!bitIstream.eof())
+    while (!bitIstream->eof())
     {
-      bool bit = bitIstream.readBit();
+      bool bit = bitIstream->readBit();
 
       if (bit)
         tree.ptrRight(); // TODO possible null refrence
@@ -34,7 +34,7 @@ namespace oddcod
       if (tree.ptrIsLeaf())
       {
         auto byte = tree.ptrReadByte();
-        outStream.writeAligned(&byte, 1);
+        outStream->write(&byte, 1);
         tree.ptrReset();
       }
     }
@@ -42,8 +42,10 @@ namespace oddcod
   }
   Result huffman::decode(std::istream &inStream, std::ostream &outStream)
   {
-    StreamBitReader input(inStream);
-    StreamWriter output(outStream);
-    return huffman_decode(input, output);
+    ReaderInput input(&inStream);
+    WriterInput output(&outStream);
+    auto reader = input.createBitReader();
+    auto writer = output.createAlignedWriter();
+    return huffman_decode(reader, writer);
   }
 };

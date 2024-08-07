@@ -117,7 +117,7 @@ namespace oddcod
     }
   }
 
-  void Tree::writeTo(Writer &bitOstream)
+  void Tree::writeTo(std::shared_ptr<BitWriter> bitOstream)
   {
     std::vector<Node *> stack;
 
@@ -134,19 +134,19 @@ namespace oddcod
 
       if (node->leaf)
       {
-        bitOstream.write(true);
-        bitOstream.write(node->byte);
+        bitOstream->write(true);
+        bitOstream->write(node->byte);
       }
       else
       {
-        bitOstream.write(false);
+        bitOstream->write(false);
         stack.push_back(node->right);
         stack.push_back(node->left);
       }
     }
   }
 
-  void Tree::readFrom(BitReader &bitIstream, size_t leaf_count)
+  void Tree::readFrom(std::shared_ptr<BitReader> bitIstream, size_t leaf_count)
   {
     Node *root = new Node();
     root->leaf = false;
@@ -164,7 +164,7 @@ namespace oddcod
       Node **node = stack.back();
       stack.pop_back();
 
-      bool bit = bitIstream.readBit(); // TODO check eof, and throw
+      bool bit = bitIstream->readBit(); // TODO check eof, and throw
 
       if (!bit)
       { // parent node
@@ -180,7 +180,7 @@ namespace oddcod
       else
       { // leaf node
         Node *newNode = new Node();
-        newNode->byte = bitIstream.readByte();
+        newNode->byte = bitIstream->readByte();
         newNode->leaf = true;
         newNode->left = NULL;
         newNode->right = NULL;

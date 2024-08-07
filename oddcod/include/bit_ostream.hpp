@@ -3,17 +3,17 @@
 
 #include <ostream>
 #include <vector>
+#include <memory>
 #include "byte_slice.hpp"
 #include "bit_code.hpp"
 #include "oddcod.hpp"
 
 namespace oddcod
 {
-
-    class Writer
+    class BitWriter
     {
     public:
-        Writer() : m_byteSlice() {};
+        BitWriter() : m_byteSlice() {};
         void write(bool bit)
         {
             m_byteSlice.writeBit(bit);
@@ -51,22 +51,22 @@ namespace oddcod
             byte = byte << (BYTE_SLICE_BIT_COUNT - m_byteSlice.size());
             writeFullWord(byte);
         }
-        virtual void writeAligned(const word_t *data, size_t dataSize) = 0;
 
     protected:
         virtual void writeFullWord(word_t word) = 0;
         ByteSlice m_byteSlice;
     };
 
-    class StreamWriter : public Writer
+    class AlignedWriter
     {
     public:
-        StreamWriter(std::ostream &stream) : Writer(), m_stream(stream) {};
+        virtual void write(word_t *data, size_t dataSize) = 0;
+    };
 
-        void writeAligned(const word_t *data, size_t dataSize) override
-        {
-            m_stream.write(reinterpret_cast<const char *>(data), dataSize);
-        }
+    class StreamBitWriter : public BitWriter
+    {
+    public:
+        StreamBitWriter(std::ostream &stream) : BitWriter(), m_stream(stream) {};
 
     protected:
         void writeFullWord(word_t word) override
@@ -74,6 +74,48 @@ namespace oddcod
             m_stream << word;
         }
         std::ostream &m_stream;
+    };
+
+    class StreamAlignedWriter : public AlignedWriter
+    {
+    public:
+        StreamAlignedWriter(std::ostream &stream) : m_stream(stream) {};
+        void write(word_t *data, size_t dataSize)
+        {
+            m_stream.write(reinterpret_cast<const char *>(data), dataSize);
+        }
+
+    protected:
+        std::ostream &m_stream;
+    };
+    class WriterInput
+    {
+    public:
+        WriterInput(std::ostream *stream) : m_stream(stream), m_used(false) {};
+
+        std::shared_ptr<BitWriter> createBitWriter()
+        {
+            if (m_used)
+            {
+                return nullptr;
+            }
+            m_used = true;
+            return std::make_shared<StreamBitWriter>(*m_stream);
+        };
+
+        std::shared_ptr<AlignedWriter> createAlignedWriter()
+        {
+            if (m_used)
+            {
+                return nullptr;
+            }
+            m_used = true;
+            return std::make_shared<StreamAlignedWriter>(*m_stream);
+        };
+
+    private:
+        std::ostream *m_stream;
+        bool m_used; // TODO could use weak_ptr to the returned Reader and check if it is invalid if so return new
     };
 };
 

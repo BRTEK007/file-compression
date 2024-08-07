@@ -10,7 +10,7 @@
 
 namespace oddcod
 {
-  static Result huffman_encode(std::shared_ptr<AlignedReader> bitIstream, Writer &bitOstream)
+  static Result huffman_encode(std::shared_ptr<AlignedReader> bitIstream, std::shared_ptr<BitWriter> bitOstream)
   {
     if (bitIstream->eof())
     {
@@ -27,8 +27,8 @@ namespace oddcod
     //  write 2 bytes -> unique bytes count
     uint16_t uniqueByteCount = byteFreqArr.size();
     unsigned char *bytes = reinterpret_cast<unsigned char *>(&uniqueByteCount);
-    bitOstream.write(bytes[0]);
-    bitOstream.write(bytes[1]);
+    bitOstream->write(bytes[0]);
+    bitOstream->write(bytes[1]);
     // write huffman tree data
     tree.writeTo(bitOstream);
     // write compressed data
@@ -37,19 +37,19 @@ namespace oddcod
     {
       auto byte = bitIstream->readWord();
       BitCode code = codes[byte];
-      bitOstream.write(code);
+      bitOstream->write(code);
     }
-    bitOstream.flush();
+    bitOstream->flush();
 
     return oddcod::Result::OK;
   }
 
   Result huffman::encode(std::istream &inStream, std::ostream &outStream)
   {
-    // StreamBitReader input(inStream);
     ReaderInput input(&inStream);
+    WriterInput output(&outStream);
     auto reader = input.createAlignedReader();
-    StreamWriter output(outStream);
-    return huffman_encode(reader, output);
+    auto writer = output.createBitWriter();
+    return huffman_encode(reader, writer);
   }
 };

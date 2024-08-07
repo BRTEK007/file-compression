@@ -73,11 +73,11 @@ TEST(Tree, CreateFromAllBytesValid)
     }
 }
 
-TEST(Writer, WriteCorrectBitsBytes)
+TEST(BitWriter, WriteCorrectBitsBytes)
 {
     //---ARRANGE
     std::ostringstream stream;
-    auto bitOstream = StreamWriter(stream);
+    auto bitOstream = StreamBitWriter(stream);
     //---ACT
     // 1001 11011000(D8) 0110
     bitOstream.write(true);
