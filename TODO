@@ -1,7 +1,9 @@
 get rid of exceptions
 make for char* buffer functionality
-byte type definition using/typedef oddcod::byte unsigned char
-fix unit test
+refactor, rename, optimize, use word_t everywhere
+make script to compile everything run unit tests and example tests
+python run example tests in multiple threads
+example tests as c++ unit_Tests?
 multiple byte words, 3 for rgb data etc..., utf-8...
 API:
 inStream outStream
