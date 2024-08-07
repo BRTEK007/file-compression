@@ -117,7 +117,7 @@ namespace oddcod
     }
   }
 
-  void Tree::writeTo(Output &bitOstream)
+  void Tree::writeTo(Writer &bitOstream)
   {
     std::vector<Node *> stack;
 
@@ -146,7 +146,7 @@ namespace oddcod
     }
   }
 
-  void Tree::readFrom(Input &bitIstream, size_t leaf_count)
+  void Tree::readFrom(BitReader &bitIstream, size_t leaf_count)
   {
     Node *root = new Node();
     root->leaf = false;

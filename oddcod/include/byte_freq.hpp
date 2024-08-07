@@ -14,8 +14,7 @@ namespace oddcod
     size_t freq;
   };
 
-  std::vector<ByteFreq> findByteFrequencies(Input &input);
-
+  std::vector<ByteFreq> findByteFrequencies(std::shared_ptr<AlignedReader> input);
 };
 
 #endif

@@ -4,7 +4,7 @@
 #include "bit_istream.hpp"
 namespace oddcod
 {
-  static Result huffman_decode(Input &bitIstream, Output &outStream)
+  static Result huffman_decode(BitReader &bitIstream, Writer &outStream)
   {
     // read 2 bytes -> unique bytes count
     unsigned char bytes[2];
@@ -42,8 +42,8 @@ namespace oddcod
   }
   Result huffman::decode(std::istream &inStream, std::ostream &outStream)
   {
-    StreamInput input(inStream);
-    StreamOutput output(outStream);
+    StreamBitReader input(inStream);
+    StreamWriter output(outStream);
     return huffman_decode(input, output);
   }
 };

@@ -10,10 +10,10 @@
 namespace oddcod
 {
 
-    class Output
+    class Writer
     {
     public:
-        Output() : m_byteSlice() {};
+        Writer() : m_byteSlice() {};
         void write(bool bit)
         {
             m_byteSlice.writeBit(bit);
@@ -58,10 +58,10 @@ namespace oddcod
         ByteSlice m_byteSlice;
     };
 
-    class StreamOutput : public Output
+    class StreamWriter : public Writer
     {
     public:
-        StreamOutput(std::ostream &stream) : Output(), m_stream(stream) {};
+        StreamWriter(std::ostream &stream) : Writer(), m_stream(stream) {};
 
         void writeAligned(const word_t *data, size_t dataSize) override
         {

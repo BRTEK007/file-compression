@@ -14,7 +14,7 @@ namespace oddcod
         ERR_ENCODE_EMPTY = 1,
     };
 
-    // have interface for INput and Output, extend with classes, pass that to a function, unify with Bitistream and BitOstream
+    // have interface for INput and Writer, extend with classes, pass that to a function, unify with Bitistream and BitOstream
 
     namespace huffman
     {

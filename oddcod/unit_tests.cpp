@@ -73,11 +73,11 @@ TEST(Tree, CreateFromAllBytesValid)
     }
 }
 
-TEST(Output, WriteCorrectBitsBytes)
+TEST(Writer, WriteCorrectBitsBytes)
 {
     //---ARRANGE
     std::ostringstream stream;
-    auto bitOstream = StreamOutput(stream);
+    auto bitOstream = StreamWriter(stream);
     //---ACT
     // 1001 11011000(D8) 0110
     bitOstream.write(true);
@@ -98,11 +98,11 @@ TEST(Output, WriteCorrectBitsBytes)
     EXPECT_EQ((unsigned char)bytes[1], (unsigned char)'\x86');
 }
 
-TEST(Input, ReadCorrectBitsBytes)
+TEST(BitReader, ReadCorrectBitsBytes)
 {
     //---ARRANGE
     std::istringstream stream("\x9D\x86"); // 10011101(9D) 10000110(86)
-    auto bitIstream = StreamInput(stream);
+    auto bitIstream = StreamBitReader(stream);
     //---ACT & ASSERT
     EXPECT_FALSE(bitIstream.eof());
     // 1001 11011000(D8) 0110
@@ -122,16 +122,16 @@ TEST(Input, ReadCorrectBitsBytes)
     EXPECT_TRUE(bitIstream.eof());
 }
 
-TEST(Input, ReadAligned)
+TEST(BitReader, ReadAligned)
 {
     std::istringstream stream("\x9D\x86"); // 10011101(9D) 10000110(86)
-    auto bitIstream = StreamInput(stream);
+    auto bitIstream = StreamAlignedReader(stream);
 
-    EXPECT_FALSE(bitIstream.eofAligend());
-    EXPECT_EQ(bitIstream.readAligned(), 0x9D);
-    EXPECT_FALSE(bitIstream.eofAligend());
-    EXPECT_EQ(bitIstream.readAligned(), 0x86);
-    EXPECT_TRUE(bitIstream.eofAligend());
+    EXPECT_FALSE(bitIstream.eof());
+    EXPECT_EQ(bitIstream.readWord(), 0x9D);
+    EXPECT_FALSE(bitIstream.eof());
+    EXPECT_EQ(bitIstream.readWord(), 0x86);
+    EXPECT_TRUE(bitIstream.eof());
 }
 
 int main(int argc, char **argv)

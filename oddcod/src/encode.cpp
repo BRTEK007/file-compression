@@ -10,10 +10,9 @@
 
 namespace oddcod
 {
-
-  static Result huffman_encode(Input &bitIstream, Output &bitOstream)
+  static Result huffman_encode(std::shared_ptr<AlignedReader> bitIstream, Writer &bitOstream)
   {
-    if (bitIstream.eofAligend())
+    if (bitIstream->eof())
     {
       return Result::ERR_ENCODE_EMPTY;
     }
@@ -33,10 +32,10 @@ namespace oddcod
     // write huffman tree data
     tree.writeTo(bitOstream);
     // write compressed data
-    bitIstream.resetToBegin();
-    while (!bitIstream.eofAligend())
+    bitIstream->resetToBegin();
+    while (!bitIstream->eof())
     {
-      auto byte = bitIstream.readAligned();
+      auto byte = bitIstream->readWord();
       BitCode code = codes[byte];
       bitOstream.write(code);
     }
@@ -47,8 +46,10 @@ namespace oddcod
 
   Result huffman::encode(std::istream &inStream, std::ostream &outStream)
   {
-    StreamInput input(inStream);
-    StreamOutput output(outStream);
-    return huffman_encode(input, output);
+    // StreamBitReader input(inStream);
+    ReaderInput input(&inStream);
+    auto reader = input.createAlignedReader();
+    StreamWriter output(outStream);
+    return huffman_encode(reader, output);
   }
 };
