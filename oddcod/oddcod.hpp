@@ -18,6 +18,15 @@ namespace oddcod
 
     namespace huffman
     {
+        enum WordType
+        {
+            BYTE = 0, // best for ascii text files
+            RGB,
+            RGBA,
+            UTF8,
+            ASCII7 // best for 7 bit ascii
+        };
+
         Result encode(std::istream &inStream, std::ostream &outStream);
         Result decode(std::istream &inStream, std::ostream &outStream);
     };

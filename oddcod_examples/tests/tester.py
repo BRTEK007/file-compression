@@ -7,8 +7,6 @@ GREEN = '\033[92m'
 RED = '\033[91m'
 ENDC = '\033[0m'
 
-#TODO timeout detection
-
 class Tester:
     def __init__(self, compressor_path):
         self.absolute_path = os.path.dirname(__file__)
@@ -24,15 +22,15 @@ class Tester:
         return 1
 
     def runAll(self, dir_path):
-        #for root, dirs, files in os.walk(dir_path):
-            #for filename in files:
-                #print(root, dirs, files)
-        for root, _, files in os.walk(dir_path):
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        abs_dir_path = os.path.join(base_path, dir_path)
+
+        for root, _, files in os.walk(abs_dir_path):
             for filename in files:
                 file_path = os.path.join(root, filename)
-                self.run(file_path)
+                self.run(file_path, os.path.relpath(file_path, start=base_path))
 
-    def run(self, file_path):
+    def run(self, file_path, test_name):
         absoluteFilePath = os.path.join(self.absolute_path, file_path)
         
         start = time.time()
@@ -41,11 +39,15 @@ class Tester:
 
         #compression
         file_stats = os.stat(file_path)
-        print('{0:32} {1:10}B'.format(file_path, file_stats.st_size), end='\t')
+        print('{0:32} {1:10}B'.format(test_name, file_stats.st_size), end='\t')
         process = subprocess.Popen([self.compressor_path, '-c', absoluteFilePath, 'temp.compressed'], stdout=stdoutRedirect, stderr=subprocess.PIPE) 
-        stream_out, stream_err = process.communicate()
-        if process.returncode != 0:
-            return self.failed(file_path, 'COMPRESSION', process.returncode, stream_err)
+        try:
+            stream_out, stream_err = process.communicate(timeout=3)
+            if process.returncode != 0:
+                return self.failed(file_path, 'COMPRESSION', process.returncode, stream_err)
+        except subprocess.TimeoutExpired:
+            return self.failed(file_path, 'COMPRESSION timeout', None, None)
+        
         #decompression
         process = subprocess.Popen([self.compressor_path, '-d', 'temp.compressed', 'temp.decompressed'], stdout=stdoutRedirect, stderr=subprocess.PIPE) 
         try:
@@ -71,7 +73,6 @@ class Tester:
                                                     round(elapsed*1000, 2),
         round(100 - (100*file_stats_after.st_size)/file_stats.st_size, 2)
         ))
-        #print('{0} {1:50}\t{2}ms'.format(GREEN+"PASSED"+ENDC, file_path, round(elapsed*1000, 2)))
 
 tester = Tester("../build/file-compression")
 tester.runAll("both")
