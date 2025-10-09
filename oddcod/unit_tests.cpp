@@ -4,6 +4,8 @@
 #include "byte_freq.hpp"
 #include "tree.hpp"
 
+using namespace oddcod;
+
 TEST(ByteSlice, WriteReadEqual)
 {
     //---ARRANGE
@@ -71,11 +73,11 @@ TEST(Tree, CreateFromAllBytesValid)
     }
 }
 
-TEST(BitOstream, WriteCorrectBitsBytes)
+TEST(BitWriter, WriteCorrectBitsBytes)
 {
     //---ARRANGE
     std::ostringstream stream;
-    auto bitOstream = BitOstream(stream);
+    auto bitOstream = StreamBitWriter(stream);
     //---ACT
     // 1001 11011000(D8) 0110
     bitOstream.write(true);
@@ -96,11 +98,11 @@ TEST(BitOstream, WriteCorrectBitsBytes)
     EXPECT_EQ((unsigned char)bytes[1], (unsigned char)'\x86');
 }
 
-TEST(BitIstream, ReadCorrectBitsBytes)
+TEST(BitReader, ReadCorrectBitsBytes)
 {
     //---ARRANGE
     std::istringstream stream("\x9D\x86"); // 10011101(9D) 10000110(86)
-    auto bitIstream = BitIstream(stream);
+    auto bitIstream = StreamBitReader(stream);
     //---ACT & ASSERT
     EXPECT_FALSE(bitIstream.eof());
     // 1001 11011000(D8) 0110
@@ -117,6 +119,18 @@ TEST(BitIstream, ReadCorrectBitsBytes)
     EXPECT_EQ(bitIstream.readBit(), false);
 
     // std::cout << "<" << bitIstream.readBit() << ">";
+    EXPECT_TRUE(bitIstream.eof());
+}
+
+TEST(BitReader, ReadAligned)
+{
+    std::istringstream stream("\x9D\x86"); // 10011101(9D) 10000110(86)
+    auto bitIstream = StreamAlignedReader(stream);
+
+    EXPECT_FALSE(bitIstream.eof());
+    EXPECT_EQ(bitIstream.readWord(), 0x9D);
+    EXPECT_FALSE(bitIstream.eof());
+    EXPECT_EQ(bitIstream.readWord(), 0x86);
     EXPECT_TRUE(bitIstream.eof());
 }
 
