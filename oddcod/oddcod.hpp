@@ -12,7 +12,9 @@ namespace oddcod
     {
         OK = 0,
         ERR_ENCODE_EMPTY = 1,
-        ERR_DECODE_TREE = 2
+        ERR_DECODE_TREE = 2,
+        ERR_INPUT = 3,
+        ERR_OUTPUT = 4
     };
 
     namespace huffman

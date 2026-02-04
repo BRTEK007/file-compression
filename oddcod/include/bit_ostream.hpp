@@ -10,6 +10,7 @@
 
 namespace oddcod
 {
+    // Abstract class for writing by bits.
     class BitWriter
     {
     public:
@@ -57,12 +58,14 @@ namespace oddcod
         ByteSlice m_byteSlice;
     };
 
+    // Abstract class for writing by bytes. 
     class AlignedWriter
     {
     public:
         virtual void write(word_t *data, size_t dataSize) = 0;
     };
 
+    // Writes by bits to a stream.
     class StreamBitWriter : public BitWriter
     {
     public:
@@ -76,6 +79,7 @@ namespace oddcod
         std::ostream &m_stream;
     };
 
+    // Writes by bytes to a stream.
     class StreamAlignedWriter : public AlignedWriter
     {
     public:
@@ -89,10 +93,11 @@ namespace oddcod
         std::ostream &m_stream;
     };
     
-    class OutputWriter
+    // Creates bit or aligned writers on stream.
+    class StreamWriterProvider
     {
     public:
-        OutputWriter(std::ostream *stream) : m_stream(stream), m_used(false) {};
+        StreamWriterProvider(std::ostream *stream) : m_stream(stream), m_used(false) {};
 
         std::shared_ptr<BitWriter> createBitWriter()
         {
@@ -116,7 +121,7 @@ namespace oddcod
 
     private:
         std::ostream *m_stream;
-        bool m_used; // TODO could use weak_ptr to the returned Reader and check if it is invalid if so return new
+        bool m_used;
     };
 };
 

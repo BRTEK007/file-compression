@@ -46,10 +46,16 @@ namespace oddcod
 
   Result huffman::encode(std::istream &inStream, std::ostream &outStream)
   {
-    InputReader input(&inStream);
-    OutputWriter output(&outStream);
+    StreamReaderProvider input(&inStream);
+    StreamWriterProvider output(&outStream);
+
     auto reader = input.createAlignedReader();
+    if (!reader)
+      return Result::ERR_INPUT;
     auto writer = output.createBitWriter();
+    if (!writer)
+      return Result::ERR_OUTPUT;
+
     return huffman_encode(reader, writer);
   }
 };
