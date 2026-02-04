@@ -27,23 +27,12 @@ c++ file compression and decompression, using Huffman coding
     exit(2);
   }
 
-  bool wasError = false;
+  oddcod::Result result;
 
-  if (doCompress)
-  {
-    try
-    {
-      oddcod::huffman::encode(inStream, outStream);
-    }
-    catch (std::exception &e)
-    {
-      std::cout << "ERROR: " << e.what() << '\n';
-      wasError = true;
-    }
-  }
-  else
-  {
-    oddcod::huffman::decode(inStream, outStream);
+  if(doCompress){
+    result = oddcod::huffman::encode(inStream, outStream);
+  }else{
+    result = oddcod::huffman::decode(inStream, outStream);
   }
 
   inStream.close();
