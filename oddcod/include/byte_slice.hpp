@@ -7,6 +7,7 @@ namespace oddcod
 {
 #define BYTE_SLICE_BIT_COUNT 8
 
+  // Read and write to a byte by individual bits or full byte.
   class ByteSlice
   {
     unsigned char bits;

@@ -89,10 +89,10 @@ namespace oddcod
         std::ostream &m_stream;
     };
     
-    class WriterInput
+    class OutputWriter
     {
     public:
-        WriterInput(std::ostream *stream) : m_stream(stream), m_used(false) {};
+        OutputWriter(std::ostream *stream) : m_stream(stream), m_used(false) {};
 
         std::shared_ptr<BitWriter> createBitWriter()
         {

@@ -46,8 +46,8 @@ namespace oddcod
 
   Result huffman::encode(std::istream &inStream, std::ostream &outStream)
   {
-    ReaderInput input(&inStream);
-    WriterInput output(&outStream);
+    InputReader input(&inStream);
+    OutputWriter output(&outStream);
     auto reader = input.createAlignedReader();
     auto writer = output.createBitWriter();
     return huffman_encode(reader, writer);

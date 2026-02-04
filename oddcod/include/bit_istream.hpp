@@ -116,16 +116,6 @@ namespace oddcod
             m_stream.seekg(0, std::ios::beg);
             return streamSize;
         };
-        // void writeToVec(std::vector<word_t> *outVec) override
-        //{
-        // m_stream.seekg(0, std::ios::end);
-        // auto streamSize = m_stream.tellg();
-        // m_stream.seekg(0, std::ios::beg);
-
-        // outVec->clear();
-        // outVec->resize(streamSize);
-        // m_stream.read(reinterpret_cast<char *>(outVec->data()), streamSize);
-        //};
     protected:
         void updateCache()
         {
@@ -136,11 +126,10 @@ namespace oddcod
         std::istream &m_stream;
     };
 
-    // TODO inputData/outputData, create Aligned/Ualigned readed writer over it
-    class ReaderInput
+    class InputReader
     {
     public:
-        ReaderInput(std::istream *stream) : m_stream(stream), m_used(false) {};
+        InputReader(std::istream *stream) : m_stream(stream), m_used(false) {};
 
         std::shared_ptr<BitReader> createBitReader()
         {
