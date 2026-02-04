@@ -49,7 +49,7 @@ TEST(BitCode, WriteReadEqual)
     EXPECT_EQ(code.readBit(), true);
 }
 
-TEST(Tree, CreateFromAllBytesValid)
+TEST(CodeTree, CreateFromAllBytesValid)
 {
     //---ARRANGE
     std::vector<ByteFreq> byteFreqArr;
@@ -60,7 +60,7 @@ TEST(Tree, CreateFromAllBytesValid)
         bf.freq = 1;
         byteFreqArr.push_back(bf);
     }
-    auto tree = Tree(byteFreqArr);
+    auto tree = CodeTree(byteFreqArr);
 
     //---ACT
     std::array<BitCode, 256> codes;

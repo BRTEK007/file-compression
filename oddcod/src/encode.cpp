@@ -19,7 +19,7 @@ namespace oddcod
 
     auto byteFreqArr = findByteFrequencies(bitIstream);
 
-    auto tree = Tree(byteFreqArr);
+    auto tree = CodeTree(byteFreqArr);
 
     std::array<BitCode, 256> codes;
     tree.extractCodes(codes);
@@ -46,10 +46,16 @@ namespace oddcod
 
   Result huffman::encode(std::istream &inStream, std::ostream &outStream)
   {
-    ReaderInput input(&inStream);
-    WriterInput output(&outStream);
+    StreamReaderProvider input(&inStream);
+    StreamWriterProvider output(&outStream);
+
     auto reader = input.createAlignedReader();
+    if (!reader)
+      return Result::ERR_INPUT;
     auto writer = output.createBitWriter();
+    if (!writer)
+      return Result::ERR_OUTPUT;
+
     return huffman_encode(reader, writer);
   }
 };

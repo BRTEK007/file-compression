@@ -1,6 +1,7 @@
 #include "byte_freq.hpp"
 
 #include <algorithm>
+#include <array>
 namespace oddcod
 {
   // returns array of byte_frequencies from input byte buffer

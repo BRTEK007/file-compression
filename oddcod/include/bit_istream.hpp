@@ -10,6 +10,7 @@
 
 namespace oddcod
 {
+    // Abstract class for reading by bits.
     class BitReader
     {
     public:
@@ -48,6 +49,7 @@ namespace oddcod
         ByteSlice m_byteSlice;
     };
 
+    // Abstract class for reading by bytes.
     class AlignedReader
     {
     public:
@@ -57,6 +59,7 @@ namespace oddcod
         virtual size_t getSize() = 0;
     };
 
+    // Reads by bits from a stream.
     class StreamBitReader : public BitReader
     {
     public:
@@ -84,6 +87,7 @@ namespace oddcod
         std::istream &m_stream;
     };
 
+    // Reads by bytes from a stream.
     class StreamAlignedReader : public AlignedReader
     {
     public:
@@ -116,16 +120,6 @@ namespace oddcod
             m_stream.seekg(0, std::ios::beg);
             return streamSize;
         };
-        // void writeToVec(std::vector<word_t> *outVec) override
-        //{
-        // m_stream.seekg(0, std::ios::end);
-        // auto streamSize = m_stream.tellg();
-        // m_stream.seekg(0, std::ios::beg);
-
-        // outVec->clear();
-        // outVec->resize(streamSize);
-        // m_stream.read(reinterpret_cast<char *>(outVec->data()), streamSize);
-        //};
     protected:
         void updateCache()
         {
@@ -136,11 +130,11 @@ namespace oddcod
         std::istream &m_stream;
     };
 
-    // TODO inputData/outputData, create Aligned/Ualigned readed writer over it
-    class ReaderInput
+    // Creates bit or aligned readers on stream.
+    class StreamReaderProvider
     {
     public:
-        ReaderInput(std::istream *stream) : m_stream(stream), m_used(false) {};
+        StreamReaderProvider(std::istream *stream) : m_stream(stream), m_used(false) {};
 
         std::shared_ptr<BitReader> createBitReader()
         {
@@ -164,7 +158,7 @@ namespace oddcod
 
     private:
         std::istream *m_stream;
-        bool m_used; // TODO could use weak_ptr to the returned Reader and check if it is invalid if so return new
+        bool m_used;
     };
 };
 

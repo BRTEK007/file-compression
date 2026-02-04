@@ -12,21 +12,13 @@ namespace oddcod
     {
         OK = 0,
         ERR_ENCODE_EMPTY = 1,
+        ERR_DECODE_TREE = 2,
+        ERR_INPUT = 3,
+        ERR_OUTPUT = 4
     };
-
-    // have interface for INput and Writer, extend with classes, pass that to a function, unify with Bitistream and BitOstream
 
     namespace huffman
     {
-        enum WordType
-        {
-            BYTE = 0, // best for ascii text files
-            RGB,
-            RGBA,
-            UTF8,
-            ASCII7 // best for 7 bit ascii
-        };
-
         Result encode(std::istream &inStream, std::ostream &outStream);
         Result decode(std::istream &inStream, std::ostream &outStream);
     };

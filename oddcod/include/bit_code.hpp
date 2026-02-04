@@ -5,6 +5,7 @@
 
 namespace oddcod
 {
+    // Stores 256 bit long code, with read and write by individual bits.
     class BitCode
     {
     private:

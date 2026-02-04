@@ -1,5 +1,6 @@
 #include "bit_code.hpp"
 #include <algorithm>
+
 namespace oddcod
 {
     BitCode::BitCode() : len(0)

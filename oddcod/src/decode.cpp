@@ -12,7 +12,7 @@ namespace oddcod
     bytes[1] = bitIstream->readByte();
     uint16_t uniqueByteCount = *(reinterpret_cast<uint16_t *>(bytes));
 
-    Tree tree;
+    CodeTree tree;
     tree.readFrom(bitIstream, uniqueByteCount); // TODO possible error
 
     std::vector<unsigned char> leafBytes;
@@ -27,9 +27,13 @@ namespace oddcod
       bool bit = bitIstream->readBit();
 
       if (bit)
-        tree.ptrRight(); // TODO possible null refrence
+        tree.ptrRight();
       else
-        tree.ptrLeft(); // TODO possible null refrence
+        tree.ptrLeft();
+
+      if (tree.ptrIsNull()){
+        return Result::ERR_DECODE_TREE;
+      }
 
       if (tree.ptrIsLeaf())
       {
@@ -42,10 +46,16 @@ namespace oddcod
   }
   Result huffman::decode(std::istream &inStream, std::ostream &outStream)
   {
-    ReaderInput input(&inStream);
-    WriterInput output(&outStream);
+    StreamReaderProvider input(&inStream);
+    StreamWriterProvider output(&outStream);
+
     auto reader = input.createBitReader();
+    if (!reader)
+      return Result::ERR_INPUT;
     auto writer = output.createAlignedWriter();
+    if (!writer)
+      return Result::ERR_OUTPUT;
+      
     return huffman_decode(reader, writer);
   }
 };

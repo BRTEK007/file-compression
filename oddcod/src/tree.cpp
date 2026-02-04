@@ -1,21 +1,55 @@
 #include "tree.hpp"
 
-#include "node_queue.hpp"
+// node queue
+namespace oddcod{
+  CodeTreeNodeQueue::CodeTreeNodeQueue(size_t size)
+  {
+    this->nodes.reserve(size);
+  }
+
+  size_t CodeTreeNodeQueue::size()
+  {
+    return this->nodes.size();
+  }
+
+  void CodeTreeNodeQueue::push(CodeTreeNode *node)
+  {
+    this->nodes.push_back(node);
+  }
+
+  CodeTreeNode *CodeTreeNodeQueue::pop()
+  {
+    CodeTreeNode *node = this->nodes[0];
+    int index = 0;
+    for (size_t i = 0; i < this->nodes.size(); i++)
+    {
+      if (this->nodes[i]->freq < node->freq)
+      {
+        node = this->nodes[i];
+        index = i;
+      }
+    }
+    this->nodes.erase(this->nodes.begin() + index);
+    return node;
+  }
+};
+
+// tree
 namespace oddcod
 {
-  Tree::Tree()
+  CodeTree::CodeTree()
   {
     this->head = NULL;
     this->nodePtr = NULL;
   }
 
-  Tree::~Tree()
+  CodeTree::~CodeTree()
   {
-    std::vector<Node *> stack;
+    std::vector<CodeTreeNode *> stack;
     stack.push_back(this->head);
     while (!stack.empty())
     {
-      Node *node = stack.back();
+      CodeTreeNode *node = stack.back();
       stack.pop_back();
       if (node != NULL)
       {
@@ -26,14 +60,14 @@ namespace oddcod
     }
   }
 
-  Tree::Tree(const std::vector<ByteFreq> &bf_arr)
+  CodeTree::CodeTree(const std::vector<ByteFreq> &bf_arr)
   {
-    NodeQueue queue(bf_arr.size());
+    CodeTreeNodeQueue queue(bf_arr.size());
 
     // create a leaf node for each symbol
     for (size_t i = 0; i < bf_arr.size(); i++)
     {
-      Node *node = new Node;
+      CodeTreeNode *node = new CodeTreeNode;
       node->byte = bf_arr[i].byte;
       node->freq = bf_arr[i].freq;
       node->leaf = true;
@@ -46,10 +80,10 @@ namespace oddcod
     while (queue.size() > 1)
     {
       // remove two nodes of highest probability
-      Node *nodeA = queue.pop();
-      Node *nodeB = queue.pop();
+      CodeTreeNode *nodeA = queue.pop();
+      CodeTreeNode *nodeB = queue.pop();
       // create new internal node
-      Node *nodeInternal = new Node;
+      CodeTreeNode *nodeInternal = new CodeTreeNode;
       nodeInternal->freq = nodeA->freq + nodeB->freq;
       nodeInternal->leaf = false;
       nodeInternal->left = nodeA;
@@ -60,9 +94,9 @@ namespace oddcod
     this->head = queue.pop();
   }
 
-  void Tree::extractCodes(std::array<BitCode, 256> &codes)
+  void CodeTree::extractCodes(std::array<BitCode, 256> &codes)
   {
-    std::vector<std::pair<Node *, BitCode>> stack;
+    std::vector<std::pair<CodeTreeNode *, BitCode>> stack;
 
     BitCode code;
     stack.push_back({this->head, code});
@@ -72,7 +106,7 @@ namespace oddcod
       auto nodeCode = stack.back();
       stack.pop_back();
 
-      Node *node = nodeCode.first;
+      CodeTreeNode *node = nodeCode.first;
       BitCode code = nodeCode.second;
 
       if (node != NULL)
@@ -94,16 +128,16 @@ namespace oddcod
     }
   }
 
-  void Tree::extractLeafBytes(std::vector<unsigned char> &bytes)
+  void CodeTree::extractLeafBytes(std::vector<unsigned char> &bytes)
   {
-    std::vector<Node *> stack;
+    std::vector<CodeTreeNode *> stack;
     stack.push_back(this->head);
 
     bytes.clear();
 
     while (!stack.empty())
     {
-      Node *node = stack.back();
+      CodeTreeNode *node = stack.back();
       stack.pop_back();
       if (node != NULL)
       {
@@ -117,16 +151,16 @@ namespace oddcod
     }
   }
 
-  void Tree::writeTo(std::shared_ptr<BitWriter> bitOstream)
+  void CodeTree::writeTo(std::shared_ptr<BitWriter> bitOstream)
   {
-    std::vector<Node *> stack;
+    std::vector<CodeTreeNode *> stack;
 
     stack.push_back(this->head->right);
     stack.push_back(this->head->left);
 
     while (!stack.empty())
     {
-      Node *node = stack.back();
+      CodeTreeNode *node = stack.back();
       stack.pop_back();
 
       if (!node)
@@ -146,14 +180,14 @@ namespace oddcod
     }
   }
 
-  void Tree::readFrom(std::shared_ptr<BitReader> bitIstream, size_t leaf_count)
+  void CodeTree::readFrom(std::shared_ptr<BitReader> bitIstream, size_t leaf_count)
   {
-    Node *root = new Node();
+    CodeTreeNode *root = new CodeTreeNode();
     root->leaf = false;
     root->left = NULL;
     root->right = NULL;
 
-    std::vector<Node **> stack;
+    std::vector<CodeTreeNode **> stack;
 
     stack.push_back(&(root->right));
     stack.push_back(&(root->left));
@@ -161,14 +195,14 @@ namespace oddcod
     size_t leavesRead = 0;
     while (leavesRead < leaf_count)
     {
-      Node **node = stack.back();
+      CodeTreeNode **node = stack.back();
       stack.pop_back();
 
       bool bit = bitIstream->readBit(); // TODO check eof, and throw
 
       if (!bit)
       { // parent node
-        Node *newNode = new Node();
+        CodeTreeNode *newNode = new CodeTreeNode();
         newNode->leaf = false;
         newNode->left = NULL;
         newNode->right = NULL;
@@ -179,7 +213,7 @@ namespace oddcod
       }
       else
       { // leaf node
-        Node *newNode = new Node();
+        CodeTreeNode *newNode = new CodeTreeNode();
         newNode->byte = bitIstream->readByte();
         newNode->leaf = true;
         newNode->left = NULL;
@@ -191,27 +225,32 @@ namespace oddcod
     this->head = root;
   }
 
-  void Tree::ptrReset()
+  void CodeTree::ptrReset()
   {
     this->nodePtr = this->head;
   }
 
-  void Tree::ptrRight()
+  void CodeTree::ptrRight()
   {
     this->nodePtr = this->nodePtr->right;
   }
 
-  void Tree::ptrLeft()
+  void CodeTree::ptrLeft()
   {
     this->nodePtr = this->nodePtr->left;
   }
 
-  bool Tree::ptrIsLeaf()
+  bool CodeTree::ptrIsLeaf()
   {
     return this->nodePtr->leaf;
   }
 
-  unsigned char Tree::ptrReadByte()
+  bool CodeTree::ptrIsNull()
+  {
+    return this->nodePtr == NULL;
+  }
+
+  unsigned char CodeTree::ptrReadByte()
   {
     return this->nodePtr->byte;
   }
