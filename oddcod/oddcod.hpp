@@ -12,6 +12,7 @@ namespace oddcod
     {
         OK = 0,
         ERR_ENCODE_EMPTY = 1,
+        ERR_DECODE_TREE = 2
     };
 
     // have interface for INput and Writer, extend with classes, pass that to a function, unify with Bitistream and BitOstream

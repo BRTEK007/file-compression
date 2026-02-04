@@ -27,9 +27,13 @@ namespace oddcod
       bool bit = bitIstream->readBit();
 
       if (bit)
-        tree.ptrRight(); // TODO possible null refrence
+        tree.ptrRight();
       else
-        tree.ptrLeft(); // TODO possible null refrence
+        tree.ptrLeft();
+
+      if (tree.ptrIsNull()){
+        return Result::ERR_DECODE_TREE;
+      }
 
       if (tree.ptrIsLeaf())
       {

@@ -88,6 +88,7 @@ namespace oddcod
     protected:
         std::ostream &m_stream;
     };
+    
     class WriterInput
     {
     public:

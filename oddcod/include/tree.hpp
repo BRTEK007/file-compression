@@ -12,7 +12,6 @@
 
 namespace oddcod
 {
-
   struct Node
   {
     unsigned char byte;
@@ -39,6 +38,7 @@ namespace oddcod
     void ptrRight();
     void ptrLeft();
     bool ptrIsLeaf();
+    bool ptrIsNull();
     unsigned char ptrReadByte();
   };
 };

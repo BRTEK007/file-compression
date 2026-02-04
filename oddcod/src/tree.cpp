@@ -211,6 +211,11 @@ namespace oddcod
     return this->nodePtr->leaf;
   }
 
+  bool Tree::ptrIsNull()
+  {
+    return this->nodePtr == NULL;
+  }
+
   unsigned char Tree::ptrReadByte()
   {
     return this->nodePtr->byte;
