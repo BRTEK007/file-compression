@@ -19,7 +19,7 @@ namespace oddcod
 
     auto byteFreqArr = findByteFrequencies(bitIstream);
 
-    auto tree = Tree(byteFreqArr);
+    auto tree = CodeTree(byteFreqArr);
 
     std::array<BitCode, 256> codes;
     tree.extractCodes(codes);

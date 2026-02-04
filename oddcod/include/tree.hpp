@@ -12,24 +12,39 @@
 
 namespace oddcod
 {
-  struct Node
+  // Node of the Code Tree, refrences following nodes, stores byte, leaf, frequency information.
+  struct CodeTreeNode
   {
     unsigned char byte;
     bool leaf;
     unsigned freq;
-    struct Node *left;
-    struct Node *right;
+    struct CodeTreeNode *left;
+    struct CodeTreeNode *right;
   };
 
-  class Tree
+  // Priority queue of code tree nodes ordered by frequency.
+  class CodeTreeNodeQueue
   {
-    Node *head;
-    Node *nodePtr;
+  private:
+    std::vector<CodeTreeNode *> nodes;
 
   public:
-    Tree();
-    Tree(const std::vector<ByteFreq> &bf_arr);
-    ~Tree();
+    CodeTreeNodeQueue(size_t size);
+    size_t size();
+    void push(CodeTreeNode *node);
+    CodeTreeNode *pop();
+  };
+
+  // Tree where the leaves hold byte values, and the associated bit code is encoded in the path.
+  class CodeTree
+  {
+    CodeTreeNode *head;
+    CodeTreeNode *nodePtr;
+
+  public:
+    CodeTree();
+    CodeTree(const std::vector<ByteFreq> &bf_arr);
+    ~CodeTree();
     void readFrom(std::shared_ptr<BitReader> bitReader, size_t leaf_count);
     void extractCodes(std::array<BitCode, 256> &codes);
     void extractLeafBytes(std::vector<unsigned char> &bytes);

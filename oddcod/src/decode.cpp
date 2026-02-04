@@ -12,7 +12,7 @@ namespace oddcod
     bytes[1] = bitIstream->readByte();
     uint16_t uniqueByteCount = *(reinterpret_cast<uint16_t *>(bytes));
 
-    Tree tree;
+    CodeTree tree;
     tree.readFrom(bitIstream, uniqueByteCount); // TODO possible error
 
     std::vector<unsigned char> leafBytes;
