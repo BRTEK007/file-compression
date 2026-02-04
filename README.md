@@ -4,8 +4,8 @@ c++ file compression and decompression, using Huffman coding
 
 # Project structure
 
-- **oddcod** coding library with unit tests written in google test
-- **oddcod_examples** minimal file compression program, with python tests
+- **oddcod** coding library, with unit tests
+- **oddcod_examples** minimal file compression program, with end to end tests
 
 # Minimal example usage of library
 
@@ -46,7 +46,7 @@ c++ file compression and decompression, using Huffman coding
 # Testing
 - `run_unit_tests.sh` and `run_e2e_tests.sh` scripts provided
 unit
-- unit tests for oddcod library, use google test
+- unit tests for oddcod library, use [GoogleTest](https://github.com/google/googletest)
 - python tests run file compression and decompression program, and comprare the results with original
 
 ## Example unit tests run:
@@ -106,4 +106,4 @@ both/img/fireworks.pgm              7375889B    PASSED 667.1ms (deflated 52.88%)
 both/img/readme.txt                    2038B    PASSED 4.35ms (deflated 38.32%)
 ```
 
-# test images: https://imagecompression.info/test_images/
+## test images: https://imagecompression.info/test_images/
